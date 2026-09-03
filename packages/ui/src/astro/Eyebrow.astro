@@ -1,0 +1,7 @@
+---
+interface Props { onDark?: boolean; class?: string }
+const { onDark = false, class: cls = "" } = Astro.props;
+---
+<span class:list={["ui-eyebrow", cls]} data-on-dark={onDark ? "" : undefined}>
+  <slot />
+</span>

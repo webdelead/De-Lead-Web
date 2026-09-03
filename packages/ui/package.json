@@ -1,0 +1,28 @@
+{
+  "name": "@delead/ui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./lib": "./src/lib/index.ts",
+    "./client/reveal": "./src/client/reveal.ts",
+    "./client/countUp": "./src/client/countUp.ts",
+    "./astro/*": "./src/astro/*",
+    "./styles.css": "./src/styles.css"
+  },
+  "files": ["src"],
+  "dependencies": {
+    "@delead/brand": "workspace:*"
+  },
+  "devDependencies": {
+    "@delead/config": "workspace:*",
+    "astro": "^5.14.1",
+    "typescript": "^5.7.2"
+  },
+  "peerDependencies": {
+    "astro": "^5"
+  },
+  "peerDependenciesMeta": {
+    "astro": { "optional": true }
+  }
+}

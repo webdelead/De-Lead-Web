@@ -1,0 +1,22 @@
+---
+/* One stat. If `value` is numeric it counts up on scroll-in; otherwise it
+   renders as-is (e.g. "India & UAE"). */
+interface Props { value: string; suffix?: string; label: string; onDark?: boolean }
+const { value, suffix = "", label, onDark = false } = Astro.props;
+const numeric = /^\d[\d,]*$/.test(value);
+const count = numeric ? value.replace(/,/g, "") : undefined;
+const fg = onDark ? "#fff" : "var(--color-ink)";
+const sub = onDark ? "rgba(255,255,255,.7)" : "var(--color-ink-soft)";
+---
+<div class="ui-stat">
+  <b
+    style={`display:block;font-family:var(--font-display);font-weight:700;line-height:1;font-size:clamp(1.7rem,4vw,2.6rem);color:${fg}`}
+    data-count={count}
+    data-suffix={count ? suffix : undefined}
+  >
+    {count ? "0" + suffix : value + suffix}
+  </b>
+  <span style={`display:block;margin-top:.5rem;font-size:.8rem;font-weight:600;line-height:1.3;color:${sub}`}>
+    {label}
+  </span>
+</div>

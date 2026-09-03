@@ -1,0 +1,22 @@
+---
+interface Props {
+  href?: string;
+  variant?: "primary" | "ghost" | "cream";
+  type?: "button" | "submit";
+  class?: string;
+  external?: boolean;
+}
+const { href, variant = "primary", type = "button", class: cls = "", external = false } = Astro.props;
+const Tag = href ? "a" : "button";
+const rel = external ? "noopener noreferrer" : undefined;
+const target = external ? "_blank" : undefined;
+---
+<Tag
+  class:list={["ui-btn", `ui-btn--${variant}`, cls]}
+  href={href}
+  type={href ? undefined : type}
+  rel={rel}
+  target={target}
+>
+  <slot />
+</Tag>
