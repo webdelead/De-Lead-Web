@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-primary-purple: #5021B0;
+  --color-secondary-yellow: #FDC638;
+  --color-secondary-dark: #03010D;
+  --color-secondary-grey-1: #D9D9D9;
+  --color-secondary-purple: #6031A5;
+  --color-secondary-white: #FFFFFF;
+  --color-secondary-purple-light: #9040CF;
+  --color-secondary-light: #E5D5FC;
+  --color-secondary-purple-dark: #331A5C;
+  --color-secondary-dark-2: #1A0D2D;
+
+  --font-covered: var(--font-covered);
+  --font-host: var(--font-host);
+}
+
+body {
+  font-family: var(--font-host), Arial, Helvetica, sans-serif;
+  background-color: var(--color-primary-purple);
+  color: var(--color-secondary-white);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

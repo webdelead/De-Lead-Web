@@ -52,6 +52,14 @@ function cdnUrl(ref: string) {
   return `https://cdn.sanity.io/images/${PROJECT}/${DATASET}/${id}-${dims}.${fmt}`;
 }
 
+async function ensureBucket(bucket: string) {
+  await fetch(`${SUPABASE_URL}/storage/v1/bucket`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${SERVICE_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ id: bucket, name: bucket, public: true }),
+  }).catch(() => {});
+}
+
 async function uploadToStorage(srcUrl: string, key: string) {
   const img = await fetch(srcUrl);
   if (!img.ok) throw new Error(`fetch image ${img.status}`);
@@ -87,6 +95,10 @@ async function uploadToStorage(srcUrl: string, key: string) {
 }
 
 async function main() {
+  await ensureBucket(BUCKET);
+  await ensureBucket("shared");
+  await ensureBucket("walk2lead");
+
   // ---- events ----
   const events = await groq<any[]>(
     `*[_type == "event"]{title, "slug": slug.current, description, date, location, audience, duration, inclusion, isFeatured, order, stats, logo}`,
