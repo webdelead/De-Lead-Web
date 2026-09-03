@@ -25,6 +25,8 @@ const ATTR = {
   "dominant-baseline": "dominantBaseline", "xlink:href": "xlinkHref", crossorigin: "crossOrigin",
   allowfullscreen: "allowFullScreen", tabindex: "tabIndex", autocomplete: "autoComplete",
   maxlength: "maxLength", minlength: "minLength", readonly: "readOnly", enctype: "encType",
+  novalidate: "noValidate", autofocus: "autoFocus", formnovalidate: "formNoValidate",
+  spellcheck: "spellCheck", contenteditable: "contentEditable", inputmode: "inputMode",
   srcset: "srcSet", "is:inline": "", "http-equiv": "httpEquiv",
 };
 const VOID = new Set(["img", "input", "br", "hr", "meta", "link", "source", "area", "col", "embed", "track", "wbr"]);
