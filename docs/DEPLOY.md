@@ -6,7 +6,8 @@ Repo: `github.com/webdelead/De-Lead-Web` · Supabase project `dslvxzcqcuqhfqqaoh
 
 - DB schema migrated + seeded on Supabase (admin `webdelead@gmail.com`, real content from the old sites).
 - TinkerChamps content imported off Sanity (1 event, 17 gallery, 3 reviews → Supabase Storage).
-- All 7 apps build locally against the live DB.
+- All 7 apps are **Next 15** and build locally against the live DB. The 5 marketing
+  sites were converted Astro → Next (2026-09) — 1:1 pixel ports, componentised, ISR.
 
 ## 1. GitHub secrets (Settings → Secrets and variables → Actions)
 
@@ -42,25 +43,21 @@ Vercel Cron needs a `CRON_SECRET` env var on the dashboard project (any long ran
 string) — Vercel sends it as `Authorization: Bearer <CRON_SECRET>` and the route rejects
 anything else.
 
-## 2. Cloudflare Pages — 5 static sites
+## 2. Marketing sites (5) — Vercel or VPS
 
-For **each** of `deleadint · walk2lead · makerchamps · corporate · dli-education`:
+All five (`deleadint · walk2lead · makerchamps · corporate · dli-education`) are Next 15
+apps with `output: "standalone"` and on-demand ISR. **No build hooks, no Cloudflare Pages.**
 
-1. Cloudflare dashboard → Workers & Pages → Create → Pages → Connect to Git → `webdelead/De-Lead-Web`.
-2. **Build configuration**
-   - Framework preset: **Astro**
-   - Build command: `pnpm install && pnpm --filter @delead/site-<name> build`
-     (names: `site-deleadint`, `site-walk2lead`, `site-makerchamps`, `site-corporate`, `site-dli-education`)
-   - Build output directory: `apps/<name>/dist`
-   - Root directory: `/` (repo root)
-3. **Settings → Builds → Build watch paths**: `apps/<name>/*` and `packages/*`
-   (so a push only rebuilds the sites that changed — keeps you under the 500 builds/mo free cap).
-4. **Environment variables** (Production + Preview):
+### Option A — Vercel (one project per site)
+1. Add New Project → import `webdelead/De-Lead-Web` → **Root Directory** `apps/<name>`.
+2. Framework auto-detects Next.js. Build `pnpm install && pnpm --filter @delead/site-<name> build`.
+3. **Environment variables** (Production + Preview):
    - `DATABASE_URL` = transaction pooler URI
    - `SUPABASE_URL` = `https://dslvxzcqcuqhfqqaohfb.supabase.co`
    - `PUBLIC_LEAD_ENDPOINT` = `https://admin.deleadint.com/api/lead`
-   - `SITE_URL_<VERTICAL>` for its own canonical (optional; falls back to the default host)
-5. **Custom domains** → add the subdomain:
+   - `REVALIDATE_SECRET` = the shared secret (identical on every site + the dashboard)
+   - `SITE_URL_<VERTICAL>` = its own canonical origin
+4. **Custom domains** → add the subdomain:
    | Site | Domain | 301 alias also add |
    |---|---|---|
    | deleadint | `deleadint.com` + `www.deleadint.com` | — |
@@ -68,14 +65,31 @@ For **each** of `deleadint · walk2lead · makerchamps · corporate · dli-educa
    | makerchamps | `mc.deleadint.com` | `makerchamps.deleadint.com` |
    | corporate | `corporate.deleadint.com` | — |
    | dli-education | `edu.deleadint.com` | — |
-   Cloudflare shows a **CNAME target** (e.g. `de-lead-web-w2l.pages.dev`).
-6. **Hostinger DNS**: add `CNAME <sub> → <target>.pages.dev`. Leave every `MX`, `TXT`
+5. **Hostinger DNS**: add the `CNAME <sub> → <vercel target>`. Leave every `MX`, `TXT`
    (SPF/DKIM/DMARC) and `autoconfig`/`autodiscover` record untouched — **Zoho mail is unaffected**.
-7. **Settings → Builds → Deploy hooks** → create one → paste its URL into the root `.env`
-   as `DEPLOY_HOOK_<VERTICAL>` and into the dashboard's Vercel env. This is what the
-   dashboard's "Publish to site" button calls.
 
-## 3. Vercel — dashboard + tinkerchamps
+### Option B — single VPS ($6–12/mo), for when ticketing/CRM/payments land
+- `pnpm install && pnpm -r --filter "./apps/*" build` → each app emits `.next/standalone`.
+- Run each with `pm2`/systemd: `node apps/<name>/.next/standalone/apps/<name>/server.js`
+  on its own port (4321–4325, 3100, 3200).
+- `caddy` reverse-proxies by host:
+  ```
+  deleadint.com, www.deleadint.com { reverse_proxy localhost:4321 }
+  w2l.deleadint.com               { reverse_proxy localhost:4322 }
+  mc.deleadint.com                { reverse_proxy localhost:4323 }
+  corporate.deleadint.com         { reverse_proxy localhost:4324 }
+  edu.deleadint.com               { reverse_proxy localhost:4325 }
+  admin.deleadint.com             { reverse_proxy localhost:3100 }
+  tc.deleadint.com                { reverse_proxy localhost:3200 }
+  ```
+  Caddy gets certs automatically. Same env vars as Option A, in each service's environment.
+
+### Publish (both options)
+The dashboard "Publish to site" button `POST`s `<SITE_URL_*>/api/revalidate` with header
+`x-revalidate-secret: <REVALIDATE_SECRET>`; the route calls `revalidatePath("/", "layout")`.
+Effect is near-instant, costs no build. `git push` still triggers a normal redeploy for code.
+
+## 3. Dashboard + TinkerChamps (Vercel)
 
 Two projects, same repo:
 
@@ -90,9 +104,10 @@ Two projects, same repo:
    `DATABASE_URL`, `DIRECT_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`,
    `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
    `STORAGE_PROVIDER=supabase`, `CRON_SECRET`,
-   `APPS_SCRIPT_URL_*` (all six), `DEPLOY_HOOK_*` (all five), `PUBLIC_LEAD_ENDPOINT`,
-   `SITE_URL_*` (all seven).
-   tinkerchamps needs `DATABASE_URL`, `SUPABASE_URL`, `APPS_SCRIPT_URL_TINKERCHAMPS`.
+   `APPS_SCRIPT_URL_*` (all six), `PUBLIC_LEAD_ENDPOINT`,
+   `REVALIDATE_SECRET` (so "Publish" can reach the sites), `SITE_URL_*` (all seven).
+   tinkerchamps needs `DATABASE_URL`, `SUPABASE_URL`, `APPS_SCRIPT_URL_TINKERCHAMPS`,
+   `REVALIDATE_SECRET`.
 4. Add the custom domains → CNAME in Hostinger DNS (MX/TXT untouched).
 5. Vercel Hobby is technically non-commercial; for one low-traffic admin + one site this
    is the pragmatic choice. Move tinkerchamps to Cloudflare later if the 100 GB/mo
@@ -163,11 +178,11 @@ MX + SPF/DKIM/DMARC records are copied faithfully and kept unproxied.** That's t
 | Item | Where |
 |---|---|
 | Per-site **Apps Script URLs** (§5) | `.env` / Vercel `APPS_SCRIPT_URL_*` |
-| **Deploy hooks** (created in §2.7) | `.env` / Vercel `DEPLOY_HOOK_*` |
+| **`REVALIDATE_SECRET`** — one shared value on every site **and** the dashboard | `.env` / each host's env |
 | **`CRON_SECRET`** for the Vercel keep-alive | dashboard Vercel env |
 | **Cloudflare R2** (optional, later) | set `R2_*`, run `pnpm --filter @delead/db migrate:storage`, flip `STORAGE_PROVIDER=r2`, redeploy. No code changes. |
 | Real **starter blog posts** — 3 seeded from brochure facts, flagged for edit | dashboard → De' Lead International → Journal |
-| **OG images** (`/og.jpg` per site) | drop into each `apps/<name>/public/` |
+| **OG images** (`/og.jpg` per site) | drop into each `apps/<name>/public/`; each `app/layout.tsx` already points `openGraph.images` at a per-site logo as a placeholder |
 
 ## 8. Local dev
 

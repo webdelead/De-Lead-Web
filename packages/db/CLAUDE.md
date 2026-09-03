@@ -22,6 +22,7 @@ shared Supabase project — always go through a generated migration so history i
 | `schema.sql` | Full DDL snapshot, for reference / manual restore. Regenerated, never hand-edited. |
 | `drizzle/` | Ordered migrations (this is what `migrate` runs). |
 | `scripts/seed.ts` + `seed-content.ts` | First-run data: creates the first admin **via the Supabase Auth admin API** (`SEED_ADMIN_EMAIL`/`_PASSWORD`) + its profile row, publish_state, real content lifted from the old sites. Idempotent (seed-content only fills empty tables). |
+| `scripts/populate.ts` | `pnpm --filter @delead/db populate` — uploads every image from `apps/*/public/assets/` to Supabase Storage and rebuilds the content rows the Next sites read (w2l projects/testimonials/gallery/press, makerchamps + hub gallery, hub press, blog). Idempotent (images upsert by path; owned tables cleared per-vertical). **Its copy strings must stay byte-identical to the approved site markup** — the sites render straight from these rows. |
 | `scripts/import-sanity.ts` | One-off: pulled TinkerChamps events/gallery/reviews out of Sanity into Postgres + Supabase Storage. Already run. |
 | `scripts/migrate-storage.ts` | One-off (later): copy every asset from Supabase Storage to Cloudflare R2, flip `provider`. |
 | `scripts/ping.ts` | Keep-alive — inserts a `ping_log` row. `pnpm --filter @delead/db ping <source>` (source defaults to `cron`). |
