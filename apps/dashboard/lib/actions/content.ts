@@ -136,15 +136,34 @@ export async function reorderRows(input: {
   return { ok: true };
 }
 
+/**
+ * "Publish to site" — the sites are Next apps with ISR, so publishing just
+ * asks each one to revalidate its cache (no rebuild, no Cloudflare build quota).
+ * POST <site>/api/revalidate with the shared REVALIDATE_SECRET.
+ */
 export async function publishVertical(slug: VerticalSlug) {
   const session = await getSession();
   const key = dbKey(slug);
   if (!canAccess(session, key, "edit")) throw new Error("forbidden");
 
-  const hook = process.env[`DEPLOY_HOOK_${key.toUpperCase()}` as keyof NodeJS.ProcessEnv];
-  if (hook) {
-    await fetch(hook, { method: "POST" }).catch(() => {});
+  const base = process.env[
+    `SITE_URL_${key.toUpperCase()}` as keyof NodeJS.ProcessEnv
+  ] as string | undefined;
+  const secret = process.env.REVALIDATE_SECRET;
+  let triggered = false;
+  if (base && secret) {
+    try {
+      const res = await fetch(`${base.replace(/\/$/, "")}/api/revalidate`, {
+        method: "POST",
+        headers: { "x-revalidate-secret": secret },
+        cache: "no-store",
+      });
+      triggered = res.ok;
+    } catch {
+      triggered = false;
+    }
   }
+
   await clearDirty(key, session.user.id);
   await writeAudit({
     userId: session.user.id,
@@ -154,7 +173,7 @@ export async function publishVertical(slug: VerticalSlug) {
     entityId: slug,
     vertical: key,
   });
-  return { ok: true, triggered: !!hook };
+  return { ok: true, triggered };
 }
 
 export async function uploadAsset(form: FormData) {
