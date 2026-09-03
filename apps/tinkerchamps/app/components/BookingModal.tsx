@@ -21,17 +21,21 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  // lock scroll + back-button trap while open
+  // lock scroll (incl. Lenis) + back-button trap while open
   useEffect(() => {
     if (!isOpen) return;
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
+    // @ts-ignore
+    if (window.lenis) window.lenis.stop();
     window.history.pushState({ modalOpen: true }, "");
     const onPop = () => onClose();
     window.addEventListener("popstate", onPop);
     return () => {
       document.body.style.overflow = "unset";
       document.documentElement.style.overflow = "unset";
+      // @ts-ignore
+      if (window.lenis) window.lenis.start();
       window.removeEventListener("popstate", onPop);
       if (window.history.state?.modalOpen) window.history.back();
     };
@@ -97,6 +101,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
 
   const fieldCls =
     "w-full rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-white placeholder-white/40 outline-none transition focus:border-secondary-yellow";
+  const labelCls = "mb-1.5 block text-xs font-bold uppercase tracking-[0.15em] text-white/70";
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-8">
@@ -131,7 +136,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
             {isSubmitted ? (
               <SuccessStep selectedProgram="TinkerChamps" onDone={handleClose} />
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4" data-lenis-prevent>
                 <div className="mb-6">
                   <h2 className="font-covered text-3xl font-bold text-white md:text-4xl">
                     Book a <span className="text-secondary-yellow">Seat</span>
@@ -142,9 +147,13 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 </div>
 
                 <div>
+                  <label htmlFor="bm-parent" className={labelCls}>
+                    Parent&apos;s name
+                  </label>
                   <input
+                    id="bm-parent"
                     className={fieldCls}
-                    placeholder="Parent's name"
+                    placeholder="e.g. Anjali Menon"
                     value={form.parentName}
                     onChange={(e) => set("parentName", e.target.value)}
                   />
@@ -154,9 +163,13 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 </div>
 
                 <div>
+                  <label htmlFor="bm-student" className={labelCls}>
+                    Student&apos;s name
+                  </label>
                   <input
+                    id="bm-student"
                     className={fieldCls}
-                    placeholder="Student's name"
+                    placeholder="e.g. Aarav Menon"
                     value={form.studentName}
                     onChange={(e) => set("studentName", e.target.value)}
                   />
@@ -166,7 +179,11 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 </div>
 
                 <div>
+                  <label htmlFor="bm-class" className={labelCls}>
+                    Class
+                  </label>
                   <select
+                    id="bm-class"
                     className={`${fieldCls} appearance-none`}
                     value={form.classGrade}
                     onChange={(e) => set("classGrade", e.target.value)}
@@ -186,8 +203,12 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 </div>
 
                 <div>
+                  <label htmlFor="bm-phone" className={labelCls}>
+                    Phone
+                  </label>
                   <div className="flex gap-2">
                     <select
+                      aria-label="Country code"
                       className="rounded-xl border border-white/15 bg-white/10 px-3 py-3 text-white outline-none focus:border-secondary-yellow"
                       value={countryCode}
                       onChange={(e) => setCountryCode(e.target.value)}
@@ -200,8 +221,9 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                       </option>
                     </select>
                     <input
+                      id="bm-phone"
                       className={fieldCls}
-                      placeholder="Phone number"
+                      placeholder="10-digit number"
                       inputMode="tel"
                       value={form.phone}
                       onChange={(e) => set("phone", e.target.value)}
@@ -213,9 +235,13 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
                 </div>
 
                 <div>
+                  <label htmlFor="bm-place" className={labelCls}>
+                    Location
+                  </label>
                   <input
+                    id="bm-place"
                     className={fieldCls}
-                    placeholder="Location (town / city)"
+                    placeholder="Town / city"
                     value={form.place}
                     onChange={(e) => set("place", e.target.value)}
                   />

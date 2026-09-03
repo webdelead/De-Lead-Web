@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Covered_By_Your_Grace, Host_Grotesk } from "next/font/google";
 import Script from "next/script";
 import "../globals.css";
+import SmoothScroll from "../components/SmoothScroll";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { Analytics } from "@vercel/analytics/next";
@@ -184,6 +185,7 @@ export default function RootLayout({
         </Script>
 
         <ModalProvider>
+          <SmoothScroll />
           <Navbar />
           {children}
           <Footer />
