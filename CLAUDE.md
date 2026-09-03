@@ -15,7 +15,7 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
 |---|---|
 | `apps/deleadint` `walk2lead` `makerchamps` `corporate` `dli-education` | Astro 5 **static** marketing sites. Tailwind v4 restyle, each keeps its own accent + display font (`@delead/brand`). Content read from Postgres **at build time** in `.astro` frontmatter (`src/lib/content.ts`). Shared `<LeadForm>` posts to the dashboard's `/api/lead`. |
 | `apps/tinkerchamps` | Next 16 app. Migrated off Sanity — `sanity/lib/client.ts` is a shim to `/api/tc/*` routes on Postgres. (Astro conversion under discussion, not yet done.) |
-| `apps/dashboard` | Next 15 admin (`admin.deleadint.com`). Auth.js email+password, RBAC (`super_admin` + per-vertical `view`/`edit` grants), generic resource CRUD (`lib/resources.ts` registry), leads inbox, users, audit. |
+| `apps/dashboard` | Next 15 admin (`admin.deleadint.com`). **Supabase Auth** email+password (login has show/hide + forgot/reset; `lib/supabase/*` + `lib/authz.ts`); `users` table is a profile row keyed by the Supabase auth uid. RBAC (`super_admin` + per-vertical `view`/`edit` grants), generic resource CRUD (`lib/resources.ts` registry), leads inbox, users (invite-by-email), audit. Sidebar vertical sections are collapsible. |
 | `packages/db` | Drizzle schema + client + migrations + seed. **The one source of DB truth.** |
 | `packages/ui` | Shared Astro components (`SiteHeader`, `SiteFooter`, `LeadForm`, …) + `client/` scroll utils + `lib/`. |
 | `packages/brand` | Tailwind v4 theme tokens, per-vertical palette + font map, the `verticals.ts` registry. |

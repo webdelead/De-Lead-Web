@@ -46,7 +46,7 @@ Package manager **pnpm 9** + **Turborepo 2**. Node ≥ 20.11.
 | Dashboard + TinkerChamps | **Next 16** (App Router) + React 19 | matches current TinkerChamps |
 | Dashboard UI | **shadcn/ui** (Radix + Tailwind), **TanStack Table** for lists, **nuqs** for URL filter state | professional admin standard; every control specced in §6 |
 | ORM | **Drizzle** + `postgres` (postgres.js) | connection string only — portable to a droplet later |
-| Auth | **Auth.js v5** Credentials provider, **email + password** | password hashed with `@node-rs/argon2`; **DB sessions** (not JWT) so revoking access is instant |
+| Auth | **Supabase Auth** email + password (switched from Auth.js 2026-09 for managed reset emails) | `@supabase/ssr`; login has show/hide + "Forgot password"; `/reset-password`, `/auth/callback`; invite-by-email for new users; `users` table is a profile keyed by the auth uid |
 | RBAC | app-level: `role` + per-vertical grants (see §5) | enforced in server actions + middleware, not Postgres RLS |
 | Image storage | **Supabase Storage** now (buckets `tinkerchamps`, `walk2lead`, `shared`), public-read, service-role write. Reached only through `lib/storage.ts` (`put` / `delete` / `publicUrl`) so switching to **Cloudflare R2** later is a config + one-time file-copy job, no app changes. | gallery/press/reviews are small; 1 GB free is plenty for now. `STORAGE_PROVIDER` env flips it. |
 | Cron | **GitHub Actions** scheduled workflow | `SELECT 1` + a row in `ping_log`, 4×/week |

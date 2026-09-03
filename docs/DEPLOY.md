@@ -16,7 +16,13 @@ Repo: `github.com/webdelead/De-Lead-Web` · Supabase project `dslvxzcqcuqhfqqaoh
 | `DIRECT_URL` | session pooler URI `:5432` |
 | `SUPABASE_URL` | `https://dslvxzcqcuqhfqqaohfb.supabase.co` |
 | `SUPABASE_SERVICE_ROLE_KEY` | service role JWT |
-| `AUTH_SECRET` | from `.env` |
+| `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` | from `.env` (dashboard login runs client-side) |
+
+### Supabase Auth config (one-time, in the Supabase dashboard → Authentication)
+
+- **URL Configuration → Redirect URLs**: add `https://admin.deleadint.com/**` and, for local dev, `http://localhost:3100/**`. Needed for the invite / password-reset email links.
+- **Email templates**: the default "Invite" and "Reset password" templates work as-is.
+- **SMTP**: the built-in sender is rate-limited (~a few emails/hour). For reliable invites/resets, set a custom SMTP (Authentication → SMTP Settings) — the company Zoho account works.
 
 The `supabase-ping` workflow only needs `DIRECT_URL`. Run it once manually
 (Actions → Supabase keep-alive → Run workflow) to confirm.
@@ -82,7 +88,8 @@ Two projects, same repo:
 2. Framework auto-detects (Next.js). Install command `pnpm install` (default).
 3. **Environment variables** — dashboard needs everything from `.env`:
    `DATABASE_URL`, `DIRECT_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`,
-   `SUPABASE_SERVICE_ROLE_KEY`, `AUTH_SECRET`, `STORAGE_PROVIDER=supabase`,
+   `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+   `STORAGE_PROVIDER=supabase`, `CRON_SECRET`,
    `APPS_SCRIPT_URL_*` (all six), `DEPLOY_HOOK_*` (all five), `PUBLIC_LEAD_ENDPOINT`,
    `SITE_URL_*` (all seven).
    tinkerchamps needs `DATABASE_URL`, `SUPABASE_URL`, `APPS_SCRIPT_URL_TINKERCHAMPS`.
