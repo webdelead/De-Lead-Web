@@ -17,6 +17,9 @@ import {
   galleryImages,
   w2lProjects,
   blogPosts,
+  courses,
+  studentOutcomes,
+  trackRecord,
 } from "../src/schema";
 import { eq, and } from "drizzle-orm";
 
@@ -185,17 +188,89 @@ const W2L_PRESS: [string, string][] = [
 /* ============================================================
    MAKERCHAMPS gallery
    ============================================================ */
+/* 8 photos, 2 marquee rows of 4 (S09_gallery). alt = exact static markup. */
 const MC_GALLERY: [string, string][] = [
-  ["orientation-auditorium.webp", "Orientation in an NIT Calicut auditorium"],
-  ["isro-exhibit-tour.webp", "Guided space-research exhibit tour"],
-  ["chandrayaan-lander-demo.webp", "Chandrayaan lander model demonstration"],
-  ["electronics-lab-visit.webp", "Visiting an NIT electronics research lab"],
-  ["chemistry-lab-handson.webp", "Hands-on chemistry session"],
-  ["prototype-building.webp", "Building a prototype with real materials"],
-  ["physics-demo-pascals-law.webp", "Live physics demonstration"],
+  ["orientation-auditorium.webp", "Orientation session in an NIT Calicut auditorium"],
+  ["isro-exhibit-tour.webp", "Students on a guided space-research exhibit tour"],
+  ["chandrayaan-lander-demo.webp", "Mentor explaining a Chandrayaan lander model to students"],
+  ["electronics-lab-visit.webp", "Students visiting an NIT electronics research lab"],
+  ["chemistry-lab-handson.webp", "Hands-on chemistry experiment session"],
+  ["prototype-building.webp", "Students building a prototype with real materials"],
+  ["physics-demo-pascals-law.webp", "Live physics demonstration on stage"],
   ["nit-team-huddle.webp", "Team huddle inside an NIT Calicut hall"],
-  ["nit-calicut-gate.webp", "NIT Calicut campus gate"],
-  ["chandrayaan-lander-demo.webp", "Space exhibit"],
+];
+
+// [quote, author, role] — 4 real MakerChamps quotes (S10_testimonials)
+const MC_TESTIMONIALS: [string, string, string][] = [
+  ["My daughter Meenakshi had an absolutely fantastic time. Beyond just the lessons, this bootcamp has been truly transformative — we've seen a remarkable boost in her confidence. Getting to explore a premier institution like NIT Calicut, attend live classes, and work in the actual labs was a dream come true for her.",
+   "Soorajnath", "Parent of Meenakshi"],
+  ["The students thoroughly enjoyed the sessions and found the experience truly encouraging. They have so many valuable takeaways — it's wonderful to see how happy and inspired they are. We sincerely appreciate all the time, effort, and passion the team put into making these sessions so meaningful.",
+   "Program Partner", "MakerChamps Season 2"],
+  ["My son Hashim wasn't very enthusiastic going in — but the transformation over just two days was remarkable. He came home more energetic, more confident, more inspired, and told me: \"I don't want to study in a normal college anymore. I have to crack JEE and get into a really good college — I have to work.\" For me, that shift in mindset was the greatest achievement of this program.",
+   "Safiya Cheruvakkath", "Parent of Muhammed Hashim, Grade XI"],
+  ["The two-day camp was a wonderful event — my son loved it. Since he dreams of studying at an NIT, he was thrilled to visit the campus and take part. In an era where children are confined to their phones, camps like this are exactly what helps the new generation build real social connections. Please conduct more programs like this.",
+   "Parent of Rizwan Khan", "Translated from a Malayalam voice message"],
+];
+
+/* ============================================================
+   CORPORATE TRAINING — track record, testimonials, gallery
+   ============================================================ */
+// [whenLabel, client, blurb, badge] — S09_trackrecord (7, then cloned in the component)
+const CORP_TRACK: [string, string, string, string][] = [
+  ["Feb 2023", "RAG Business Hub", "Full-staff leadership training: decision-making, communication, a culture of innovation.", "Whole company"],
+  ["Dec 2023", "DP World", "Confidence and team building for a cohort of 100 staff, personalised coaching and exercises.", "100 staff"],
+  ["Feb 2024", "RAG Business Hub", "Team building at the Business Bay head office for the entire team, CEO and co-founder included.", "CEO included"],
+  ["Mar 2024", "Kayzan Group", "Two-day immersive outbound for 35 senior members at a farmhouse in Al Rahba, Abu Dhabi.", "2 days · 35 people"],
+  ["May 2024", "Kayzan Group", "Emotional Selling & Leadership Accelerator for the sales team, Al Bustan Centre, Dubai.", "Sales team"],
+  ["Sep 2024", "Al Ahalia Group", "Next Level Leadership for 50+ decision-makers across medical, operations, nursing, marketing & admin.", "50+ leaders"],
+  ["Feb 2025", "DP World Digital", "Activity-based team building for the Enterprise Systems team, running 12:30pm to 10pm, with a BBQ.", "Full day"],
+];
+
+// [quote, author, role] — S10_testimonials placeholders (kept as-is so the site is unchanged; client edits in the dashboard)
+const CORP_TESTIMONIALS: [string, string, string][] = [
+  ["The two days out of the office did more for how the team communicates than anything we had tried in-house. People came back talking to each other differently.",
+   "[Client name]", "[Role], [Company]"],
+  ["It was built around our actual challenges, not a generic deck. The facilitators ran the room themselves and kept every session hands-on.",
+   "[Client name]", "[Role], [Company]"],
+  ["Our leadership team took part alongside everyone else. That is what made the change stick once we were back at our desks.",
+   "[Client name]", "[Role], [Company]"],
+];
+
+// [file, caption, alt] — S12_gallery (5, fixed grid slots g-a..g-e)
+const CORP_GALLERY: [string, string, string][] = [
+  ["outbound-horse.webp", "Outbound, Al Rahba", "Participant horse riding during an outbound session in Abu Dhabi"],
+  ["facilitator-mic.webp", "On the floor", "A facilitator leading a corporate session"],
+  ["trophy-win.webp", "Team challenge", "A team celebrating a challenge win"],
+  ["support-activity.webp", "Trust exercise", "A group trust-and-support activity"],
+  ["sales-session.webp", "Sales team, Dubai", "A training session in a Dubai conference hall"],
+];
+
+/* ============================================================
+   DLI EDUCATION — student catalogue + student outcomes
+   ============================================================ */
+// [track, title, description, ageLabel, format, durationLabel] — students/S05_catalogue (11, in order)
+const DLI_COURSES: [string, string, string, string, string, string][] = [
+  ["AI & Data", "Gen AI for Smart Learning", "Prompt engineering, smart study techniques, memory and visual learning, ethical AI use.", "Ages 13+", "Group or 1-to-1", "2 months"],
+  ["AI & Data", "Artificial Intelligence for All", "How models learn, everyday AI tools, building simple projects, ethics and limitations.", "Ages 12+", "Group or 1-to-1", "Concepts first"],
+  ["AI & Data", "Python for Data Analytics", "Statistics fundamentals, data management, exploratory analysis, visualisation, capstone projects.", "Ages 14+", "4 to 5 months", "48 to 60 hrs"],
+  ["AI & Data", "Data & Analytics", "Reading, cleaning and presenting data, and building dashboards a team can actually use.", "Ages 14+", "Group or 1-to-1", "Dashboards"],
+  ["Coding & Web", "Python Programming", "Core fundamentals, problem solving, control structures, data structures, file and exception handling.", "Ages 12+", "3 to 4 months", "32 hrs"],
+  ["Coding & Web", "Web Development", "HTML foundation, CSS and Bootstrap, JavaScript and jQuery, frameworks, deployment.", "Ages 12+", "4 to 5 months", "32 to 48 hrs"],
+  ["Coding & Web", "Internet of Things", "Microcontrollers, sensors and actuators, connectivity, build a connected device.", "Ages 13+", "Group or 1-to-1", "Hardware included"],
+  ["Design", "3D Design & Modeling", "Modelling fundamentals, design and sculpting, texturing and rendering, architecture, product design.", "Ages 12+", "3 to 4 months", "32 hrs"],
+  ["Design", "UI/UX Designing", "User research, wireframing, visual design, prototyping.", "Ages 14+", "Group or 1-to-1", "Prototype"],
+  ["Robotics & Kids", "Robotics", "Electronics and sensors, mechanical design, robot programming, innovation projects. Prepares for STEM careers.", "Ages 10+", "3 to 4 months", "32 hrs"],
+  ["Robotics & Kids", "Block Based Coding for Kids", "Scratch, Code.org, PictoBlox, EduBlocks. Computational thinking without syntax errors.", "Ages 7+", "3 to 4 months", "32 hrs"],
+];
+
+// [name, place, win, tag] — students/S07_heroes (6, in order)
+const DLI_OUTCOMES: [string, string, string, string][] = [
+  ["Muhammed Adhil T S", "GUPS Thurayoor, Kerala", "Champion at the TechTop International Bootcamp, held at Kerala Startup Mission's Maker Village, Kochi.", "Robotics"],
+  ["Ameya M", "GGVHS Feroke, Kerala", "Champion at the TechTop International Bootcamp, held at Kerala Startup Mission's Maker Village, Kochi.", "Robotics"],
+  ["Evana Eliza Vinoj", "Sharjah Indian School, UAE", "Digitised an entire village library with a Python application. Won the Sharjah Award for Educational Excellence, Distinguished Student, with a Dh30,000 scholarship.", "Python"],
+  ["Aamil Nazar", "GHSS Medical College Campus, Kozhikode", "Built his school's website and was honoured by Kerala's education minister. Two-time winner of the state-level web design competition.", "Web development"],
+  ["Abhinav Krishna", "Kozhikode, India", "Inspire Award for a Money Sanitizer Machine built with robotics. Designed an automatic waste-collection machine prototype for city workers.", "Robotics"],
+  ["Neeraj V M", "GHSS Koduvayoor, Kerala", "Built a weather application in Python and completed a machine-learning project at the age of 14.", "Python & ML"],
 ];
 
 /* ============================================================
@@ -306,15 +381,63 @@ async function main() {
 
   // ---- MakerChamps gallery ----
   await db.delete(galleryImages).where(eq(galleryImages.vertical, "makerchamps"));
-  let mi = 0;
-  const seenMc = new Set<string>();
-  for (const [file, alt] of MC_GALLERY) {
-    if (seenMc.has(file)) continue;
-    seenMc.add(file);
+  for (let i = 0; i < MC_GALLERY.length; i++) {
+    const [file, alt] = MC_GALLERY[i]!;
     const assetId = await up(`makerchamps/public/assets/photos/${file}`, "makerchamps", `gallery/${file}`, "makerchamps", alt);
-    await db.insert(galleryImages).values({ vertical: "makerchamps", title: alt, assetId, sortOrder: mi++ });
+    await db.insert(galleryImages).values({ vertical: "makerchamps", title: alt, assetId, sortOrder: i });
   }
-  console.log(`✔ gallery (makerchamps): ${mi}`);
+  console.log(`✔ gallery (makerchamps): ${MC_GALLERY.length}`);
+
+  // ---- MakerChamps testimonials ----
+  await db.delete(testimonials).where(eq(testimonials.vertical, "makerchamps"));
+  for (let i = 0; i < MC_TESTIMONIALS.length; i++) {
+    const [quote, authorName, authorRole] = MC_TESTIMONIALS[i]!;
+    await db.insert(testimonials).values({ vertical: "makerchamps", quote, authorName, authorRole, sortOrder: i });
+  }
+  console.log(`✔ testimonials (makerchamps): ${MC_TESTIMONIALS.length}`);
+
+  // ---- Corporate track record ----
+  await db.delete(trackRecord);
+  for (let i = 0; i < CORP_TRACK.length; i++) {
+    const [whenLabel, client, blurb, badge] = CORP_TRACK[i]!;
+    await db.insert(trackRecord).values({ whenLabel, client, blurb, badge, sortOrder: i });
+  }
+  console.log(`✔ track_record (corporate): ${CORP_TRACK.length}`);
+
+  // ---- Corporate testimonials ----
+  await db.delete(testimonials).where(eq(testimonials.vertical, "corporate"));
+  for (let i = 0; i < CORP_TESTIMONIALS.length; i++) {
+    const [quote, authorName, authorRole] = CORP_TESTIMONIALS[i]!;
+    await db.insert(testimonials).values({ vertical: "corporate", quote, authorName, authorRole, sortOrder: i });
+  }
+  console.log(`✔ testimonials (corporate): ${CORP_TESTIMONIALS.length}`);
+
+  // ---- Corporate gallery ----
+  await db.delete(galleryImages).where(eq(galleryImages.vertical, "corporate"));
+  for (let i = 0; i < CORP_GALLERY.length; i++) {
+    const [file, caption, alt] = CORP_GALLERY[i]!;
+    const assetId = await up(`corporate/public/assets/photos/${file}`, "shared", `corporate/gallery/${file}`, "corporate", alt);
+    await db.insert(galleryImages).values({ vertical: "corporate", title: caption, assetId, sortOrder: i });
+  }
+  console.log(`✔ gallery (corporate): ${CORP_GALLERY.length}`);
+
+  // ---- DLI Education — student catalogue ----
+  await db.delete(courses).where(eq(courses.audience, "students"));
+  for (let i = 0; i < DLI_COURSES.length; i++) {
+    const [track, title, description, ageLabel, format, durationLabel] = DLI_COURSES[i]!;
+    await db.insert(courses).values({
+      audience: "students", track, title, description, ageLabel, format, durationLabel, sortOrder: i,
+    });
+  }
+  console.log(`✔ courses (dli, students): ${DLI_COURSES.length}`);
+
+  // ---- DLI Education — student outcomes ----
+  await db.delete(studentOutcomes).where(eq(studentOutcomes.vertical, "dli_education"));
+  for (let i = 0; i < DLI_OUTCOMES.length; i++) {
+    const [name, place, win, tag] = DLI_OUTCOMES[i]!;
+    await db.insert(studentOutcomes).values({ vertical: "dli_education", name, place, win, tag, sortOrder: i });
+  }
+  console.log(`✔ student_outcomes (dli): ${DLI_OUTCOMES.length}`);
 
   // ---- Hub gallery ----
   await db.delete(galleryImages).where(eq(galleryImages.vertical, "deleadint"));

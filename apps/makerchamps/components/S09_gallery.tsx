@@ -1,4 +1,28 @@
-export function S09_gallery() {
+import { getGallery } from "@/lib/content";
+
+type Img = { id: string; _url: string; _alt: string };
+
+function Row({ imgs, dir }: { imgs: Img[]; dir: "left" | "right" }) {
+  return (
+    <div className={`marquee-row marquee-${dir}`}>
+      <div className="marquee-track">
+        {imgs.map((im) => (
+          <img key={`a${im.id}`} src={im._url} alt={im._alt} loading="lazy" />
+        ))}
+        {imgs.map((im) => (
+          <img key={`b${im.id}`} src={im._url} alt="" aria-hidden="true" loading="lazy" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export async function S09_gallery() {
+  const rows = (await getGallery()) as Img[];
+  const mid = Math.ceil(rows.length / 2);
+  const top = rows.slice(0, mid);
+  const bottom = rows.slice(mid);
+
   return (
     <>
       <section className="section gallery" id="gallery">
@@ -9,30 +33,8 @@ export function S09_gallery() {
           </div>
         </div>
         <div className="marquee-wrap reveal">
-          <div className="marquee-row marquee-left">
-            <div className="marquee-track">
-              <img src="/assets/photos/orientation-auditorium.webp" alt="Orientation session in an NIT Calicut auditorium" loading="lazy" />
-              <img src="/assets/photos/isro-exhibit-tour.webp" alt="Students on a guided space-research exhibit tour" loading="lazy" />
-              <img src="/assets/photos/chandrayaan-lander-demo.webp" alt="Mentor explaining a Chandrayaan lander model to students" loading="lazy" />
-              <img src="/assets/photos/electronics-lab-visit.webp" alt="Students visiting an NIT electronics research lab" loading="lazy" />
-              <img src="/assets/photos/orientation-auditorium.webp" alt="" aria-hidden="true" loading="lazy" />
-              <img src="/assets/photos/isro-exhibit-tour.webp" alt="" aria-hidden="true" loading="lazy" />
-              <img src="/assets/photos/chandrayaan-lander-demo.webp" alt="" aria-hidden="true" loading="lazy" />
-              <img src="/assets/photos/electronics-lab-visit.webp" alt="" aria-hidden="true" loading="lazy" />
-            </div>
-          </div>
-          <div className="marquee-row marquee-right">
-            <div className="marquee-track">
-              <img src="/assets/photos/chemistry-lab-handson.webp" alt="Hands-on chemistry experiment session" loading="lazy" />
-              <img src="/assets/photos/prototype-building.webp" alt="Students building a prototype with real materials" loading="lazy" />
-              <img src="/assets/photos/physics-demo-pascals-law.webp" alt="Live physics demonstration on stage" loading="lazy" />
-              <img src="/assets/photos/nit-team-huddle.webp" alt="Team huddle inside an NIT Calicut hall" loading="lazy" />
-              <img src="/assets/photos/chemistry-lab-handson.webp" alt="" aria-hidden="true" loading="lazy" />
-              <img src="/assets/photos/prototype-building.webp" alt="" aria-hidden="true" loading="lazy" />
-              <img src="/assets/photos/physics-demo-pascals-law.webp" alt="" aria-hidden="true" loading="lazy" />
-              <img src="/assets/photos/nit-team-huddle.webp" alt="" aria-hidden="true" loading="lazy" />
-            </div>
-          </div>
+          <Row imgs={top} dir="left" />
+          <Row imgs={bottom} dir="right" />
         </div>
       </section>
     </>

@@ -1,4 +1,7 @@
-export function S10_testimonials() {
+import { getTestimonials } from "@/lib/content";
+
+export async function S10_testimonials() {
+  const rows = await getTestimonials();
   return (
     <>
       <section className="section testi" id="testimonials">
@@ -9,26 +12,21 @@ export function S10_testimonials() {
             <p>Short quotes from the people who booked the programme.</p>
           </div>
           <div className="testi-grid reveal">
-            <figure className="quote">
-              <span className="quote-mark" aria-hidden="true">&ldquo;</span>
-              <blockquote>The two days out of the office did more for how the team communicates than anything we had tried in-house. People came back talking to each other differently.</blockquote>
-              <figcaption><b>[Client name]</b><span>[Role], [Company]</span></figcaption>
-            </figure>
-            <figure className="quote">
-              <span className="quote-mark" aria-hidden="true">&ldquo;</span>
-              <blockquote>It was built around our actual challenges, not a generic deck. The facilitators ran the room themselves and kept every session hands-on.</blockquote>
-              <figcaption><b>[Client name]</b><span>[Role], [Company]</span></figcaption>
-            </figure>
-            <figure className="quote">
-              <span className="quote-mark" aria-hidden="true">&ldquo;</span>
-              <blockquote>Our leadership team took part alongside everyone else. That is what made the change stick once we were back at our desks.</blockquote>
-              <figcaption><b>[Client name]</b><span>[Role], [Company]</span></figcaption>
-            </figure>
+            {rows.map((t) => (
+              <figure className="quote" key={t.id}>
+                <span className="quote-mark" aria-hidden="true">&ldquo;</span>
+                <blockquote>{t.quote}</blockquote>
+                <figcaption>
+                  <b>{t.authorName}</b>
+                  <span>{t.authorRole}</span>
+                </figcaption>
+              </figure>
+            ))}
           </div>
           <p className="testi-note">Placeholder quotes. Send the approved wording, names and roles and we will drop them in.</p>
         </div>
       </section>
-      
+
       {/* ============ TEAM ============ */}
     </>
   );

@@ -1,4 +1,10 @@
-export function S12_gallery() {
+import { getGallery } from "@/lib/content";
+
+// fixed grid slots in the approved layout
+const SLOTS = ["g-a", "g-b", "g-c", "g-d", "g-e"];
+
+export async function S12_gallery() {
+  const rows = (await getGallery()).slice(0, SLOTS.length);
   return (
     <>
       <section className="section gallery" id="gallery">
@@ -8,15 +14,16 @@ export function S12_gallery() {
             <h2>What a programme looks like</h2>
           </div>
           <div className="gallery-grid reveal">
-            <figure className="g-a"><img src="/assets/photos/outbound-horse.webp" alt="Participant horse riding during an outbound session in Abu Dhabi" loading="lazy" /><figcaption>Outbound, Al Rahba</figcaption></figure>
-            <figure className="g-b"><img src="/assets/photos/facilitator-mic.webp" alt="A facilitator leading a corporate session" loading="lazy" /><figcaption>On the floor</figcaption></figure>
-            <figure className="g-c"><img src="/assets/photos/trophy-win.webp" alt="A team celebrating a challenge win" loading="lazy" /><figcaption>Team challenge</figcaption></figure>
-            <figure className="g-d"><img src="/assets/photos/support-activity.webp" alt="A group trust-and-support activity" loading="lazy" /><figcaption>Trust exercise</figcaption></figure>
-            <figure className="g-e"><img src="/assets/photos/sales-session.webp" alt="A training session in a Dubai conference hall" loading="lazy" /><figcaption>Sales team, Dubai</figcaption></figure>
+            {rows.map((g, i) => (
+              <figure className={SLOTS[i]} key={g.id}>
+                <img src={g._url} alt={g._alt} loading="lazy" />
+                <figcaption>{g.title}</figcaption>
+              </figure>
+            ))}
           </div>
         </div>
       </section>
-      
+
       {/* ============ CTA ============ */}
     </>
   );
