@@ -89,7 +89,12 @@ SITE_URL_CORPORATE=https://corporate.deleadint.com
 SITE_URL_DLI_EDUCATION=https://edu.deleadint.com
 SITE_URL_TINKERCHAMPS=https://tc.deleadint.com
 SITE_URL_DASHBOARD=https://admin.deleadint.com
-APPS_SCRIPT_URL_TINKERCHAMPS=https://script.google.com/macros/s/AKfycbzkcRnAb0ehuksU8T4uRSTimS2QsnYh2qT9onDfUp3rnmjs96tBNrZXF6BEHThCJCy51A/exec
+APPS_SCRIPT_URL_DELEADINT=https://script.google.com/macros/s/AKfycbzaKSDLqwSjYrWLAXqR-6qzxy6OzsScbnUpnLvumgDK8HW0RmCrdeJIz4TEBbwzg65X/exec
+APPS_SCRIPT_URL_WALK2LEAD=https://script.google.com/macros/s/AKfycbyqVKowhmqrD1u1Xt5qKgzND3fpihgfiuI7ZnIi-inhm7JVF-wgwAmXXWq2EHzYylTBrg/exec
+APPS_SCRIPT_URL_MAKERCHAMPS=https://script.google.com/macros/s/AKfycbySyamNFm289wO1WmiMJ2ISM4lD0PoYJ3dKPZUbP8XGRNN50zD03ILqRgrM0lkHQ_0p/exec
+APPS_SCRIPT_URL_CORPORATE=https://script.google.com/macros/s/AKfycbwjtvTAzPFnanne5Pvp4x5smuMDxAwT0okZX1Bp0Nc2mHJSjbqHFOcZCHheSX5N36DGPw/exec
+APPS_SCRIPT_URL_DLI_EDUCATION=https://script.google.com/macros/s/AKfycbwkuaVA9GCnBgMxDVVEJy7lpokIJ81OXKUst3WRx-ep4qxU2uTSnO4yUrgGKdu3IIHxlQ/exec
+APPS_SCRIPT_URL_TINKERCHAMPS=https://script.google.com/macros/s/AKfycbxEbaNm8YFwOyQHlLlXsmFxCKv0f9FxnYgjIZ6z_uYFidX35maEgFAKxSSgpP6JU3lC/exec
 ```
 
 ### delead-deleadint
@@ -144,7 +149,7 @@ SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
 PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
 SITE_URL_TINKERCHAMPS=https://tc.deleadint.com
-APPS_SCRIPT_URL_TINKERCHAMPS=https://script.google.com/macros/s/AKfycbzkcRnAb0ehuksU8T4uRSTimS2QsnYh2qT9onDfUp3rnmjs96tBNrZXF6BEHThCJCy51A/exec
+APPS_SCRIPT_URL_TINKERCHAMPS=https://script.google.com/macros/s/AKfycbxEbaNm8YFwOyQHlLlXsmFxCKv0f9FxnYgjIZ6z_uYFidX35maEgFAKxSSgpP6JU3lC/exec
 ```
 
 ## SECTION 5 — Vercel Cron secret (dashboard only)
