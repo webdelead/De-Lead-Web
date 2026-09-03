@@ -1,0 +1,37 @@
+{
+  "name": "@delead/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./client": "./src/client.ts"
+  },
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "migrate": "tsx scripts/migrate.ts",
+    "push": "drizzle-kit push",
+    "studio": "drizzle-kit studio",
+    "seed": "tsx scripts/seed.ts && tsx scripts/seed-content.ts",
+    "seed:auth": "tsx scripts/seed.ts",
+    "seed:content": "tsx scripts/seed-content.ts",
+    "ping": "tsx scripts/ping.ts",
+    "import:sanity": "tsx scripts/import-sanity.ts",
+    "migrate:storage": "tsx scripts/migrate-storage.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@node-rs/argon2": "^2.0.2",
+    "drizzle-orm": "^0.38.3",
+    "postgres": "^3.4.5"
+  },
+  "devDependencies": {
+    "@delead/config": "workspace:*",
+    "@delead/brand": "workspace:*",
+    "dotenv": "^16.4.7",
+    "drizzle-kit": "^0.30.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

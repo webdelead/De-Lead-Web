@@ -1,0 +1,28 @@
+{
+  "name": "delead-web",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@10.33.2",
+  "engines": {
+    "node": ">=20.11.0",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "db:generate": "pnpm --filter @delead/db generate",
+    "db:migrate": "pnpm --filter @delead/db migrate",
+    "db:studio": "pnpm --filter @delead/db studio",
+    "db:seed": "pnpm --filter @delead/db seed"
+  },
+  "devDependencies": {
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "prettier": "^3.4.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "sharp", "@tailwindcss/oxide"]
+  }
+}

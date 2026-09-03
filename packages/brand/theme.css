@@ -1,0 +1,104 @@
+/* ============================================================
+   @delead/brand — shared Tailwind v4 theme
+   Usage in an app's global stylesheet:
+     @import "tailwindcss";
+     @import "@delead/brand/theme.css";
+   Then per-vertical accent utilities come from the [data-vertical] blocks
+   below, or set --accent / --accent-ink on a wrapper.
+   ============================================================ */
+
+@theme {
+  /* ---- house palette ---- */
+  --color-ink: #1c1417;
+  --color-ink-soft: #4d4348;
+  --color-cream: #faf7f4;
+  --color-cream-2: #f2e9e2;
+  --color-line: #e6dcd3;
+  --color-paper: #ffffff;
+
+  --color-magenta: #750649;
+  --color-magenta-deep: #4a0330;
+  --color-magenta-soft: #9c2e73;
+
+  /* ---- per-vertical accents (also see [data-vertical] below) ---- */
+  --color-w2l: #c81c1c;
+  --color-w2l-ink: #ffffff;
+
+  --color-tc-purple: #5021b0;
+  --color-tc-yellow: #fdc638;
+
+  --color-mc-navy: #021e5d;
+  --color-mc-orange: #fe5501;
+  --color-mc-lime: #c3e86a;
+
+  --color-dli-navy: #142653;
+  --color-dli-teal: #29bac1;
+
+  --color-gf-blue: #0145d5;
+
+  /* ---- radius ---- */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+
+  /* ---- shadow ---- */
+  --shadow-sm: 0 12px 34px -16px rgba(28, 20, 23, 0.24);
+  --shadow-md: 0 30px 70px -30px rgba(28, 20, 23, 0.32);
+
+  /* ---- easing / timing ---- */
+  --ease-out-soft: cubic-bezier(0.22, 0.7, 0.2, 1);
+  --default-transition-duration: 220ms;
+  --default-transition-timing-function: cubic-bezier(0.22, 0.7, 0.2, 1);
+
+  /* ---- fonts (families resolved by each app's @fontsource imports) ---- */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Instrument Sans", system-ui, sans-serif; /* hub + corporate */
+  --font-serif: "Lora", Georgia, serif; /* walk2lead */
+  --font-grotesk: "Bricolage Grotesque", system-ui, sans-serif; /* makerchamps */
+  --font-rounded: "Poppins", system-ui, sans-serif; /* dli education */
+  --font-script: "Caveat", cursive; /* hub accents */
+
+  /* ---- layout ---- */
+  --container-site: 1240px;
+}
+
+/* Per-vertical theming: a page sets <html data-vertical="walk2lead"> and gets
+   --accent / --accent-ink / --font-display wired to that brand. Components use
+   var(--accent) instead of hard-coding a colour. */
+:root {
+  --accent: var(--color-magenta);
+  --accent-ink: #ffffff;
+}
+[data-vertical="deleadint"],
+[data-vertical="corporate"] {
+  --accent: var(--color-magenta);
+  --accent-ink: #ffffff;
+}
+[data-vertical="walk2lead"] {
+  --accent: var(--color-w2l);
+  --accent-ink: #ffffff;
+  --font-display: var(--font-serif);
+}
+[data-vertical="makerchamps"] {
+  --accent: var(--color-mc-orange);
+  --accent-ink: #04122e;
+  --font-display: var(--font-grotesk);
+}
+[data-vertical="dli-education"] {
+  --accent: var(--color-dli-teal);
+  --accent-ink: #06232b;
+  --font-display: var(--font-rounded);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

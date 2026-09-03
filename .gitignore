@@ -1,0 +1,20 @@
+# deps
+node_modules/
+.pnpm-store/
+
+# env / secrets — never commit
+.env
+.env.*
+!.env.example
+
+# build output
+dist/
+.next/
+.turbo/
+.astro/
+out/
+
+# misc
+.DS_Store
+*.log
+coverage/

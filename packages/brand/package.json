@@ -1,0 +1,13 @@
+{
+  "name": "@delead/brand",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./theme.css": "./theme.css",
+    "./reset.css": "./reset.css",
+    "./tokens": "./src/tokens.ts",
+    "./verticals": "./src/verticals.ts"
+  },
+  "files": ["theme.css", "reset.css", "src"]
+}
