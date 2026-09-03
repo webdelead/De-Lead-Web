@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/api/lead",
+        source: "/api/(lead|booking)",
         headers: [{ key: "Access-Control-Allow-Methods", value: "POST, OPTIONS" }],
       },
       {

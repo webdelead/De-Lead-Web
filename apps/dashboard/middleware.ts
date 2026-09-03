@@ -30,6 +30,7 @@ export async function middleware(req: NextRequest) {
 
   if (
     pathname.startsWith("/api/lead") ||
+    pathname.startsWith("/api/booking") ||
     pathname.startsWith("/api/health") ||
     pathname.startsWith("/api/cron") ||
     PUBLIC.some((p) => pathname.startsWith(p))

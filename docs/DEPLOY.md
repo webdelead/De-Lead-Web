@@ -106,8 +106,10 @@ Two projects, same repo:
    `STORAGE_PROVIDER=supabase`, `CRON_SECRET`,
    `APPS_SCRIPT_URL_*` (all six), `NEXT_PUBLIC_LEAD_ENDPOINT`,
    `REVALIDATE_SECRET` (so "Publish" can reach the sites), `SITE_URL_*` (all seven).
-   tinkerchamps needs `DATABASE_URL`, `SUPABASE_URL`, `APPS_SCRIPT_URL_TINKERCHAMPS`,
-   `REVALIDATE_SECRET`.
+   tinkerchamps needs `DATABASE_URL`, `SUPABASE_URL`, `REVALIDATE_SECRET`,
+   `SITE_URL_TINKERCHAMPS`, `NEXT_PUBLIC_LEAD_ENDPOINT`, `NEXT_PUBLIC_BOOKING_ENDPOINT`
+   (its booking form POSTs to the dashboard's `/api/booking`, same as the marketing
+   sites' lead forms — TC no longer writes bookings or calls Apps Script directly).
 4. Add the custom domains → CNAME in Hostinger DNS (MX/TXT untouched).
 5. Vercel Hobby is technically non-commercial; for one low-traffic admin + one site this
    is the pragmatic choice. Move tinkerchamps to Cloudflare later if the 100 GB/mo

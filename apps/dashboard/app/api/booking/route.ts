@@ -2,21 +2,41 @@ import { NextResponse, after } from "next/server";
 import { getDb, tcBookings, outbox, flushOutbox } from "@delead/db";
 import { verifyTurnstile } from "@delead/shared/turnstile";
 
+// Public write endpoint for the TinkerChamps booking form. Same model as
+// /api/lead: the site POSTs here (cross-origin), the dashboard owns the DB write
+// + the Google-Sheet mirror (via the outbox). TC no longer talks to the DB or
+// Apps Script directly for bookings.
+
+const TC_ORIGIN = process.env.SITE_URL_TINKERCHAMPS ?? "";
 const FIELD_MAX = 200;
 const REQUIRED = ["parentName", "studentName", "classGrade", "phone", "place"] as const;
 
-/** Trim + hard length-cap a value from the request body. */
 function field(v: unknown, max = FIELD_MAX): string {
   return typeof v === "string" ? v.trim().slice(0, max) : "";
 }
 
-export async function POST(request: Request) {
+function cors(origin: string | null) {
+  const allow = origin && origin === TC_ORIGIN ? origin : TC_ORIGIN || "*";
+  return {
+    "Access-Control-Allow-Origin": allow,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    Vary: "Origin",
+  };
+}
+
+export function OPTIONS(req: Request) {
+  return new NextResponse(null, { status: 204, headers: cors(req.headers.get("origin")) });
+}
+
+export async function POST(req: Request) {
+  const headers = cors(req.headers.get("origin"));
   try {
     let payload: Record<string, unknown>;
     try {
-      payload = await request.json();
+      payload = await req.json();
     } catch {
-      return NextResponse.json({ success: false, error: "Invalid request body." }, { status: 400 });
+      return NextResponse.json({ success: false, error: "Invalid request body." }, { status: 400, headers });
     }
 
     const clean = {
@@ -26,25 +46,21 @@ export async function POST(request: Request) {
       phone: field(payload.phone, 40),
       place: field(payload.place),
     };
-
     if (REQUIRED.some((k) => !clean[k])) {
       return NextResponse.json(
         { success: false, error: "Missing required booking fields." },
-        { status: 400 },
+        { status: 400, headers },
       );
     }
 
     if (!(await verifyTurnstile(field(payload.turnstileToken, 4000)))) {
-      return NextResponse.json({ success: false, error: "Challenge failed." }, { status: 403 });
+      return NextResponse.json({ success: false, error: "Challenge failed." }, { status: 403, headers });
     }
 
     const db = getDb();
-    const appsScriptUrl = process.env.APPS_SCRIPT_URL || process.env.APPS_SCRIPT_URL_TINKERCHAMPS;
+    const appsScriptUrl = process.env.APPS_SCRIPT_URL_TINKERCHAMPS;
     const mirrorPayload = { ...clean, receivedAt: new Date().toISOString() };
 
-    // store the booking + queue the Google Sheet mirror in one transaction, so
-    // the mirror survives a dropped request. Plain-insert fallback if the
-    // outbox table isn't there yet.
     let bookingId: string | undefined;
     try {
       bookingId = await db.transaction(async (tx) => {
@@ -70,17 +86,13 @@ export async function POST(request: Request) {
           }).catch(() => {}),
         );
       }
-      return NextResponse.json({ success: true, bookingId }, { status: 200 });
+      return NextResponse.json({ success: true, bookingId }, { status: 200, headers });
     }
 
     if (appsScriptUrl) after(() => flushOutbox(db, { limit: 5 }).catch(() => {}));
-
-    return NextResponse.json({ success: true, bookingId }, { status: 200 });
+    return NextResponse.json({ success: true, bookingId }, { status: 200, headers });
   } catch (error) {
     console.error("Booking submission API error:", error);
-    return NextResponse.json(
-      { success: false, error: "Internal Server Error" },
-      { status: 500 },
-    );
+    return NextResponse.json({ success: false, error: "Internal Server Error" }, { status: 500, headers });
   }
 }

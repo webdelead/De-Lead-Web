@@ -148,9 +148,12 @@ DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
 NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_BOOKING_ENDPOINT=https://admin.deleadint.com/api/booking
 SITE_URL_TINKERCHAMPS=https://tc.deleadint.com
-APPS_SCRIPT_URL_TINKERCHAMPS=https://script.google.com/macros/s/AKfycbxEbaNm8YFwOyQHlLlXsmFxCKv0f9FxnYgjIZ6z_uYFidX35maEgFAKxSSgpP6JU3lC/exec
 ```
+(TinkerChamps no longer writes bookings itself — the form POSTs to the dashboard's
+`/api/booking`, same as the marketing sites' lead forms. `APPS_SCRIPT_URL_TINKERCHAMPS`
+lives only in the **dashboard** project now.)
 
 ## SECTION 5 — Vercel Cron secret (dashboard only)
 

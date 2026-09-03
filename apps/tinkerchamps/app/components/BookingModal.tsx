@@ -7,6 +7,10 @@ import { IoClose } from "react-icons/io5";
 import { Backdrop, Decorations } from "./booking/BookingUI";
 import SuccessStep from "./booking/SuccessStep";
 
+// Bookings are written by the dashboard (same as leads), not by this app.
+const BOOKING_ENDPOINT =
+  process.env.NEXT_PUBLIC_BOOKING_ENDPOINT || "https://admin.deleadint.com/api/booking";
+
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -84,8 +88,8 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
       place: form.place.trim(),
     };
 
-    // optimistic — the server also mirrors to the Sheet, which is slow
-    fetch("/api/booking", {
+    // optimistic — the dashboard also mirrors to the Sheet, which is slow
+    fetch(BOOKING_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
