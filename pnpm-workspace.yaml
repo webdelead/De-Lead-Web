@@ -1,3 +1,15 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+# Shared toolchain versions — one source of truth. Reference as "catalog:" in
+# each package.json. `next` / `react` / `react-dom` join this once every app is
+# on the same major (Phase 3b — Next 16 alignment).
+catalog:
+  "@types/node": ^24.7.0
+  "@types/react": ^19.0.4
+  "@types/react-dom": ^19.0.2
+  dotenv: ^16.4.7
+  drizzle-orm: ^0.45.2
+  tailwindcss: ^4.0.0
+  typescript: ^5.7.2

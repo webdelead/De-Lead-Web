@@ -26,17 +26,17 @@
     "populate": "tsx scripts/populate.ts"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.47.10",
-    "drizzle-orm": "^0.38.3",
+    "@supabase/supabase-js": "^2.114.0",
+    "drizzle-orm": "catalog:",
     "postgres": "^3.4.5"
   },
   "devDependencies": {
     "@delead/config": "workspace:*",
     "@delead/brand": "workspace:*",
-    "@types/node": "^22.10.5",
-    "dotenv": "^16.4.7",
-    "drizzle-kit": "^0.30.1",
+    "@types/node": "catalog:",
+    "dotenv": "catalog:",
+    "drizzle-kit": "^0.31.10",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "catalog:"
   }
 }

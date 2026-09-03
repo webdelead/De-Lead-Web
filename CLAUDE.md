@@ -17,7 +17,7 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
 | `apps/tinkerchamps` | Next 16 app, **same ISR model as the 5 marketing sites** (2026-09): `(site)/page.tsx` is an async server component that fetches events/gallery/reviews from Postgres (`app/lib/tc-db.ts`) and passes them as props; `revalidate = 3600` + `app/api/revalidate`. ScrollColorBackground + Lenis + WebGL gallery + framer-motion all kept (client components, unaffected). The old Sanity shim + `/api/tc/*` routes were deleted. Journey section is static cards; booking modal is a single 5-field labelled form → `/api/booking` → `tc_bookings` (still dynamic — it's a write). |
 | `apps/dashboard` | Next 15 admin (`admin.deleadint.com`). **Supabase Auth** email+password (login has show/hide + forgot/reset; `lib/supabase/*` + `lib/authz.ts`); `users` table is a profile row keyed by the Supabase auth uid. RBAC (`super_admin` + per-vertical `view`/`edit` grants), generic resource CRUD (`lib/resources.ts` registry), leads inbox, users (invite-by-email), audit. Sidebar vertical sections are collapsible. |
 | `packages/db` | Drizzle schema + client + migrations + seed. **The one source of DB truth.** |
-| `packages/ui` | Legacy shared Astro components (`SiteHeader`, `SiteFooter`, `LeadForm`, …) — **no longer imported** by the sites after the Next move; kept for reference, safe to delete once nothing references it. |
+| ~~`packages/ui`~~ | Deleted 2026-09 (Phase 3) — was legacy Astro components, unused after the Next move. |
 | `packages/brand` | Tailwind v4 theme tokens, per-vertical palette + font map, the `verticals.ts` registry. |
 | `packages/config` | Shared tsconfig / prettier. |
 

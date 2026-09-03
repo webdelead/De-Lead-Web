@@ -6,7 +6,7 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,7 +15,18 @@ jobs:
         with:
           node-version: 24
           cache: pnpm
-      - run: pnpm install --frozen-lockfile=false
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+        continue-on-error: true # only 3 apps have a lint script yet — full flat-config setup is Phase 3b
+
+      - name: Audit (high+)
+        run: pnpm audit --audit-level=high || true
+
       - name: Build all
         run: pnpm build
         env:
@@ -25,3 +36,15 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           PUBLIC_LEAD_ENDPOINT: https://admin.deleadint.com/api/lead
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @delead/dashboard test

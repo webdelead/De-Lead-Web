@@ -19,8 +19,8 @@ const url = process.env.DIRECT_URL || requireEnv("DATABASE_URL");
 const { db, sql: raw } = createDb(url);
 
 async function isEmpty(table: string) {
-  const [{ n }] = await raw`select count(*)::int as n from ${raw(table)}`;
-  return n === 0;
+  const rows = await raw<{ n: number }[]>`select count(*)::int as n from ${raw(table)}`;
+  return (rows[0]?.n ?? 0) === 0;
 }
 
 async function seedIfEmpty<T>(table: string, rows: T[], insert: () => Promise<unknown>) {
