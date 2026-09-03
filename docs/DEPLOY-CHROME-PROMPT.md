@@ -147,7 +147,6 @@ SITE_URL_DLI_EDUCATION=https://edu.deleadint.com
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
 NEXT_PUBLIC_BOOKING_ENDPOINT=https://admin.deleadint.com/api/booking
 SITE_URL_TINKERCHAMPS=https://tc.deleadint.com
 ```
