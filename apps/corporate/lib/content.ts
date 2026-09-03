@@ -1,5 +1,6 @@
 import "server-only";
 import { assetPublicUrl } from "@delead/shared/storage";
+import { buildSafe } from "@delead/shared/build-safe";
 import {
   getReadDb,
   testimonials,
@@ -11,7 +12,6 @@ import {
   asc,
   inArray,
 } from "@delead/db";
-
 
 async function withUrl<T extends Record<string, unknown>>(rows: T[], key: keyof T) {
   const ids = [...new Set(rows.map((r) => r[key]).filter(Boolean) as string[])];
@@ -27,30 +27,36 @@ async function withUrl<T extends Record<string, unknown>>(rows: T[], key: keyof 
   });
 }
 
-export async function getTrackRecord() {
-  const db = getReadDb();
-  return db
-    .select()
-    .from(trackRecord)
-    .where(eq(trackRecord.isActive, true))
-    .orderBy(asc(trackRecord.sortOrder));
+export function getTrackRecord() {
+  return buildSafe(async () => {
+    const db = getReadDb();
+    return db
+      .select()
+      .from(trackRecord)
+      .where(eq(trackRecord.isActive, true))
+      .orderBy(asc(trackRecord.sortOrder));
+  }, []);
 }
 
-export async function getTestimonials() {
-  const db = getReadDb();
-  return db
-    .select()
-    .from(testimonials)
-    .where(and(eq(testimonials.vertical, "corporate"), eq(testimonials.isActive, true)))
-    .orderBy(asc(testimonials.sortOrder));
+export function getTestimonials() {
+  return buildSafe(async () => {
+    const db = getReadDb();
+    return db
+      .select()
+      .from(testimonials)
+      .where(and(eq(testimonials.vertical, "corporate"), eq(testimonials.isActive, true)))
+      .orderBy(asc(testimonials.sortOrder));
+  }, []);
 }
 
-export async function getGallery() {
-  const db = getReadDb();
-  const rows = await db
-    .select()
-    .from(galleryImages)
-    .where(and(eq(galleryImages.vertical, "corporate"), eq(galleryImages.isActive, true)))
-    .orderBy(asc(galleryImages.sortOrder));
-  return withUrl(rows, "assetId");
+export function getGallery() {
+  return buildSafe(async () => {
+    const db = getReadDb();
+    const rows = await db
+      .select()
+      .from(galleryImages)
+      .where(and(eq(galleryImages.vertical, "corporate"), eq(galleryImages.isActive, true)))
+      .orderBy(asc(galleryImages.sortOrder));
+    return withUrl(rows, "assetId");
+  }, []);
 }

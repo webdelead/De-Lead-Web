@@ -9,12 +9,17 @@ import { Footer } from "@/components/Footer";
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const db = getReadDb();
-  const rows = await db
-    .select({ slug: blogPosts.slug })
-    .from(blogPosts)
-    .where(eq(blogPosts.status, "published"));
-  return rows.map((r) => ({ slug: r.slug }));
+  try {
+    const db = getReadDb();
+    const rows = await db
+      .select({ slug: blogPosts.slug })
+      .from(blogPosts)
+      .where(eq(blogPosts.status, "published"));
+    return rows.map((r) => ({ slug: r.slug }));
+  } catch {
+    // no DB at build time (CI / preview) — pages render on-demand via ISR
+    return [];
+  }
 }
 
 export async function generateMetadata({

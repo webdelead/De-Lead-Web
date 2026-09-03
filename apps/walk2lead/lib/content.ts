@@ -1,5 +1,6 @@
 import "server-only";
 import { assetPublicUrl } from "@delead/shared/storage";
+import { buildSafe } from "@delead/shared/build-safe";
 import {
   getReadDb,
   testimonials,
@@ -12,7 +13,6 @@ import {
   asc,
   inArray,
 } from "@delead/db";
-
 
 async function withUrl<T extends Record<string, unknown>>(rows: T[], key: keyof T) {
   const ids = [...new Set(rows.map((r) => r[key]).filter(Boolean) as string[])];
@@ -28,42 +28,50 @@ async function withUrl<T extends Record<string, unknown>>(rows: T[], key: keyof 
   });
 }
 
-export async function getProjects() {
-  const db = getReadDb();
-  const rows = await db
-    .select()
-    .from(w2lProjects)
-    .where(eq(w2lProjects.isActive, true))
-    .orderBy(asc(w2lProjects.sortOrder));
-  return withUrl(rows, "assetId");
+export function getProjects() {
+  return buildSafe(async () => {
+    const db = getReadDb();
+    const rows = await db
+      .select()
+      .from(w2lProjects)
+      .where(eq(w2lProjects.isActive, true))
+      .orderBy(asc(w2lProjects.sortOrder));
+    return withUrl(rows, "assetId");
+  }, []);
 }
 
-export async function getGallery() {
-  const db = getReadDb();
-  const rows = await db
-    .select()
-    .from(galleryImages)
-    .where(and(eq(galleryImages.vertical, "walk2lead"), eq(galleryImages.isActive, true)))
-    .orderBy(asc(galleryImages.sortOrder));
-  return withUrl(rows, "assetId");
+export function getGallery() {
+  return buildSafe(async () => {
+    const db = getReadDb();
+    const rows = await db
+      .select()
+      .from(galleryImages)
+      .where(and(eq(galleryImages.vertical, "walk2lead"), eq(galleryImages.isActive, true)))
+      .orderBy(asc(galleryImages.sortOrder));
+    return withUrl(rows, "assetId");
+  }, []);
 }
 
-export async function getPress() {
-  const db = getReadDb();
-  const rows = await db
-    .select()
-    .from(pressClippings)
-    .where(and(eq(pressClippings.vertical, "walk2lead"), eq(pressClippings.isActive, true)))
-    .orderBy(asc(pressClippings.sortOrder));
-  return withUrl(rows, "assetId");
+export function getPress() {
+  return buildSafe(async () => {
+    const db = getReadDb();
+    const rows = await db
+      .select()
+      .from(pressClippings)
+      .where(and(eq(pressClippings.vertical, "walk2lead"), eq(pressClippings.isActive, true)))
+      .orderBy(asc(pressClippings.sortOrder));
+    return withUrl(rows, "assetId");
+  }, []);
 }
 
-export async function getVoices() {
-  const db = getReadDb();
-  const rows = await db
-    .select()
-    .from(testimonials)
-    .where(and(eq(testimonials.vertical, "walk2lead"), eq(testimonials.isActive, true)))
-    .orderBy(asc(testimonials.sortOrder));
-  return withUrl(rows, "avatarAssetId");
+export function getVoices() {
+  return buildSafe(async () => {
+    const db = getReadDb();
+    const rows = await db
+      .select()
+      .from(testimonials)
+      .where(and(eq(testimonials.vertical, "walk2lead"), eq(testimonials.isActive, true)))
+      .orderBy(asc(testimonials.sortOrder));
+    return withUrl(rows, "avatarAssetId");
+  }, []);
 }

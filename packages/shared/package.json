@@ -7,7 +7,8 @@
     ".": "./src/index.ts",
     "./strings": "./src/strings.ts",
     "./storage": "./src/storage.ts",
-    "./turnstile": "./src/turnstile.ts"
+    "./turnstile": "./src/turnstile.ts",
+    "./build-safe": "./src/build-safe.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

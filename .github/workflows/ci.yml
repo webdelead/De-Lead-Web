@@ -28,13 +28,20 @@ jobs:
         run: pnpm audit --audit-level=high || true
 
       - name: Build all
+        # The sites use buildSafe() so a missing DB is fine (pages become ISR).
+        # The dashboard's Supabase client only needs *some* URL/key at build to
+        # not throw during prerender — placeholders unless real secrets are set.
         run: pnpm build
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          REVALIDATE_SECRET: ci-placeholder
           PUBLIC_LEAD_ENDPOINT: https://admin.deleadint.com/api/lead
 
   test:
