@@ -20,7 +20,8 @@
     "ping": "tsx scripts/ping.ts",
     "import:sanity": "tsx scripts/import-sanity.ts",
     "migrate:storage": "tsx scripts/migrate-storage.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "populate": "tsx scripts/populate.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.47.10",
