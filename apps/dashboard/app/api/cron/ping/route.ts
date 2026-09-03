@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { getDb, pingLog, sql } from "@delead/db";
 
 // Vercel Cron hits this daily (apps/dashboard/vercel.json). Second, independent
-// keep-alive alongside the GitHub Actions one. Guarded by CRON_SECRET.
+// keep-alive alongside the GitHub Actions one.
+// TODO (Phase 5, "cron last"): make CRON_SECRET mandatory / fail closed once the
+// secret is set in Vercel. Left soft for now so the keep-alive keeps working.
 export const dynamic = "force-dynamic";
 
 export async function GET(req: Request) {
@@ -16,6 +18,7 @@ export async function GET(req: Request) {
     const [{ n }] = await db.select({ n: sql<number>`count(*)::int` }).from(pingLog);
     return NextResponse.json({ ok: true, total: n });
   } catch (e) {
-    return NextResponse.json({ ok: false, error: String(e) }, { status: 500 });
+    console.error("cron ping failed:", e);
+    return NextResponse.json({ ok: false }, { status: 500 });
   }
 }

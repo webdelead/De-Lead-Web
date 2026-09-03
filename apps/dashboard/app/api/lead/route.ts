@@ -32,6 +32,25 @@ const schema = z.object({
   pagePath: z.string().max(300).optional(),
 });
 
+/**
+ * Trustworthy client IP. On Vercel `x-vercel-forwarded-for` / `x-real-ip` are
+ * set by the platform edge and overwrite anything the client sends. The
+ * client-controlled `x-forwarded-for` is only a last resort, and we take the
+ * LAST hop (closest to our infra), never the spoofable left-most value.
+ */
+function clientIp(req: Request): string {
+  const vercel = req.headers.get("x-vercel-forwarded-for");
+  if (vercel) return vercel.split(",")[0]!.trim();
+  const real = req.headers.get("x-real-ip");
+  if (real) return real.trim();
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) {
+    const parts = xff.split(",").map((s) => s.trim()).filter(Boolean);
+    return parts[parts.length - 1] ?? "";
+  }
+  return "";
+}
+
 function cors(origin: string | null) {
   const allow = origin && ORIGINS.includes(origin) ? origin : ORIGINS[0] ?? "*";
   return {
@@ -61,24 +80,23 @@ export async function POST(req: Request) {
   const d = parsed.data;
   const sourceKey = d.source.replace(/-/g, "_");
 
-  const ip =
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    req.headers.get("x-real-ip") ??
-    "";
+  const ip = clientIp(req);
   const ipHash = ip ? createHash("sha256").update(ip).digest("hex").slice(0, 32) : null;
 
   const db = getDb();
 
-  // light rate-limit: same ip + same source, 3 in the last 2 minutes
+  // rate-limit by trusted IP: 3 per source / 2 min, and a hard 15 across all
+  // sources / 10 min. Over either limit → silently accept, don't store.
   if (ipHash) {
-    const [{ n }] = await db
-      .select({ n: sql<number>`count(*)::int` })
+    const [{ perSource, total }] = await db
+      .select({
+        perSource: sql<number>`count(*) filter (where ${leads.source} = ${sourceKey} and ${leads.createdAt} > now() - interval '2 minutes')::int`,
+        total: sql<number>`count(*) filter (where ${leads.createdAt} > now() - interval '10 minutes')::int`,
+      })
       .from(leads)
-      .where(
-        sql`${leads.ipHash} = ${ipHash} and ${leads.source} = ${sourceKey} and ${leads.createdAt} > now() - interval '2 minutes'`,
-      );
-    if (n >= 3) {
-      return NextResponse.json({ ok: true }, { headers }); // silently accept, don't store
+      .where(sql`${leads.ipHash} = ${ipHash} and ${leads.createdAt} > now() - interval '10 minutes'`);
+    if (perSource >= 3 || total >= 15) {
+      return NextResponse.json({ ok: true }, { headers });
     }
   }
 

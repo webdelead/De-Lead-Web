@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase/server";
+import { safeNext } from "@/lib/utils";
 
 // Handles the ?code= exchange from Supabase invite / recovery emails (PKCE flow).
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const code = url.searchParams.get("code");
-  const next = url.searchParams.get("next") || "/reset-password";
+  const next = safeNext(url.searchParams.get("next"), "/reset-password");
 
   if (code) {
     const supabase = await supabaseServer();

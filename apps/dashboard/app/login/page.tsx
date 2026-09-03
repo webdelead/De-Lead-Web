@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
+import { safeNext } from "@/lib/utils";
 import { LoginForm } from "@/components/login-form";
 
 export default async function LoginPage({
@@ -8,11 +9,12 @@ export default async function LoginPage({
   searchParams: Promise<{ next?: string; error?: string }>;
 }) {
   const sp = await searchParams;
+  const next = safeNext(sp.next);
   const supabase = await supabaseServer();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (user) redirect(sp.next || "/");
+  if (user) redirect(next);
 
   return (
     <main className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
@@ -59,7 +61,7 @@ export default async function LoginPage({
             <p className="text-sm text-muted-foreground">Use your De&apos; Lead admin account.</p>
           </div>
           <LoginForm
-            next={sp.next}
+            next={next}
             error={sp.error === "no-access" ? "Your account has no dashboard access." : undefined}
           />
           <p className="mt-6 text-center text-xs text-muted-foreground">

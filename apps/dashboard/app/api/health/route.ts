@@ -7,6 +7,7 @@ export async function GET() {
     await db.execute(sql`select 1`);
     return NextResponse.json({ ok: true, ts: new Date().toISOString() });
   } catch (e) {
-    return NextResponse.json({ ok: false, error: String(e) }, { status: 500 });
+    console.error("health check failed:", e);
+    return NextResponse.json({ ok: false }, { status: 500 });
   }
 }

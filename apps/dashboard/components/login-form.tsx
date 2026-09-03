@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
 import { Alert } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
+import { safeNext } from "@/lib/utils";
 
 export function LoginForm({ next, error }: { next?: string; error?: string }) {
   const router = useRouter();
@@ -32,7 +33,7 @@ export function LoginForm({ next, error }: { next?: string; error?: string }) {
       );
       return;
     }
-    router.replace(next || "/");
+    router.replace(safeNext(next));
     router.refresh();
   }
 

@@ -5,7 +5,9 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "verbatimModuleSyntax": false
+    "verbatimModuleSyntax": false,
+    // node --test runs .test.ts directly and needs explicit .ts import specifiers
+    "allowImportingTsExtensions": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { marked } from "marked";
 import { getDb, blogPosts, eq } from "@delead/db";
 import { getPost } from "@/lib/content";
+import { renderMarkdown } from "@/lib/markdown";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 
@@ -42,7 +42,7 @@ export default async function JournalPost({
   const post = await getPost(slug);
   if (!post) notFound();
 
-  const html = await marked.parse(post.bodyMd || "");
+  const html = renderMarkdown(post.bodyMd || "");
   const date = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString("en-IN", {
         day: "numeric",

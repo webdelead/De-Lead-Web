@@ -1,9 +1,10 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { getDb, assets, publishState, sql, eq } from "@delead/db";
+import { getDb, assets, publishState, sql, eq, and } from "@delead/db";
 import { getSession, canAccess, dbKey } from "@/lib/authz";
 import { writeAudit, markDirty, clearDirty } from "@/lib/audit";
 import { resourceFor, type ResourceDef } from "@/lib/resources";
+import { resourceAllowedInVertical } from "@/lib/resource-access";
 import { put, ensureBucket } from "@/lib/storage";
 import { VERTICALS, type VerticalSlug } from "@delead/brand/verticals";
 
@@ -32,11 +33,37 @@ function coerce(def: ResourceDef, name: string, raw: FormDataEntryValue | null) 
   }
 }
 
-async function guard(resourceKey: string, verticalSlug: VerticalSlug) {
+/**
+ * A resource may only be mutated in a vertical it actually belongs to. The page
+ * component enforces this too, but server actions can be called directly, so it
+ * has to be re-checked here — otherwise a user with `edit` on their own vertical
+ * could pass any other vertical's slug (or `blog_posts` from any vertical).
+ */
+function assertResourceVertical(def: ResourceDef, verticalDbKey: string) {
+  if (!resourceAllowedInVertical(def, verticalDbKey)) throw new Error("forbidden");
+}
+
+/**
+ * WHERE clause that pins a mutation to a single row *and* the caller's vertical.
+ * For `verticalScoped` tables this adds `vertical = <key>`; for `fixedVertical`
+ * tables there is no column to filter, and `assertResourceVertical` +
+ * `canAccess(edit)` are the boundary.
+ */
+function scopeById(def: ResourceDef, verticalDbKey: string, id: string) {
+  const idCol = (def.table as never)["id"];
+  if (def.verticalScoped) {
+    return and(eq(idCol, id), eq((def.table as never)["vertical"], verticalDbKey));
+  }
+  return eq(idCol, id);
+}
+
+async function guard(resource: string, verticalSlug: VerticalSlug) {
+  const def = resourceFor(resource);
   const session = await getSession();
   const key = dbKey(verticalSlug);
   if (!canAccess(session, key, "edit")) throw new Error("forbidden");
-  return { session, verticalDbKey: key };
+  assertResourceVertical(def, key);
+  return { session, def, verticalDbKey: key };
 }
 
 export async function saveRow(input: {
@@ -45,8 +72,7 @@ export async function saveRow(input: {
   id?: string;
   values: Record<string, string>;
 }) {
-  const def = resourceFor(input.resource);
-  const { session, verticalDbKey } = await guard(input.resource, input.vertical);
+  const { session, def, verticalDbKey } = await guard(input.resource, input.vertical);
   const db = getDb();
 
   const row: Record<string, unknown> = {};
@@ -66,7 +92,12 @@ export async function saveRow(input: {
   let entityId = input.id;
 
   if (input.id) {
-    await db.update(table).set(row).where(eq((def.table as never)["id"], input.id));
+    const updated = await db
+      .update(table)
+      .set(row)
+      .where(scopeById(def, verticalDbKey, input.id))
+      .returning({ id: (def.table as never)["id"] });
+    if ((updated as unknown[]).length === 0) throw new Error("not found");
     await writeAudit({
       userId: session.user.id,
       userEmail: session.user.email!,
@@ -101,10 +132,13 @@ export async function saveRow(input: {
 }
 
 export async function deleteRow(input: { resource: string; vertical: VerticalSlug; id: string }) {
-  const def = resourceFor(input.resource);
-  const { session, verticalDbKey } = await guard(input.resource, input.vertical);
+  const { session, def, verticalDbKey } = await guard(input.resource, input.vertical);
   const db = getDb();
-  await db.delete(def.table as never).where(eq((def.table as never)["id"], input.id));
+  const deleted = await db
+    .delete(def.table as never)
+    .where(scopeById(def, verticalDbKey, input.id))
+    .returning({ id: (def.table as never)["id"] });
+  if ((deleted as unknown[]).length === 0) throw new Error("not found");
   await writeAudit({
     userId: session.user.id,
     userEmail: session.user.email!,
@@ -123,12 +157,14 @@ export async function reorderRows(input: {
   vertical: VerticalSlug;
   ids: string[];
 }) {
-  const def = resourceFor(input.resource);
-  const { verticalDbKey } = await guard(input.resource, input.vertical);
+  const { def, verticalDbKey } = await guard(input.resource, input.vertical);
   const db = getDb();
   await Promise.all(
     input.ids.map((id, i) =>
-      db.update(def.table as never).set({ sortOrder: i }).where(eq((def.table as never)["id"], id)),
+      db
+        .update(def.table as never)
+        .set({ sortOrder: i })
+        .where(scopeById(def, verticalDbKey, id)),
     ),
   );
   await markDirty(verticalDbKey);
@@ -176,6 +212,29 @@ export async function publishVertical(slug: VerticalSlug) {
   return { ok: true, triggered };
 }
 
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8 MB
+// raster images only — SVG is intentionally excluded (script-carrying vector)
+const ALLOWED_IMAGE_MIME: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/avif": "avif",
+  "image/gif": "gif",
+};
+// magic-byte sniff, so a renamed / mislabelled file is caught server-side
+function sniffMime(buf: Buffer): string | null {
+  if (buf.length < 12) return null;
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return "image/jpeg";
+  if (buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])))
+    return "image/png";
+  if (buf.subarray(0, 4).toString("ascii") === "RIFF" && buf.subarray(8, 12).toString("ascii") === "WEBP")
+    return "image/webp";
+  const ascii6 = buf.subarray(0, 6).toString("ascii");
+  if (ascii6 === "GIF87a" || ascii6 === "GIF89a") return "image/gif";
+  if (buf.subarray(4, 12).toString("ascii") === "ftypavif") return "image/avif";
+  return null;
+}
+
 export async function uploadAsset(form: FormData) {
   const session = await getSession();
   const file = form.get("file") as File | null;
@@ -184,12 +243,19 @@ export async function uploadAsset(form: FormData) {
   const key = VERTICALS[verticalSlug]?.key ?? "deleadint";
   if (!canAccess(session, key, "edit")) throw new Error("forbidden");
 
+  if (file.size > MAX_UPLOAD_BYTES) throw new Error("file too large (max 8 MB)");
+  const buf = Buffer.from(await file.arrayBuffer());
+  if (buf.byteLength > MAX_UPLOAD_BYTES) throw new Error("file too large (max 8 MB)");
+
+  const sniffed = sniffMime(buf);
+  const mime = sniffed && sniffed in ALLOWED_IMAGE_MIME ? sniffed : null;
+  if (!mime) throw new Error("unsupported file type — upload a JPG, PNG, WebP, AVIF or GIF");
+
   const bucket = ["tinkerchamps", "walk2lead"].includes(key) ? key : "shared";
   await ensureBucket(bucket);
-  const ext = (file.name.split(".").pop() || "bin").toLowerCase();
+  const ext = ALLOWED_IMAGE_MIME[mime];
   const path = `${key}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-  const buf = Buffer.from(await file.arrayBuffer());
-  const stored = await put(bucket, path, buf, file.type || "application/octet-stream");
+  const stored = await put(bucket, path, buf, mime);
 
   const db = getDb();
   const [row] = await db
