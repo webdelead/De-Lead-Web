@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getReadDb, blogPosts, eq } from "@delead/db";
 import { getPost } from "@/lib/content";
-import { renderMarkdown } from "@/lib/markdown";
+import { renderBlogBody } from "@/lib/blog-render";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 
@@ -47,7 +47,7 @@ export default async function JournalPost({
   const post = await getPost(slug);
   if (!post) notFound();
 
-  const html = renderMarkdown(post.bodyMd || "");
+  const html = renderBlogBody(post);
   const date = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString("en-IN", {
         day: "numeric",

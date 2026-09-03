@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { AssetPicker } from "@/components/asset-picker";
 import { StatsField } from "@/components/stats-field";
+import { RichTextEditor } from "@/components/rich-text-editor";
 import { saveRow } from "@/lib/actions/content";
 import type { ResourceDef } from "@/lib/resources";
 
@@ -47,11 +48,15 @@ export function ResourceForm({
     initial[f.name] =
       f.type === "stats"
         ? JSON.stringify(v ?? [])
-        : f.type === "boolean"
-          ? String(v ?? false)
-          : v == null
-            ? ""
-            : String(v);
+        : f.type === "richtext"
+          ? v && typeof v === "object"
+            ? JSON.stringify(v)
+            : ""
+          : f.type === "boolean"
+            ? String(v ?? false)
+            : v == null
+              ? ""
+              : String(v);
   }
   const [values, setValues] = useState(initial);
   const set = (k: string, v: string) => setValues((s) => ({ ...s, [k]: v }));
@@ -146,6 +151,9 @@ export function ResourceForm({
             )}
             {f.type === "stats" && (
               <StatsField value={values[f.name] ?? "[]"} onChange={(v) => set(f.name, v)} />
+            )}
+            {f.type === "richtext" && (
+              <RichTextEditor value={values[f.name] ?? ""} onChange={(v) => set(f.name, v)} />
             )}
 
             {f.help && <p className="mt-1 text-xs text-muted-foreground">{f.help}</p>}

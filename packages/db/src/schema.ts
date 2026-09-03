@@ -268,6 +268,9 @@ export const blogPosts = pgTable(
     slug: text("slug").notNull(),
     excerpt: text("excerpt").default("").notNull(),
     coverAssetId: uuid("cover_asset_id").references(() => assets.id, { onDelete: "set null" }),
+    // body_json = TipTap/ProseMirror doc (new editor). body_md kept as the
+    // fallback for posts authored before the block editor; render prefers json.
+    bodyJson: jsonb("body_json").$type<Record<string, unknown> | null>(),
     bodyMd: text("body_md").default("").notNull(),
     tag: text("tag").default("").notNull(),
     status: contentStatus("status").default("draft").notNull(),

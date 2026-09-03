@@ -23,6 +23,12 @@ function coerce(def: ResourceDef, name: string, raw: FormDataEntryValue | null) 
       } catch {
         return [];
       }
+    case "richtext":
+      try {
+        return v ? JSON.parse(v) : null;
+      } catch {
+        return null;
+      }
     case "image":
       return v || null;
     default:

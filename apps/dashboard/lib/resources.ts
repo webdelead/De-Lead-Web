@@ -5,6 +5,7 @@ export type FieldType =
   | "text"
   | "textarea"
   | "markdown"
+  | "richtext" // TipTap block editor → jsonb
   | "boolean"
   | "select"
   | "image"
@@ -166,7 +167,7 @@ export const RESOURCES: Record<string, ResourceDef> = {
       { name: "tag", label: "Tag", type: "text", help: "e.g. TinkerChamps, MakerChamps" },
       { name: "excerpt", label: "Excerpt", type: "textarea", span: 2 },
       { name: "cover_asset_id", label: "Cover image", type: "image" },
-      { name: "body_md", label: "Body (Markdown)", type: "markdown", span: 2 },
+      { name: "body_json", label: "Body", type: "richtext", span: 2 },
       { name: "author_name", label: "Author", type: "text", defaultValue: "De' Lead International" },
       { name: "status", label: "Status", type: "select", options: ["draft", "published"], defaultValue: "draft" },
     ],

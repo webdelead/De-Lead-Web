@@ -115,8 +115,9 @@ While it runs, watch:
 
 - **Phase 3b:** Next 15 → 16 + React 19.2 for the 6 non-TC apps. Needs a visual diff of each
   marketing site against its `../<Name>` static folder (pixel-frozen).
-- **Phase 4b:** journal **block / rich-text editor** (TipTap) — replaces the Markdown textarea.
-  Schema migration + editor component + server renderer + convert existing posts.
+- ~~**Phase 4b:** journal block / rich-text editor (TipTap)~~ — **DONE.** After `migrate`,
+  optionally run `pnpm --filter @delead/db blog:json` to convert existing posts so they
+  open in the editor (the renderer falls back to their Markdown otherwise).
 - **Phase 4b:** marketing-site CSP (needs per-site testing vs Google Fonts / external images).
 - **Phase 5b:** server-side search + pagination on dashboard content lists — only matters
   once a single list exceeds ~500 rows (you're far from that).

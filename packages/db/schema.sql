@@ -45,6 +45,7 @@ CREATE TABLE "blog_posts" (
 	"slug" text NOT NULL,
 	"excerpt" text DEFAULT '' NOT NULL,
 	"cover_asset_id" uuid,
+	"body_json" jsonb,
 	"body_md" text DEFAULT '' NOT NULL,
 	"tag" text DEFAULT '' NOT NULL,
 	"status" "content_status" DEFAULT 'draft' NOT NULL,

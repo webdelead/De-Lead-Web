@@ -20,6 +20,7 @@
     "ping": "tsx scripts/ping.ts",
     "roles": "tsx scripts/apply-roles.ts",
     "outbox:flush": "tsx scripts/outbox-flush.ts",
+    "blog:json": "tsx scripts/migrate-blog-json.ts",
     "import:sanity": "tsx scripts/import-sanity.ts",
     "migrate:storage": "tsx scripts/migrate-storage.ts",
     "typecheck": "tsc --noEmit",
@@ -27,13 +28,16 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.114.0",
+    "@tiptap/html": "^3.31.2",
     "aws4fetch": "^1.0.20",
     "drizzle-orm": "catalog:",
+    "marked": "^18.0.11",
     "postgres": "^3.4.5"
   },
   "devDependencies": {
     "@delead/config": "workspace:*",
     "@delead/brand": "workspace:*",
+    "@delead/shared": "workspace:*",
     "@types/node": "catalog:",
     "dotenv": "catalog:",
     "drizzle-kit": "^0.31.10",

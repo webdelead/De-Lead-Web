@@ -27,6 +27,7 @@ shared Supabase project — always go through a generated migration so history i
 | `scripts/migrate-storage.ts` | One-off (later): copy every asset from Supabase Storage to Cloudflare R2, flip `provider`. |
 | `scripts/ping.ts` | Keep-alive — inserts a `ping_log` row. `pnpm --filter @delead/db ping <source>` (source defaults to `cron`). |
 | `scripts/apply-roles.ts` | `pnpm --filter @delead/db roles` — applies `roles.sql` (creates `delead_web_ro` / `delead_web_app`, grants) + sets LOGIN passwords from `DELEAD_WEB_*_PASSWORD`. |
+| `scripts/migrate-blog-json.ts` | One-off: `pnpm --filter @delead/db blog:json` — fills `blog_posts.body_json` (TipTap doc) from `body_md` for old posts. Idempotent. Renderer falls back to `body_md` anyway. |
 | `scripts/outbox-flush.ts` | `pnpm --filter @delead/db outbox:flush` — drains the `outbox` webhook queue with retry/backoff. Also run every 30 min by `.github/workflows/outbox.yml`. |
 
 ## Connection
