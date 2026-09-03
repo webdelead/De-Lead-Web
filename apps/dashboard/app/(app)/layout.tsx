@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { getSession } from "@/lib/authz";
 import { buildNav } from "@/lib/nav";
 import { Sidebar } from "@/components/sidebar";
@@ -14,8 +16,19 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <Suspense fallback={null}>
         <NavProgress />
       </Suspense>
-      <aside className="hidden border-r bg-sidebar md:block">
-        <Sidebar groups={groups} />
+      <aside className="app-sidebar hidden border-r md:flex md:flex-col">
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 border-b px-4 py-3.5 text-sm font-semibold tracking-tight"
+        >
+          <Image src="/delead-mark.png" alt="" width={26} height={26} className="rounded-[6px]" />
+          <span>
+            De&apos; Lead <span className="text-muted-foreground">Admin</span>
+          </span>
+        </Link>
+        <div className="min-h-0 flex-1 overflow-y-auto">
+          <Sidebar groups={groups} />
+        </div>
       </aside>
       <div className="flex min-h-0 flex-col">
         <Topbar
@@ -23,7 +36,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           email={session.user.email ?? ""}
           role={session.user.role}
         />
-        <main className="min-h-0 flex-1 overflow-y-auto bg-muted/20 p-6">{children}</main>
+        <main className="app-canvas min-h-0 flex-1 overflow-y-auto p-6">{children}</main>
       </div>
     </div>
   );

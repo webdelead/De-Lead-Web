@@ -27,8 +27,15 @@ export function Topbar({ name, email, role }: { name: string; email: string; rol
   }
 
   return (
-    <header className="flex h-14 items-center justify-between border-b bg-background px-4">
-      <div className="font-semibold tracking-tight">De' Lead Admin</div>
+    <header className="flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+      <div className="flex items-center gap-2 font-semibold tracking-tight md:hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/delead-mark.png" alt="" className="h-6 w-6 rounded-[5px]" />
+        <span>
+          De&apos; Lead <span className="text-muted-foreground">Admin</span>
+        </span>
+      </div>
+      <div className="hidden md:block" />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="gap-2">

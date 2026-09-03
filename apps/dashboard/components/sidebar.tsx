@@ -76,11 +76,12 @@ export function Sidebar({ groups }: { groups: NavGroup[] }) {
                     <li key={it.href}>
                       <Link
                         href={it.href}
+                        aria-current={active ? "page" : undefined}
                         className={cn(
-                          "block rounded-md px-2 py-1.5 text-sm transition-colors",
+                          "block rounded-md px-2.5 py-1.5 text-sm transition-colors",
                           active
-                            ? "bg-primary/10 font-medium text-primary"
-                            : "text-foreground/80 hover:bg-muted hover:text-foreground",
+                            ? "sidebar-link-active"
+                            : "text-foreground/75 hover:bg-muted hover:text-foreground",
                         )}
                       >
                         {it.label}

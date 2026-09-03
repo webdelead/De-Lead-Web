@@ -1,9 +1,11 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { getSession, visibleVerticals, isSuperAdmin } from "@/lib/authz";
 import { getDb, leads, publishState, pingLog, sql, and, gte, inArray, desc } from "@delead/db";
 import { verticalByKey } from "@delead/brand/verticals";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Activity, Database, Inbox, UploadCloud } from "lucide-react";
 
 export default async function DashboardHome() {
   const session = await getSession();
@@ -25,63 +27,84 @@ export default async function DashboardHome() {
   const lastPing = ping[0]?.checkedAt;
   const pingStale = !lastPing || Date.now() - new Date(lastPing).getTime() > 3.5 * 864e5;
   const dirtyRows = dirty.filter((d) => d.dirtyCount > 0);
+  const dirtyTotal = dirtyRows.reduce((n, d) => n + d.dirtyCount, 0);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat title="New leads · 7 days" value={last7[0]?.n ?? 0} />
-        <Stat title="New leads · 30 days" value={last30[0]?.n ?? 0} />
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Unpublished changes</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-1 text-sm">
-            {dirtyRows.length === 0 ? (
-              <span className="text-muted-foreground">All sites up to date</span>
-            ) : (
-              dirtyRows.map((d) => (
-                <div key={d.vertical} className="flex justify-between">
-                  <span>{verticalByKey(d.vertical)?.name}</span>
-                  <Badge variant="secondary">{d.dirtyCount}</Badge>
-                </div>
-              ))
-            )}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Database keep-alive</CardTitle>
-          </CardHeader>
-          <CardContent className="text-sm">
-            {pingStale ? <Badge variant="destructive">stale</Badge> : <Badge variant="success">ok</Badge>}
-            <div className="mt-1 text-xs text-muted-foreground">
-              {lastPing ? new Date(lastPing).toLocaleString() : "never"}
-            </div>
-          </CardContent>
-        </Card>
+    <div className="mx-auto max-w-6xl space-y-6">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+        <p className="text-sm text-muted-foreground">
+          {session.user.name?.split(" ")[0] ?? "Welcome"} — here&apos;s what&apos;s happening across
+          your sites.
+        </p>
       </div>
 
-      <Card>
-        <CardHeader className="flex-row items-center justify-between">
-          <CardTitle>Latest leads</CardTitle>
-          <Link href="/leads" className="text-sm text-primary hover:underline">
-            View all →
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Stat
+          title="New leads"
+          sub="last 7 days"
+          value={last7[0]?.n ?? 0}
+          icon={<Inbox className="h-4 w-4" />}
+          accent="var(--brand)"
+        />
+        <Stat
+          title="New leads"
+          sub="last 30 days"
+          value={last30[0]?.n ?? 0}
+          icon={<Activity className="h-4 w-4" />}
+          accent="var(--accent-blue)"
+        />
+        <Stat
+          title="Unpublished"
+          sub={dirtyRows.length ? `${dirtyRows.length} site${dirtyRows.length > 1 ? "s" : ""}` : "all in sync"}
+          value={dirtyTotal}
+          icon={<UploadCloud className="h-4 w-4" />}
+          accent="var(--accent-amber)"
+        >
+          {dirtyRows.length > 0 && (
+            <div className="mt-3 space-y-1 text-xs">
+              {dirtyRows.map((d) => (
+                <div key={d.vertical} className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{verticalByKey(d.vertical)?.name}</span>
+                  <span className="font-medium">{d.dirtyCount}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </Stat>
+        <Stat
+          title="Database"
+          sub={lastPing ? new Date(lastPing).toLocaleDateString() : "never pinged"}
+          value={pingStale ? "Stale" : "Healthy"}
+          icon={<Database className="h-4 w-4" />}
+          accent={pingStale ? "var(--destructive)" : "var(--accent-emerald)"}
+        />
+      </div>
+
+      <Card className="shadow-[var(--shadow-card)]">
+        <div className="flex items-center justify-between border-b px-6 py-4">
+          <h2 className="font-semibold tracking-tight">Latest leads</h2>
+          <Link href="/leads" className="text-sm font-medium text-primary hover:underline">
+            View all &rarr;
           </Link>
-        </CardHeader>
-        <CardContent>
+        </div>
+        <CardContent className="p-0">
           {recent.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No leads yet.</p>
+            <p className="px-6 py-10 text-center text-sm text-muted-foreground">
+              No leads yet. They&apos;ll show up here the moment a form is submitted.
+            </p>
           ) : (
-            <ul className="divide-y text-sm">
+            <ul className="divide-y">
               {recent.map((l) => (
-                <li key={l.id} className="flex items-center justify-between py-2">
-                  <div>
-                    <span className="font-medium">{l.name}</span>{" "}
-                    <span className="text-muted-foreground">· {l.interest || "—"}</span>
+                <li
+                  key={l.id}
+                  className="flex items-center justify-between px-6 py-3 text-sm transition-colors hover:bg-muted/40"
+                >
+                  <div className="min-w-0">
+                    <span className="font-medium">{l.name}</span>
+                    <span className="text-muted-foreground"> · {l.interest || "general enquiry"}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <div className="flex flex-shrink-0 items-center gap-3 text-xs text-muted-foreground">
                     <Badge variant="muted">{verticalByKey(l.source)?.shortName}</Badge>
                     {new Date(l.createdAt).toLocaleDateString()}
                   </div>
@@ -94,21 +117,49 @@ export default async function DashboardHome() {
 
       {isSuperAdmin(session) && (
         <p className="text-xs text-muted-foreground">
-          You are a super admin — you can see every vertical and manage users under Admin.
+          You&apos;re a super admin — every vertical is visible, and you can manage users under
+          Admin.
         </p>
       )}
     </div>
   );
 }
 
-function Stat({ title, value }: { title: string; value: number }) {
+function Stat({
+  title,
+  sub,
+  value,
+  icon,
+  accent,
+  children,
+}: {
+  title: string;
+  sub?: string;
+  value: number | string;
+  icon: React.ReactNode;
+  accent: string;
+  children?: React.ReactNode;
+}) {
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm text-muted-foreground">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="text-3xl font-semibold">{value}</div>
+    <Card
+      className="stat-card card-hover border"
+      style={{ "--stat-accent": accent } as CSSProperties}
+    >
+      <CardContent className="p-5">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            {title}
+          </span>
+          <span
+            className="flex h-7 w-7 items-center justify-center rounded-full"
+            style={{ background: `color-mix(in oklch, ${accent} 14%, transparent)`, color: accent }}
+          >
+            {icon}
+          </span>
+        </div>
+        <div className="mt-2 text-3xl font-semibold tracking-tight">{value}</div>
+        {sub && <div className="mt-0.5 text-xs text-muted-foreground">{sub}</div>}
+        {children}
       </CardContent>
     </Card>
   );

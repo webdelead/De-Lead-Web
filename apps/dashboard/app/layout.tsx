@@ -8,6 +8,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 export const metadata: Metadata = {
   title: "De' Lead — Admin",
   description: "De' Lead International content & leads dashboard",
+  icons: { icon: "/favicon.svg" },
   robots: { index: false, follow: false },
 };
 
