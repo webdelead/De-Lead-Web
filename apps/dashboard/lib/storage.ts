@@ -36,7 +36,7 @@ export async function put(
         "Content-Type": mime,
         "x-upsert": "true",
       },
-      body: buf,
+      body: new Uint8Array(buf),
     });
     if (!res.ok) throw new Error(`storage put ${res.status}: ${await res.text()}`);
     return { provider: "supabase", bucket, path, mime, bytes: buf.byteLength };

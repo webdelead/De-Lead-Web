@@ -1,28 +1,28 @@
-import { auth } from "@/auth";
+import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
+import { authConfig } from "./auth.config";
+
+const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
 
-  // public: the lead endpoint (CORS-guarded in the route) + auth pages + assets
   if (
     pathname.startsWith("/api/lead") ||
     pathname.startsWith("/api/health") ||
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/_next") ||
-    pathname === "/favicon.ico"
+    pathname.startsWith("/login")
   ) {
     return NextResponse.next();
   }
 
   if (!req.auth?.user?.id) {
     const url = new URL("/login", req.nextUrl);
-    url.searchParams.set("next", pathname);
+    if (pathname !== "/") url.searchParams.set("next", pathname);
     return NextResponse.redirect(url);
   }
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.\\w+$).*)"],
 };

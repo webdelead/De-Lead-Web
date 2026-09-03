@@ -9,6 +9,10 @@
     "allowJs": true,
     "noEmit": true,
     "incremental": true,
+    "noUncheckedIndexedAccess": false,
+    "verbatimModuleSyntax": false,
+    "declaration": false,
+    "declarationMap": false,
     "plugins": [{ "name": "next" }]
   }
 }

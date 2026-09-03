@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import { verify } from "@node-rs/argon2";
 import { z } from "zod";
 import { getDb, users, userVerticalAccess, eq, sql } from "@delead/db";
+import { authConfig } from "./auth.config";
 
 export type Grant = { vertical: string; level: "view" | "edit" };
 
@@ -22,9 +23,7 @@ const credsSchema = z.object({
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  session: { strategy: "jwt", maxAge: 60 * 60 * 8 },
-  trustHost: true,
-  pages: { signIn: "/login" },
+  ...authConfig,
   providers: [
     Credentials({
       credentials: { email: {}, password: {} },
@@ -42,24 +41,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const ok = await verify(u.passwordHash, password).catch(() => false);
         if (!ok) return null;
         await db.update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, u.id));
-        return { id: u.id, email: u.email, name: u.name, role: u.role };
+        return { id: u.id, email: u.email, name: u.name };
       },
     }),
   ],
   callbacks: {
-    jwt({ token, user }) {
-      if (user) token.uid = (user as { id: string }).id;
-      return token;
-    },
+    ...authConfig.callbacks,
     async session({ session, token }) {
       const uid = token.uid as string | undefined;
       if (!uid) return session;
       const db = getDb();
-      // re-check the user on every request so deactivation / grant changes are instant
       const [u] = await db.select().from(users).where(eq(users.id, uid)).limit(1);
       if (!u || !u.isActive) {
-        // force sign-out on next guard
-        return { ...session, user: { ...session.user, id: "", role: "staff", grants: [] } };
+        session.user.id = "";
+        session.user.role = "staff";
+        session.user.grants = [];
+        return session;
       }
       const grants =
         u.role === "super_admin"
