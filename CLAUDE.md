@@ -18,15 +18,30 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
 | `apps/dashboard` | Next 15 admin (`admin.deleadint.com`). **Supabase Auth** email+password (login has show/hide + forgot/reset; `lib/supabase/*` + `lib/authz.ts`); `users` table is a profile row keyed by the Supabase auth uid. RBAC (`super_admin` + per-vertical `view`/`edit` grants), generic resource CRUD (`lib/resources.ts` registry), leads inbox, users (invite-by-email), audit. Sidebar vertical sections are collapsible. |
 | `packages/db` | Drizzle schema + client + migrations + seed. **The one source of DB truth.** |
 | ~~`packages/ui`~~ | Deleted 2026-09 (Phase 3) — was legacy Astro components, unused after the Next move. |
+| `packages/shared` | `@delead/shared` — cross-app server helpers: `assetPublicUrl` (`/storage`), `snakeToCamel` (`/strings`), `verifyTurnstile` (`/turnstile`), `makeRevalidateRoute` (root, server-only). |
 | `packages/brand` | Tailwind v4 theme tokens, per-vertical palette + font map, the `verticals.ts` registry. |
 | `packages/config` | Shared tsconfig / prettier. |
 
 ## Rules
 
 - **Secrets** live only in `.env` (gitignored). Never hardcode. `.env.example` documents the keys.
-- **Supabase**: project `dslvxzcqcuqhfqqaohfb` (Mumbai). Talk to Postgres via Drizzle over the
-  pooler connection string — no Supabase Auth / RLS, so a move to a self-hosted Postgres is an
-  env change. Storage goes through `apps/dashboard/lib/storage.ts` (Supabase now, R2-ready).
+- **Node 24** everywhere (`.nvmrc`, `engines`, CI). Shared toolchain versions live in the
+  **pnpm catalog** in `pnpm-workspace.yaml` — reference as `"catalog:"`, don't pin per-app.
+- **Before committing**: `pnpm typecheck` (must pass — CI gates on it) and, when touching
+  `lib/authz` `lib/rbac` `lib/csv` `lib/resource-access` `lib/utils` or an API route,
+  `pnpm --filter @delead/dashboard test` (Node's built-in runner; add a case).
+- **Supabase**: project `dslvxzcqcuqhfqqaohfb` (Mumbai). Postgres via Drizzle over the pooler.
+  **Supabase Auth** is used (dashboard only) — that's the one accepted coupling; a Postgres
+  move is otherwise an env change. **No RLS by decision** ("stay portable") — tenant isolation
+  is app-layer: every content mutation MUST go through `guard()` + `scopeById()` in
+  `lib/actions/content.ts` (pins the WHERE to the caller's vertical and rejects a resource
+  that doesn't belong to it). Two DB roles: `DATABASE_URL` = `delead_web_app` (dashboard +
+  write APIs), `DATABASE_URL_RO` = `delead_web_ro` (marketing sites, SELECT-only) — see
+  `packages/db/scripts/roles.sql`. Sites read via `getReadDb()`, dashboard via `getDb()`.
+  Storage → **Cloudflare R2** (decided; `STORAGE_PROVIDER`, adapter in
+  `apps/dashboard/lib/storage.ts`); on Supabase Storage for now.
+- **Lead / booking webhooks** (Google Sheet mirror) go through the `outbox` table — written in
+  the same tx as the lead/booking, drained opportunistically + by `.github/workflows/outbox.yml`.
 - **DB changes**: edit `packages/db/src/schema.ts`, then `pnpm --filter @delead/db generate`
   (migration) **and** `pnpm --filter @delead/db schema` (refresh `packages/db/schema.sql`), then
   `pnpm --filter @delead/db migrate`. Commit all three. See `packages/db/CLAUDE.md`.

@@ -1,4 +1,5 @@
 import "server-only";
+import { assetPublicUrl } from "@delead/shared/storage";
 import {
   getReadDb,
   testimonials,
@@ -12,12 +13,6 @@ import {
   inArray,
 } from "@delead/db";
 
-function publicUrl(a: { provider: string; bucket: string; path: string }) {
-  const base = (process.env.SUPABASE_URL ?? "").replace(/\/$/, "");
-  if (a.provider === "r2")
-    return `${(process.env.R2_PUBLIC_BASE_URL ?? "").replace(/\/$/, "")}/${a.path}`;
-  return `${base}/storage/v1/object/public/${a.bucket}/${a.path}`;
-}
 
 async function withUrl<T extends Record<string, unknown>>(rows: T[], key: keyof T) {
   const ids = [...new Set(rows.map((r) => r[key]).filter(Boolean) as string[])];
@@ -25,7 +20,7 @@ async function withUrl<T extends Record<string, unknown>>(rows: T[], key: keyof 
   if (ids.length) {
     const db = getReadDb();
     for (const a of await db.select().from(assets).where(inArray(assets.id, ids)))
-      map.set(a.id, { url: publicUrl(a), alt: a.alt ?? "" });
+      map.set(a.id, { url: assetPublicUrl(a), alt: a.alt ?? "" });
   }
   return rows.map((r) => {
     const hit = r[key] ? map.get(r[key] as string) : undefined;

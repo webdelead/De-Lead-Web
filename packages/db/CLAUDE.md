@@ -26,9 +26,14 @@ shared Supabase project — always go through a generated migration so history i
 | `scripts/import-sanity.ts` | One-off: pulled TinkerChamps events/gallery/reviews out of Sanity into Postgres + Supabase Storage. Already run. |
 | `scripts/migrate-storage.ts` | One-off (later): copy every asset from Supabase Storage to Cloudflare R2, flip `provider`. |
 | `scripts/ping.ts` | Keep-alive — inserts a `ping_log` row. `pnpm --filter @delead/db ping <source>` (source defaults to `cron`). |
+| `scripts/apply-roles.ts` | `pnpm --filter @delead/db roles` — applies `roles.sql` (creates `delead_web_ro` / `delead_web_app`, grants) + sets LOGIN passwords from `DELEAD_WEB_*_PASSWORD`. |
+| `scripts/outbox-flush.ts` | `pnpm --filter @delead/db outbox:flush` — drains the `outbox` webhook queue with retry/backoff. Also run every 30 min by `.github/workflows/outbox.yml`. |
 
 ## Connection
 
-`DATABASE_URL` = transaction pooler (`:6543`), `prepare:false` — app runtime.
-`DIRECT_URL` = session pooler (`:5432`) — migrations, seed, CI, cron.
-Both are IPv4; free-tier direct `db.<ref>.supabase.co` is IPv6-only.
+`DATABASE_URL` = transaction pooler (`:6543`), `prepare:false` — dashboard + write APIs
+(the `delead_web_app` role once the RO/APP split is applied).
+`DATABASE_URL_RO` = same pooler, `delead_web_ro` (SELECT-only) — the marketing sites'
+`getReadDb()`. Falls back to `DATABASE_URL` when unset.
+`DIRECT_URL` = session pooler (`:5432`) — migrations, seed, CI, cron, `roles`.
+All IPv4; free-tier direct `db.<ref>.supabase.co` is IPv6-only.

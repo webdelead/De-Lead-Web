@@ -1,4 +1,5 @@
 import "server-only";
+import { assetPublicUrl } from "@delead/shared/storage";
 import {
   getReadDb,
   tcEvents,
@@ -17,15 +18,7 @@ async function urlMap(ids: (string | null)[]) {
   const clean = [...new Set(ids.filter(Boolean) as string[])];
   if (!clean.length) return new Map<string, string>();
   const rows = await db.select().from(assets).where(inArray(assets.id, clean));
-  const base = (process.env.SUPABASE_URL ?? "").replace(/\/$/, "");
-  return new Map(
-    rows.map((a) => [
-      a.id,
-      a.provider === "r2"
-        ? `${(process.env.R2_PUBLIC_BASE_URL ?? "").replace(/\/$/, "")}/${a.path}`
-        : `${base}/storage/v1/object/public/${a.bucket}/${a.path}`,
-    ]),
-  );
+  return new Map(rows.map((a) => [a.id, assetPublicUrl(a)]));
 }
 
 export async function getEvents(activeOnly: boolean) {

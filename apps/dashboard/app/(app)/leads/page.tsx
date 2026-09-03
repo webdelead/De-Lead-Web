@@ -16,6 +16,14 @@ export default async function LeadsPage({
   const allowed = visibleVerticals(session, "view");
   const page = Math.max(1, Number(sp.page ?? "1"));
 
+  if (allowed.length === 0) {
+    return (
+      <div className="rounded-lg border bg-background p-10 text-center text-sm text-muted-foreground">
+        You don&apos;t have access to any vertical yet. Ask a super admin for a grant.
+      </div>
+    );
+  }
+
   const filters = [inArray(leads.source, allowed as never)];
   if (sp.v && allowed.includes(sp.v)) filters.push(eq(leads.source, sp.v as never));
   if (sp.q) {

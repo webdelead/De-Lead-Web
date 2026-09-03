@@ -1,5 +1,6 @@
 import { NextResponse, after } from "next/server";
 import { getDb, tcBookings, outbox, flushOutbox } from "@delead/db";
+import { verifyTurnstile } from "@delead/shared/turnstile";
 
 const FIELD_MAX = 200;
 const REQUIRED = ["parentName", "studentName", "classGrade", "phone", "place"] as const;
@@ -7,28 +8,6 @@ const REQUIRED = ["parentName", "studentName", "classGrade", "phone", "place"] a
 /** Trim + hard length-cap a value from the request body. */
 function field(v: unknown, max = FIELD_MAX): string {
   return typeof v === "string" ? v.trim().slice(0, max) : "";
-}
-
-/** Cloudflare Turnstile. No-op until TURNSTILE_SECRET_KEY is set; blocks only
- *  when TURNSTILE_ENFORCE=true (monitor-first rollout). */
-async function turnstileOk(token: string): Promise<boolean> {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) return true;
-  try {
-    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body: new URLSearchParams({ secret, response: token }),
-      signal: AbortSignal.timeout(5000),
-    });
-    const data = (await res.json()) as { success?: boolean };
-    if (data.success) return true;
-  } catch (e) {
-    console.warn("turnstile verify error:", e);
-    return true;
-  }
-  if (process.env.TURNSTILE_ENFORCE === "true") return false;
-  console.warn("turnstile check failed (monitor mode, allowing)");
-  return true;
 }
 
 export async function POST(request: Request) {
@@ -55,7 +34,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!(await turnstileOk(field(payload.turnstileToken, 4000)))) {
+    if (!(await verifyTurnstile(field(payload.turnstileToken, 4000)))) {
       return NextResponse.json({ success: false, error: "Challenge failed." }, { status: 403 });
     }
 

@@ -1,14 +1,4 @@
-import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { makeRevalidateRoute } from "@delead/shared";
 
-/** Called by the dashboard's "Publish to site" button. */
-export async function POST(req: Request) {
-  const secret =
-    req.headers.get("x-revalidate-secret") ||
-    new URL(req.url).searchParams.get("secret");
-  if (!process.env.REVALIDATE_SECRET || secret !== process.env.REVALIDATE_SECRET) {
-    return NextResponse.json({ ok: false }, { status: 401 });
-  }
-  revalidatePath("/", "layout"); // home
-  return NextResponse.json({ ok: true, revalidated: true, at: Date.now() });
-}
+/** Called by the dashboard's "Publish to site" button (shared impl). */
+export const { POST } = makeRevalidateRoute();

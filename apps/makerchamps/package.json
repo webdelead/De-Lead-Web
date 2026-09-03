@@ -12,6 +12,7 @@
   "dependencies": {
     "@delead/brand": "workspace:*",
     "@delead/db": "workspace:*",
+    "@delead/shared": "workspace:*",
     "drizzle-orm": "catalog:",
     "next": "^15.1.3",
     "react": "^19.0.0",

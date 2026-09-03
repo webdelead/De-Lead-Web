@@ -13,6 +13,18 @@ export default async function DashboardHome() {
   const db = getDb();
   const keys = visibleVerticals(session, "view");
 
+  if (keys.length === 0) {
+    return (
+      <div className="mx-auto max-w-2xl rounded-lg border bg-background p-10 text-center">
+        <h1 className="text-lg font-semibold">Welcome</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Your account doesn&apos;t have access to any vertical yet. A super admin needs to grant
+          you view or edit access before anything shows up here.
+        </p>
+      </div>
+    );
+  }
+
   const since7 = new Date(Date.now() - 7 * 864e5);
   const since30 = new Date(Date.now() - 30 * 864e5);
   const inScope = inArray(leads.source, keys as never);

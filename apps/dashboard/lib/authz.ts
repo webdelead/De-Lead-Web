@@ -3,20 +3,13 @@ import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import { getDb, users, userVerticalAccess, eq } from "@delead/db";
 import { VERTICALS, type VerticalSlug } from "@delead/brand/verticals";
+import { canAccess, isSuperAdmin } from "@/lib/rbac";
 
-export type Level = "view" | "edit";
-export type Grant = { vertical: string; level: Level };
+export type { Level, Grant, SessionUser, Session } from "@/lib/rbac";
+export { canAccess, isSuperAdmin, visibleVerticals } from "@/lib/rbac";
+import type { Grant, Session } from "@/lib/rbac";
 
-export interface SessionUser {
-  id: string;
-  email: string;
-  name: string;
-  role: "super_admin" | "staff";
-  grants: Grant[];
-}
-export interface Session {
-  user: SessionUser;
-}
+const LOGIN_STAMP_EVERY_MS = 60 * 60 * 1000; // don't write more than hourly per user
 
 export function dbKey(slug: VerticalSlug): string {
   return VERTICALS[slug].key;
@@ -39,6 +32,16 @@ export async function getSession(): Promise<Session> {
   if (!profile || !profile.isActive) {
     await supabase.auth.signOut();
     redirect("/login?error=no-access");
+  }
+
+  // throttled last-seen stamp (so "Last login" in Users is meaningful)
+  const last = profile.lastLoginAt?.getTime() ?? 0;
+  if (Date.now() - last > LOGIN_STAMP_EVERY_MS) {
+    try {
+      await db.update(users).set({ lastLoginAt: new Date() }).where(eq(users.id, user.id));
+    } catch {
+      /* non-critical */
+    }
   }
 
   const grants =
@@ -82,25 +85,10 @@ export async function getOptionalSession(): Promise<Session | null> {
   };
 }
 
-export function isSuperAdmin(session: Session): boolean {
-  return session.user.role === "super_admin";
-}
-
-export function visibleVerticals(session: Session, level: Level = "view"): string[] {
-  if (isSuperAdmin(session)) return Object.values(VERTICALS).map((v) => v.key);
-  return session.user.grants
-    .filter((g) => (level === "view" ? true : g.level === "edit"))
-    .map((g) => g.vertical);
-}
-
-export function canAccess(session: Session, verticalDbKey: string, level: Level = "view"): boolean {
-  if (isSuperAdmin(session)) return true;
-  const g = session.user.grants.find((x) => x.vertical === verticalDbKey);
-  if (!g) return false;
-  return level === "view" ? true : g.level === "edit";
-}
-
-export async function requireAccess(verticalDbKey: string, level: Level = "view"): Promise<Session> {
+export async function requireAccess(
+  verticalDbKey: string,
+  level: "view" | "edit" = "view",
+): Promise<Session> {
   const session = await getSession();
   if (!canAccess(session, verticalDbKey, level)) redirect("/403");
   return session;

@@ -6,7 +6,7 @@ import { resolve } from "node:path";
 config({ path: resolve(process.cwd(), "../../.env") });
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@delead/db", "@delead/brand"],
+  transpilePackages: ["@delead/db", "@delead/brand", "@delead/shared"],
   serverExternalPackages: ["postgres"],
   eslint: { ignoreDuringBuilds: true },
   images: {
@@ -32,7 +32,20 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors 'none'",
+            value: [
+              "default-src 'self'",
+              "img-src 'self' data: blob: https://*.supabase.co",
+              "connect-src 'self' https://*.supabase.co https://challenges.cloudflare.com",
+              // Next injects inline bootstrap script/style; no nonce pipeline yet
+              "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline'",
+              "font-src 'self' data:",
+              "frame-src https://challenges.cloudflare.com",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'none'",
+            ].join("; "),
           },
         ],
       },

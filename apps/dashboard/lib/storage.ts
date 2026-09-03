@@ -1,4 +1,5 @@
 import "server-only";
+import { assetPublicUrl } from "@delead/shared/storage";
 
 /* Storage adapter. `supabase` today; `r2` later (flip STORAGE_PROVIDER, run
  * packages/db migrate:storage). Content tables store an asset row, never a URL. */
@@ -6,7 +7,6 @@ import "server-only";
 const PROVIDER = (process.env.STORAGE_PROVIDER ?? "supabase") as "supabase" | "r2";
 const SUPABASE_URL = process.env.SUPABASE_URL ?? "";
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
-const R2_PUBLIC = (process.env.R2_PUBLIC_BASE_URL ?? "").replace(/\/$/, "");
 
 export interface StoredObject {
   provider: "supabase" | "r2";
@@ -16,10 +16,8 @@ export interface StoredObject {
   bytes: number;
 }
 
-export function publicUrl(o: { provider: string; bucket: string; path: string }): string {
-  if (o.provider === "r2") return `${R2_PUBLIC}/${o.path}`;
-  return `${SUPABASE_URL.replace(/\/$/, "")}/storage/v1/object/public/${o.bucket}/${o.path}`;
-}
+/** @deprecated import `assetPublicUrl` from `@delead/shared/storage` */
+export const publicUrl = assetPublicUrl;
 
 export async function put(
   bucket: string,

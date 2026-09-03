@@ -1,9 +1,10 @@
 import { notFound } from "next/navigation";
+import { snakeToCamel as camel } from "@delead/shared/strings";
 import { getDb, assets, eq, inArray, asc, desc, and, sql } from "@delead/db";
 import { VERTICALS, type VerticalSlug } from "@delead/brand/verticals";
 import { requireAccess, dbKey } from "@/lib/authz";
 import { RESOURCES } from "@/lib/resources";
-import { publicUrl } from "@/lib/storage";
+import { assetPublicUrl as publicUrl } from "@delead/shared/storage";
 import { ResourceList } from "@/components/resource-list";
 import { PublishBar } from "@/components/publish-bar";
 
@@ -89,10 +90,6 @@ export default async function ResourcePage({
       />
     </div>
   );
-}
-
-function camel(s: string) {
-  return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
 }
 
 /** strip the drizzle table (not serializable) before passing to the client */

@@ -7,10 +7,7 @@ import { resourceFor, type ResourceDef } from "@/lib/resources";
 import { resourceAllowedInVertical } from "@/lib/resource-access";
 import { put, ensureBucket } from "@/lib/storage";
 import { VERTICALS, type VerticalSlug } from "@delead/brand/verticals";
-
-function toCamel(sn: string) {
-  return sn.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
-}
+import { snakeToCamel as toCamel, assetPublicUrl } from "@delead/shared";
 
 function coerce(def: ResourceDef, name: string, raw: FormDataEntryValue | null) {
   const field = def.fields.find((f) => f.name === name);
@@ -158,15 +155,17 @@ export async function reorderRows(input: {
   ids: string[];
 }) {
   const { def, verticalDbKey } = await guard(input.resource, input.vertical);
+  if (input.ids.length > 1000) throw new Error("too many rows");
   const db = getDb();
-  await Promise.all(
-    input.ids.map((id, i) =>
-      db
+  // one transaction so a partial failure doesn't leave a scrambled order
+  await db.transaction(async (tx) => {
+    for (let i = 0; i < input.ids.length; i++) {
+      await tx
         .update(def.table as never)
         .set({ sortOrder: i })
-        .where(scopeById(def, verticalDbKey, id)),
-    ),
-  );
+        .where(scopeById(def, verticalDbKey, input.ids[i]!));
+    }
+  });
   await markDirty(verticalDbKey);
   revalidatePath(`/c/${input.vertical}/${input.resource}`);
   return { ok: true };
@@ -270,13 +269,7 @@ export async function uploadAsset(form: FormData) {
       uploadedBy: session.user.id,
     })
     .returning();
-  return { id: row!.id, url: publicUrlOf(row!) };
-}
-
-function publicUrlOf(a: { provider: string; bucket: string; path: string }) {
-  if (a.provider === "r2")
-    return `${(process.env.R2_PUBLIC_BASE_URL ?? "").replace(/\/$/, "")}/${a.path}`;
-  return `${(process.env.SUPABASE_URL ?? "").replace(/\/$/, "")}/storage/v1/object/public/${a.bucket}/${a.path}`;
+  return { id: row!.id, url: assetPublicUrl(row!) };
 }
 
 function tableName(def: ResourceDef): string {

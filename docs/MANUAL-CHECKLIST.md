@@ -51,9 +51,23 @@ this once all phases are merged. Grouped by the phase that added the item.
       visual diff of each marketing site against its `../<Name>` static folder** — pixel-frozen.
 - [ ] **Deferred:** `zod` 3→4 (breaking; small migration) — do with Phase 4.
 
-## Phase 4
+## Phase 4 (this branch)
 
-_(to be filled in)_
+- [ ] Nothing infra-only here — it's mostly code. After merge, smoke-test: dashboard
+      login + a lead + a booking + a journal page still work; "Last login" in Users now
+      populates; drag-reorder still saves.
+- [ ] CSP added to the dashboard (enforced, conservative). If the admin UI shows blank
+      panels / blocked requests, check the browser console for CSP violations and widen the
+      directive in `apps/dashboard/next.config.ts`.
+- [ ] `zod` bumped 3 → 4 (only `/api/lead` uses it; build + schema tests pass). No action
+      unless a lead submission starts 422-ing.
+- [ ] **Deferred — Phase 4b:** the journal **block / rich-text editor** (TipTap). Still a
+      raw-Markdown textarea + DOMPurify. Needs: `blog_posts.body_md` → `body_json` migration,
+      a dashboard editor component, a server renderer, and a one-off convert of existing posts.
+- [ ] **Deferred:** decide `assets.width` / `assets.height` — populate on upload (adds `sharp`)
+      or drop the columns. Currently unused, left as-is.
+- [ ] Marketing-site CSP (report-only → enforce) — deferred to Phase 4b; needs per-site
+      testing (Google Fonts, external images) against the frozen designs.
 
 ## Phase 5
 

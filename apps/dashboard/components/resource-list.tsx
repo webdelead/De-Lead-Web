@@ -1,4 +1,5 @@
 "use client";
+import { snakeToCamel as camel } from "@delead/shared/strings";
 import { useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -325,10 +326,6 @@ export function ResourceList({
       </Dialog>
     </div>
   );
-}
-
-function camel(s: string) {
-  return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
 }
 
 function renderCell(

@@ -2,6 +2,7 @@ import { NextResponse, after } from "next/server";
 import { createHash } from "node:crypto";
 import { z } from "zod";
 import { getDb, leads, outbox, sql, flushOutbox } from "@delead/db";
+import { verifyTurnstile } from "@delead/shared/turnstile";
 import { DB_VERTICAL_KEYS } from "@delead/brand/verticals";
 
 const ORIGINS = [
@@ -32,33 +33,6 @@ const schema = z.object({
   pagePath: z.string().max(300).optional(),
   turnstileToken: z.string().max(4000).optional(),
 });
-
-/**
- * Cloudflare Turnstile check. No-op until TURNSTILE_SECRET_KEY is set; then it
- * verifies but only *blocks* when TURNSTILE_ENFORCE=true (monitor-first rollout,
- * since the pixel-frozen site forms don't send a token yet).
- */
-async function turnstileOk(token: string | undefined, ip: string): Promise<boolean> {
-  const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) return true;
-  try {
-    const body = new URLSearchParams({ secret, response: token ?? "" });
-    if (ip) body.set("remoteip", ip);
-    const res = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body,
-      signal: AbortSignal.timeout(5000),
-    });
-    const data = (await res.json()) as { success?: boolean };
-    if (data.success) return true;
-  } catch (e) {
-    console.warn("turnstile verify error:", e);
-    return true; // don't fail submissions on our verifier being down
-  }
-  if (process.env.TURNSTILE_ENFORCE === "true") return false;
-  console.warn("turnstile check failed (monitor mode, allowing)");
-  return true;
-}
 
 /**
  * Trustworthy client IP. On Vercel `x-vercel-forwarded-for` / `x-real-ip` are
@@ -111,7 +85,7 @@ export async function POST(req: Request) {
   const ip = clientIp(req);
   const ipHash = ip ? createHash("sha256").update(ip).digest("hex").slice(0, 32) : null;
 
-  if (!(await turnstileOk(d.turnstileToken, ip))) {
+  if (!(await verifyTurnstile(d.turnstileToken, ip))) {
     return NextResponse.json({ ok: false, error: "challenge failed" }, { status: 403, headers });
   }
 

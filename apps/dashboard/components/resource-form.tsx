@@ -1,4 +1,5 @@
 "use client";
+import { snakeToCamel as camel } from "@delead/shared/strings";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -20,10 +21,6 @@ import type { ResourceDef } from "@/lib/resources";
 
 type Row = Record<string, unknown> & { id: string };
 type SerDef = Omit<ResourceDef, "table">;
-
-function camel(s: string) {
-  return s.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
-}
 function slugify(s: string) {
   return s.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
 }
