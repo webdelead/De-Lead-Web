@@ -34,7 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowDown, ArrowUp, Pencil, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { ResourceForm } from "@/components/resource-form";
 import { deleteRow, reorderRows } from "@/lib/actions/content";
 import type { ResourceDef } from "@/lib/resources";
@@ -113,7 +113,7 @@ export function ResourceList({
               const sp = new URLSearchParams(window.location.search);
               if (v === "all") sp.delete(def.filterField!.name);
               else sp.set(def.filterField!.name, v);
-              router.push(`?${sp.toString()}`);
+              start(() => router.push(`?${sp.toString()}`));
             }}
           >
             <SelectTrigger className="w-44">
@@ -137,7 +137,12 @@ export function ResourceList({
         )}
       </div>
 
-      <div className="rounded-lg border bg-background">
+      <div className="relative rounded-lg border bg-background">
+        {pending && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-background/60 backdrop-blur-[1px]">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          </div>
+        )}
         <Table>
           <TableHeader>
             <TableRow>
@@ -236,7 +241,11 @@ export function ResourceList({
             <Button variant="outline" onClick={() => setConfirm(null)}>
               Cancel
             </Button>
-            <Button variant="destructive" disabled={pending} onClick={() => confirm && doDelete(confirm)}>
+            <Button
+              variant="destructive"
+              loading={pending}
+              onClick={() => confirm && doDelete(confirm)}
+            >
               Delete
             </Button>
           </DialogFooter>

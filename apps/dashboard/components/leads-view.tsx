@@ -1,5 +1,5 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -54,12 +54,18 @@ export function LeadsView(props: {
   const router = useRouter();
   const params = useSearchParams();
   const [pending, start] = useTransition();
+  const [busy, setBusy] = useState<"search" | "prev" | "next" | "filter" | null>(null);
   const [q, setQ] = useState(props.q);
   const [open, setOpen] = useState<LeadRow | null>(null);
 
   const pages = Math.max(1, Math.ceil(props.total / props.pageSize));
 
-  function push(next: Record<string, string | undefined>) {
+  useEffect(() => {
+    if (!pending) setBusy(null);
+  }, [pending]);
+
+  function push(next: Record<string, string | undefined>, which: typeof busy = null) {
+    setBusy(which);
     const sp = new URLSearchParams(params.toString());
     for (const [k, val] of Object.entries(next)) {
       if (val) sp.set(k, val);
@@ -90,7 +96,7 @@ export function LeadsView(props: {
         className="flex flex-wrap gap-2"
         onSubmit={(e) => {
           e.preventDefault();
-          push({ q: q || undefined, page: undefined });
+          push({ q: q || undefined, page: undefined }, "search");
         }}
       >
         <Input
@@ -102,7 +108,7 @@ export function LeadsView(props: {
         {props.showVerticalFilter && (
           <Select
             value={props.v || "all"}
-            onValueChange={(val) => push({ v: val === "all" ? undefined : val, page: undefined })}
+            onValueChange={(val) => push({ v: val === "all" ? undefined : val, page: undefined }, "filter")}
           >
             <SelectTrigger className="w-48">
               <SelectValue placeholder="All sites" />
@@ -117,7 +123,7 @@ export function LeadsView(props: {
             </SelectContent>
           </Select>
         )}
-        <Button type="submit" variant="secondary" size="sm" disabled={pending}>
+        <Button type="submit" variant="secondary" size="sm" loading={busy === "search"}>
           Search
         </Button>
       </form>
@@ -171,7 +177,8 @@ export function LeadsView(props: {
               variant="outline"
               size="sm"
               disabled={props.page <= 1}
-              onClick={() => push({ page: String(props.page - 1) })}
+              loading={busy === "prev"}
+              onClick={() => push({ page: String(props.page - 1) }, "prev")}
             >
               Previous
             </Button>
@@ -179,7 +186,8 @@ export function LeadsView(props: {
               variant="outline"
               size="sm"
               disabled={props.page >= pages}
-              onClick={() => push({ page: String(props.page + 1) })}
+              loading={busy === "next"}
+              onClick={() => push({ page: String(props.page + 1) }, "next")}
             >
               Next
             </Button>

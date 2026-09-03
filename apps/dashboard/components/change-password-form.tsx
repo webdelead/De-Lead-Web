@@ -35,7 +35,7 @@ export function ChangePasswordForm() {
         <Label htmlFor="np2">Confirm</Label>
         <PasswordInput id="np2" required value={pw2} onChange={(e) => setPw2(e.target.value)} />
       </div>
-      <Button type="submit" disabled={busy}>
+      <Button type="submit" loading={busy}>
         {busy ? "Saving…" : "Update password"}
       </Button>
     </form>

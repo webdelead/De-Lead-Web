@@ -75,11 +75,15 @@ export function SiteSettingsForm({
         ))}
         {canEdit && (
           <Button
-            disabled={pending}
+            loading={pending}
             onClick={() =>
               start(async () => {
-                await saveSetting({ vertical: vertical as never, key: spec.key, value: state });
-                toast.success("Saved — publish the site to push it live");
+                try {
+                  await saveSetting({ vertical: vertical as never, key: spec.key, value: state });
+                  toast.success("Saved — publish the site to push it live");
+                } catch {
+                  toast.error("Save failed");
+                }
               })
             }
           >

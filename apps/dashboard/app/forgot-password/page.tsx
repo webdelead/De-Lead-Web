@@ -58,7 +58,7 @@ export default function ForgotPasswordPage() {
                   />
                 </div>
                 {err && <p className="text-sm text-destructive">{err}</p>}
-                <Button type="submit" className="w-full" disabled={busy}>
+                <Button type="submit" className="w-full" loading={busy}>
                   {busy ? "Sending…" : "Send reset link"}
                 </Button>
                 <Link

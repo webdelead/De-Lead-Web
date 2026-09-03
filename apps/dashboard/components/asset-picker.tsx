@@ -68,7 +68,13 @@ export function AssetPicker({
           if (f) pick(f);
         }}
       />
-      <Button type="button" variant="outline" size="sm" disabled={pending} onClick={() => inputRef.current?.click()}>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        loading={pending}
+        onClick={() => inputRef.current?.click()}
+      >
         {pending ? "Uploading…" : url ? "Replace" : "Upload"}
       </Button>
       <input type="hidden" value={value} readOnly />

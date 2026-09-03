@@ -12,13 +12,13 @@ export function PublishBar({ vertical, canEdit }: { vertical: string; canEdit: b
     <Button
       variant="outline"
       size="sm"
-      disabled={pending}
+      loading={pending}
       onClick={() =>
         start(async () => {
           try {
             const r = await publishVertical(vertical as never);
             toast.success(
-              r.triggered ? "Site rebuilding — live in ~1 min" : "Marked published (no deploy hook set)",
+              r.triggered ? "Published — site updates in a few seconds" : "Marked published",
             );
           } catch {
             toast.error("Publish failed");
@@ -26,7 +26,8 @@ export function PublishBar({ vertical, canEdit }: { vertical: string; canEdit: b
         })
       }
     >
-      <UploadCloud className="h-4 w-4" /> {pending ? "Publishing…" : "Publish to site"}
+      {!pending && <UploadCloud className="h-4 w-4" />}
+      {pending ? "Publishing…" : "Publish to site"}
     </Button>
   );
 }

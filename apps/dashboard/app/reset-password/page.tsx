@@ -73,7 +73,7 @@ export default function ResetPasswordPage() {
                   />
                 </div>
                 {err && <p className="text-sm text-destructive">{err}</p>}
-                <Button type="submit" className="w-full" disabled={busy}>
+                <Button type="submit" className="w-full" loading={busy}>
                   {busy ? "Saving…" : "Update password"}
                 </Button>
               </form>

@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import { getSession } from "@/lib/authz";
 import { buildNav } from "@/lib/nav";
 import { Sidebar } from "@/components/sidebar";
 import { Topbar } from "@/components/topbar";
+import { NavProgress } from "@/components/nav-progress";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -9,6 +11,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="grid h-screen grid-rows-[auto_1fr] md:grid-cols-[240px_1fr] md:grid-rows-1">
+      <Suspense fallback={null}>
+        <NavProgress />
+      </Suspense>
       <aside className="hidden border-r bg-sidebar md:block">
         <Sidebar groups={groups} />
       </aside>

@@ -1,5 +1,5 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Loader2 } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -56,8 +57,13 @@ export function UsersView({
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
+  const [rowBusy, setRowBusy] = useState<string | null>(null); // `${id}:${action}`
   const [creating, setCreating] = useState(false);
   const [access, setAccess] = useState<U | null>(null);
+
+  useEffect(() => {
+    if (!pending) setRowBusy(null);
+  }, [pending]);
 
   return (
     <div className="space-y-4">
@@ -104,16 +110,23 @@ export function UsersView({
                   )}
                 </TableCell>
                 <TableCell>
-                  <Switch
-                    checked={u.isActive}
-                    onCheckedChange={(v) =>
-                      start(async () => {
-                        const r = await setUserActive(u.id, v);
-                        if (!r.ok) toast.error(r.error);
-                        else router.refresh();
-                      })
-                    }
-                  />
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={u.isActive}
+                      disabled={pending && rowBusy === `${u.id}:active`}
+                      onCheckedChange={(v) => {
+                        setRowBusy(`${u.id}:active`);
+                        start(async () => {
+                          const r = await setUserActive(u.id, v);
+                          if (!r.ok) toast.error(r.error);
+                          else router.refresh();
+                        });
+                      }}
+                    />
+                    {rowBusy === `${u.id}:active` && pending && (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
@@ -125,14 +138,15 @@ export function UsersView({
                     <Button
                       variant="ghost"
                       size="sm"
-                      disabled={pending}
-                      onClick={() =>
+                      loading={pending && rowBusy === `${u.id}:reset`}
+                      onClick={() => {
+                        setRowBusy(`${u.id}:reset`);
                         start(async () => {
                           const r = await sendUserReset(u.id);
                           if (r.ok) toast.success("Password-reset email sent.");
                           else toast.error(r.error);
-                        })
-                      }
+                        });
+                      }}
                     >
                       Send reset
                     </Button>
@@ -212,7 +226,8 @@ function InviteDialog({ onClose, onDone }: { onClose: () => void; onDone: () => 
             Cancel
           </Button>
           <Button
-            disabled={pending || !name || !email}
+            disabled={!name || !email}
+            loading={pending}
             onClick={() =>
               start(async () => {
                 const r = await inviteUser({ name, email, role });
@@ -285,7 +300,7 @@ function AccessDialog({
             Cancel
           </Button>
           <Button
-            disabled={pending}
+            loading={pending}
             onClick={() =>
               start(async () => {
                 const list = Object.entries(grants)

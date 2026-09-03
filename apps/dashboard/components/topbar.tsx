@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import {
@@ -10,14 +11,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, KeyRound, LogOut, User } from "lucide-react";
+import { ChevronDown, KeyRound, Loader2, LogOut, User } from "lucide-react";
 import Link from "next/link";
 
 export function Topbar({ name, email, role }: { name: string; email: string; role: string }) {
   const router = useRouter();
   const supabase = supabaseBrowser();
+  const [signingOut, setSigningOut] = useState(false);
 
   async function signOut() {
+    setSigningOut(true);
     await supabase.auth.signOut();
     router.replace("/login");
     router.refresh();
@@ -48,8 +51,16 @@ export function Topbar({ name, email, role }: { name: string; email: string; rol
               <KeyRound className="h-4 w-4" /> Change password
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onSelect={(e) => (e.preventDefault(), signOut())}>
-            <LogOut className="h-4 w-4" /> Sign out
+          <DropdownMenuItem
+            disabled={signingOut}
+            onSelect={(e) => (e.preventDefault(), signOut())}
+          >
+            {signingOut ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <LogOut className="h-4 w-4" />
+            )}{" "}
+            {signingOut ? "Signing out…" : "Sign out"}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

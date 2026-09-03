@@ -160,7 +160,7 @@ export function ResourceForm({
         <Button type="button" variant="outline" onClick={onDone}>
           Cancel
         </Button>
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" loading={pending}>
           {pending ? "Saving…" : "Save"}
         </Button>
       </div>
