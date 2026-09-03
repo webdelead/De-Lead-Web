@@ -73,8 +73,8 @@ export const metadata: Metadata = {
     images: ["/assets/images/herobanner.webp"],
   },
   icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
     apple: "/assets/TCLogo.webp",
   },
   robots: {

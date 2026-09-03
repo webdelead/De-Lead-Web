@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESC,
   alternates: { canonical: "/" },
-  icons: { icon: "/favicon.png" },
+  icons: { icon: "/favicon.svg" },
   openGraph: {
     type: "website",
     siteName: "MakerChamps",

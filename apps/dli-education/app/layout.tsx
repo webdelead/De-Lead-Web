@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: "DLI Education: De' Lead International",
   description: DESC,
   alternates: { canonical: "/" },
-  icons: { icon: "/favicon.png" },
+  icons: { icon: "/favicon.svg" },
   openGraph: {
     type: "website",
     siteName: "DLI Education",
