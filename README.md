@@ -40,3 +40,5 @@ Before committing: `pnpm typecheck` and `pnpm --filter @delead/dashboard test`.
 See [`CLAUDE.md`](CLAUDE.md) for conventions, [`docs/DEPLOY.md`](docs/DEPLOY.md)
 for the deploy runbook, and [`docs/MANUAL-CHECKLIST.md`](docs/MANUAL-CHECKLIST.md)
 for outstanding console / infra steps.
+
+First deploy is driven by [`docs/DEPLOY-CHROME-PROMPT.md`](docs/DEPLOY-CHROME-PROMPT.md).
