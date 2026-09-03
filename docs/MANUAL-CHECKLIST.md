@@ -69,6 +69,30 @@ this once all phases are merged. Grouped by the phase that added the item.
 - [ ] Marketing-site CSP (report-only → enforce) — deferred to Phase 4b; needs per-site
       testing (Google Fonts, external images) against the frozen designs.
 
-## Phase 5
+## Phase 5 (this branch) — pre-traffic
 
-_(to be filled in)_
+**Code that landed:**
+- CSV exports (`/api/export/leads`, `/api/export/bookings`) now **stream** in 1000-row
+  pages — no row cap, no OOM at scale.
+- The **R2 storage adapter is implemented** (`aws4fetch`, S3 API) in
+  `apps/dashboard/lib/storage.ts`; `migrate-storage.ts` rewritten to match.
+
+**You do:**
+- [ ] **Image host → Cloudflare R2** (decided). Create the bucket + an API token, fill
+      `R2_ACCOUNT_ID` / `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` / `R2_BUCKET` /
+      `R2_PUBLIC_BASE_URL`, run `pnpm --filter @delead/db migrate:storage`, then set
+      `STORAGE_PROVIDER=r2` in every app's Vercel env and redeploy. Verify a site image
+      loads from the R2 URL before deleting the Supabase Storage originals.
+- [ ] **Load-test** the three dynamic paths at expected peak: `/api/lead`, `/api/booking`,
+      a cold ISR regen (e.g. `POST /api/revalidate` then hit `/`). Watch Supabase
+      connection count and function duration.
+- [ ] **Decide the Postgres host** (stance #5 = ~$6 droplet). If staying on Supabase,
+      the free tier will hit egress/connection limits first — budget Supabase Pro (~$25/mo)
+      or start the droplet migration (own backups/pooling — see DEPLOY.md §5d).
+
+**Deferred — Phase 5b (bigger refactors, only if a list grows past ~500 rows):**
+- Server-side search + pagination for the dashboard resource lists
+  (`c/[vertical]/[resource]/page.tsx` + `resource-list.tsx`) — currently `limit(500)` +
+  client-side filter, mirroring the `leads` page's server-side pattern.
+- Granular ISR revalidation (`revalidateTag` per section) instead of the whole-site
+  `revalidatePath("/", "layout")` — only matters once a site is genuinely multi-page.
