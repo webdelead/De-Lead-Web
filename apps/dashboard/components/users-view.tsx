@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Alert } from "@/components/ui/alert";
 import { Loader2 } from "lucide-react";
 import {
   Table,
@@ -295,6 +296,11 @@ function AccessDialog({
             </div>
           ))}
         </div>
+        {Object.values(grants).every((l) => l === "none") && (
+          <Alert variant="warning" className="mt-1 py-2.5">
+            With no grants, {user.name} can sign in but won&apos;t see any verticals.
+          </Alert>
+        )}
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
             Cancel

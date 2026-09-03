@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/password-input";
+import { Alert } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 
 export function LoginForm({ next, error }: { next?: string; error?: string }) {
@@ -66,7 +67,11 @@ export function LoginForm({ next, error }: { next?: string; error?: string }) {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          {err && <p className="text-sm text-destructive">{err}</p>}
+          {err && (
+            <Alert variant="destructive" hideIcon className="py-2.5 text-sm">
+              {err}
+            </Alert>
+          )}
           <Button type="submit" className="w-full" loading={busy}>
             {busy ? "Signing in…" : "Sign in"}
           </Button>

@@ -5,6 +5,7 @@ import { getDb, leads, publishState, pingLog, sql, and, gte, inArray, desc } fro
 import { verticalByKey } from "@delead/brand/verticals";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import { Activity, Database, Inbox, UploadCloud } from "lucide-react";
 
 export default async function DashboardHome() {
@@ -38,6 +39,23 @@ export default async function DashboardHome() {
           your sites.
         </p>
       </div>
+
+      {pingStale && (
+        <Alert variant="warning" title="The database hasn't been pinged recently">
+          It&apos;s been more than 3 days since the last keep-alive ping{" "}
+          {lastPing ? `(${new Date(lastPing).toLocaleString()})` : "(never)"}. A free Supabase
+          project pauses after ~7 days idle — check the GitHub Actions / Vercel cron so it keeps
+          running.
+        </Alert>
+      )}
+
+      {dirtyRows.length > 0 && (
+        <Alert variant="info" title={`${dirtyTotal} unpublished change${dirtyTotal > 1 ? "s" : ""}`}>
+          {dirtyRows.map((d) => verticalByKey(d.vertical)?.name).join(", ")}{" "}
+          {dirtyRows.length > 1 ? "have" : "has"} edits that aren&apos;t live yet. Open the site&apos;s
+          content pages and hit <span className="font-medium text-foreground">Publish to site</span>.
+        </Alert>
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat

@@ -3,6 +3,7 @@ import { VERTICALS, type VerticalSlug } from "@delead/brand/verticals";
 import { requireAccess } from "@/lib/authz";
 import { getDb, siteSettings, and, eq } from "@delead/db";
 import { SiteSettingsForm, type SettingSpec } from "@/components/site-settings-form";
+import { Alert } from "@/components/ui/alert";
 
 const SPECS: Record<string, SettingSpec[]> = {
   tinkerchamps: [
@@ -56,6 +57,17 @@ export default async function VerticalSettings({
         <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
         <p className="text-sm text-muted-foreground">{v.name}</p>
       </div>
+      <Alert variant="info">
+        Saving stores the change immediately, but the live site won&apos;t reflect it until you
+        <span className="font-medium text-foreground"> Publish</span> from one of {v.name}&apos;s
+        content pages.
+      </Alert>
+      {!canEdit && (
+        <Alert variant="warning">
+          You have view-only access to {v.name} — fields are read-only. Ask a super admin for an
+          edit grant.
+        </Alert>
+      )}
       {specs.map((spec) => (
         <SiteSettingsForm
           key={spec.key}

@@ -1,10 +1,11 @@
 "use client";
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Alert } from "@/components/ui/alert";
 import {
   Table,
   TableBody,
@@ -22,7 +23,6 @@ import {
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -34,7 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowDown, ArrowUp, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { GripVertical, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
 import { ResourceForm } from "@/components/resource-form";
 import { deleteRow, reorderRows } from "@/lib/actions/content";
 import type { ResourceDef } from "@/lib/resources";
@@ -65,6 +65,11 @@ export function ResourceList({
   const [editing, setEditing] = useState<Row | null | undefined>(undefined); // undefined=closed, null=new
   const [confirm, setConfirm] = useState<Row | null>(null);
 
+  // drag-to-reorder
+  const dragFrom = useRef<number | null>(null);
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [overIdx, setOverIdx] = useState<number | null>(null);
+
   const filtered = useMemo(() => {
     if (!q) return rows;
     const needle = q.toLowerCase();
@@ -73,15 +78,27 @@ export function ResourceList({
     );
   }, [q, rows, def.search]);
 
-  function move(idx: number, dir: -1 | 1) {
+  const canReorder = def.orderable && canEdit && !q;
+
+  function commitReorder(from: number, to: number) {
+    if (from === to || from < 0 || to < 0) return;
     const next = [...rows];
-    const j = idx + dir;
-    if (j < 0 || j >= next.length) return;
-    [next[idx], next[j]] = [next[j]!, next[idx]!];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved!);
     start(async () => {
-      await reorderRows({ resource, vertical: vertical as never, ids: next.map((r) => r.id) });
-      router.refresh();
+      try {
+        await reorderRows({ resource, vertical: vertical as never, ids: next.map((r) => r.id) });
+        router.refresh();
+      } catch {
+        toast.error("Couldn't save the new order");
+      }
     });
+  }
+
+  function endDrag() {
+    dragFrom.current = null;
+    setDragIdx(null);
+    setOverIdx(null);
   }
 
   function doDelete(row: Row) {
@@ -137,6 +154,13 @@ export function ResourceList({
         )}
       </div>
 
+      {def.orderable && canEdit && q && (
+        <Alert variant="info">
+          Ordering is disabled while a search is active — clear the search box to drag rows into a
+          new order.
+        </Alert>
+      )}
+
       <div className="relative rounded-lg border bg-background">
         {pending && (
           <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-background/60 backdrop-blur-[1px]">
@@ -146,7 +170,7 @@ export function ResourceList({
         <Table>
           <TableHeader>
             <TableRow>
-              {def.orderable && <TableHead className="w-16" />}
+              {def.orderable && <TableHead className="w-10" />}
               {def.columns.map((c) => (
                 <TableHead key={c.key}>{c.label}</TableHead>
               ))}
@@ -156,7 +180,10 @@ export function ResourceList({
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={def.columns.length + 2} className="py-10 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={def.columns.length + (def.orderable ? 2 : 1)}
+                  className="py-10 text-center text-muted-foreground"
+                >
                   Nothing here yet.{" "}
                   {canEdit && (
                     <button className="text-primary underline" onClick={() => setEditing(null)}>
@@ -167,20 +194,55 @@ export function ResourceList({
               </TableRow>
             ) : (
               filtered.map((r, idx) => (
-                <TableRow key={r.id}>
+                <TableRow
+                  key={r.id}
+                  data-dragging={canReorder && dragIdx === idx ? "true" : undefined}
+                  data-drop-target={
+                    canReorder && overIdx === idx && dragIdx !== null && dragIdx !== idx
+                      ? "true"
+                      : undefined
+                  }
+                  onDragOver={
+                    canReorder
+                      ? (e) => {
+                          e.preventDefault();
+                          e.dataTransfer.dropEffect = "move";
+                          if (overIdx !== idx) setOverIdx(idx);
+                        }
+                      : undefined
+                  }
+                  onDrop={
+                    canReorder
+                      ? (e) => {
+                          e.preventDefault();
+                          if (dragFrom.current !== null) commitReorder(dragFrom.current, idx);
+                          endDrag();
+                        }
+                      : undefined
+                  }
+                >
                   {def.orderable && (
                     <TableCell className="text-muted-foreground">
-                      {!q && canEdit ? (
-                        <div className="flex flex-col">
-                          <button disabled={pending} onClick={() => move(idx, -1)}>
-                            <ArrowUp className="h-3.5 w-3.5" />
-                          </button>
-                          <button disabled={pending} onClick={() => move(idx, 1)}>
-                            <ArrowDown className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
+                      {canReorder ? (
+                        <span
+                          className="row-drag-handle inline-flex items-center justify-center"
+                          title="Drag to reorder"
+                          aria-label="Drag to reorder"
+                          role="button"
+                          tabIndex={0}
+                          draggable
+                          onDragStart={(e) => {
+                            dragFrom.current = idx;
+                            setDragIdx(idx);
+                            e.dataTransfer.effectAllowed = "move";
+                            e.dataTransfer.setData("text/plain", String(idx));
+                          }}
+                          onDragEnd={endDrag}
+                        >
+                          <GripVertical className="h-4 w-4" />
+                        </span>
                       ) : (
-                        idx + 1
+                        <span className="text-xs tabular-nums">{idx + 1}</span>
                       )}
                     </TableCell>
                   )}
@@ -233,10 +295,20 @@ export function ResourceList({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete this {def.singular.toLowerCase()}?</DialogTitle>
-            <DialogDescription>
-              {confirm ? String(confirm[camel(def.columns[0]!.key)] ?? "") : ""} — this can't be undone.
-            </DialogDescription>
           </DialogHeader>
+          <Alert variant="destructive" title="This can't be undone">
+            {confirm ? (
+              <>
+                <span className="font-medium text-foreground">
+                  {String(confirm[camel(def.columns[0]!.key)] ?? "this record")}
+                </span>{" "}
+                will be permanently removed. If it&apos;s on a live site, publish that site
+                afterwards to push the change out.
+              </>
+            ) : (
+              "This record will be permanently removed."
+            )}
+          </Alert>
           <DialogFooter>
             <Button variant="outline" onClick={() => setConfirm(null)}>
               Cancel
