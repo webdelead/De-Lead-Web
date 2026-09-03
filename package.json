@@ -23,6 +23,6 @@
     "prettier": "^3.4.2"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "sharp", "@tailwindcss/oxide"]
+    "onlyBuiltDependencies": ["esbuild", "sharp", "@tailwindcss/oxide", "unrs-resolver"]
   }
 }
