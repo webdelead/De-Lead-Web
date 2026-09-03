@@ -22,6 +22,6 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --filter @delead/db --frozen-lockfile=false
-      - run: pnpm --filter @delead/db ping
+      - run: pnpm --filter @delead/db ping github
         env:
           DIRECT_URL: ${{ secrets.DIRECT_URL }}

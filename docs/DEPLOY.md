@@ -21,6 +21,21 @@ Repo: `github.com/webdelead/De-Lead-Web` · Supabase project `dslvxzcqcuqhfqqaoh
 The `supabase-ping` workflow only needs `DIRECT_URL`. Run it once manually
 (Actions → Supabase keep-alive → Run workflow) to confirm.
 
+### Keep-alive runs from two places (redundant)
+
+Supabase free pauses after ~7 days idle. Two independent pingers so one failing
+doesn't matter — both write a row to `ping_log` with a distinct `source`, and the
+dashboard home + System page show the latest:
+
+| Pinger | Cadence | `ping_log.source` |
+|---|---|---|
+| GitHub Actions (`.github/workflows/supabase-ping.yml`) | Mon/Wed/Fri/Sun | `github` |
+| Vercel Cron on the dashboard (`apps/dashboard/vercel.json` → `/api/cron/ping`) | daily | `vercel` |
+
+Vercel Cron needs a `CRON_SECRET` env var on the dashboard project (any long random
+string) — Vercel sends it as `Authorization: Bearer <CRON_SECRET>` and the route rejects
+anything else.
+
 ## 2. Cloudflare Pages — 5 static sites
 
 For **each** of `deleadint · walk2lead · makerchamps · corporate · dli-education`:
@@ -86,21 +101,78 @@ Two projects, same repo:
 - [ ] Edit a testimonial in the dashboard → **Publish to site** → confirm the CF rebuild.
 - [ ] Run the Supabase keep-alive workflow once.
 
-## 5. Still to wire (client-provided)
+## 5. Apps Script — per-site Sheet backup + email notifier
+
+The dashboard is the source of truth. Each site *also* mirrors its submissions to
+its own Google Sheet and emails the team — a backup and a familiar view for staff.
+
+For **each** marketing site (and one for TinkerChamps bookings — already exists):
+
+1. New Google Sheet → Extensions → Apps Script.
+2. Paste [`docs/apps-script/Code.gs`](apps-script/Code.gs) (identical for every site).
+   It appends a row and emails **info@deleadint.com, arjun@deleadint.com** on every submission.
+   Change `NOTIFY_TO` in the file if the recipients differ per site.
+3. Deploy → New deployment → **Web app** · Execute as **Me** · Who has access **Anyone**.
+4. Authorise (it asks for Sheet + Gmail send permission the first time).
+5. Copy the `/exec` URL → set it in `.env` **and** the dashboard's Vercel env as
+   `APPS_SCRIPT_URL_<SITE>` (`_DELEADINT`, `_WALK2LEAD`, `_MAKERCHAMPS`, `_CORPORATE`, `_DLI_EDUCATION`).
+6. Redeploy the dashboard so it picks up the new var.
+
+Until a URL is set, submissions still save to Postgres — only the Sheet row + email are skipped.
+
+## 6. Move DNS to Cloudflare (optional, mail-safe)
+
+Cloudflare DNS is free and adds DDoS protection, DNSSEC, analytics and a WAF for the
+web records. Moving DNS does **not** move mail — you re-create the exact Zoho records.
+
+**Before you start:** in Hostinger DNS, record **every** current entry, especially:
+- all `MX` records (Zoho: `mx.zoho.in` / `mx2.zoho.in` / `mx3.zoho.in`, or the `.com` set)
+- `TXT` SPF: `v=spf1 include:zohomail.in ~all` (or `.com`)
+- `TXT`/`CNAME` DKIM: the `*._domainkey` record Zoho gave you
+- `TXT` DMARC: `_dmarc`
+- any `CNAME` for `autoconfig` / `autodiscover` / webmail
+Zoho's authoritative list is in **Zoho Mail Admin → Domains → your domain → DNS**.
+
+**Migration:**
+1. Add the domain at Cloudflare (Free plan). It scans and imports most records.
+2. **Verify every MX and every mail TXT/CNAME matches Zoho exactly.** Add any it missed.
+3. Set all mail records (MX, SPF, DKIM, DMARC, autodiscover) to **DNS only (grey cloud)** —
+   never proxied. Cloudflare's proxy is HTTP-only and would break mail.
+4. Web records (the `A`/`CNAME` for the sites + `admin`/`tc`) may be **Proxied (orange)**
+   for the WAF/security benefit — or left grey to start.
+5. At the **registrar** (where the domain is registered — likely Hostinger): change the
+   nameservers to the two Cloudflare gives you.
+6. Propagation: ~1–24h. Old and new DNS both answer during this window; because both carry
+   identical MX, there is **no mail gap**.
+7. After propagation: send + receive a test mail; run an SPF/DKIM/DMARC check
+   (mxtoolbox.com or mail-tester.com).
+8. Keep the Hostinger DNS zone intact for ~48h as rollback (switch nameservers back if needed).
+
+Your reasoning is sound: the security upside is real, and mail is safe **as long as the
+MX + SPF/DKIM/DMARC records are copied faithfully and kept unproxied.** That's the whole risk.
+
+## 7. Still to wire (client-provided)
 
 | Item | Where |
 |---|---|
-| Per-site **Apps Script Web App URLs** (new Google Sheets, one per marketing site) | `.env` / Vercel `APPS_SCRIPT_URL_DELEADINT` … `_DLI_EDUCATION`. Until set, leads are still saved to Postgres; only the Sheet mirror + notification email is skipped. |
-| **Deploy hooks** (created in step 2.7) | `.env` / Vercel `DEPLOY_HOOK_*` |
+| Per-site **Apps Script URLs** (§5) | `.env` / Vercel `APPS_SCRIPT_URL_*` |
+| **Deploy hooks** (created in §2.7) | `.env` / Vercel `DEPLOY_HOOK_*` |
+| **`CRON_SECRET`** for the Vercel keep-alive | dashboard Vercel env |
 | **Cloudflare R2** (optional, later) | set `R2_*`, run `pnpm --filter @delead/db migrate:storage`, flip `STORAGE_PROVIDER=r2`, redeploy. No code changes. |
-| Real **starter blog posts** — 3 are seeded from brochure facts, flagged for edit | dashboard → De' Lead International → Journal |
+| Real **starter blog posts** — 3 seeded from brochure facts, flagged for edit | dashboard → De' Lead International → Journal |
 | **OG images** (`/og.jpg` per site) | drop into each `apps/<name>/public/` |
 
-## 6. Local dev
+## 8. Local dev
 
 ```bash
 pnpm install
-pnpm --filter @delead/dashboard dev        # http://localhost:3100
-pnpm --filter @delead/site-deleadint dev    # http://localhost:4321
-pnpm --filter @delead/site-tinkerchamps dev # http://localhost:3200
+pnpm dev                                     # all 7 apps (Turborepo)
+# or individually:
+pnpm --filter @delead/dashboard dev          # http://localhost:3100
+pnpm --filter @delead/site-deleadint dev     # http://localhost:4321
+pnpm --filter @delead/site-walk2lead dev     # http://localhost:4322
+pnpm --filter @delead/site-makerchamps dev   # http://localhost:4323
+pnpm --filter @delead/site-corporate dev     # http://localhost:4324
+pnpm --filter @delead/site-dli-education dev  # http://localhost:4325
+pnpm --filter @delead/site-tinkerchamps dev  # http://localhost:3200
 ```
