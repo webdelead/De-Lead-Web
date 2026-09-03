@@ -1,6 +1,6 @@
 import "server-only";
 import {
-  createDb,
+  getDb,
   tcEvents,
   galleryImages,
   whatsappReviews,
@@ -12,9 +12,8 @@ import {
   inArray,
 } from "@delead/db";
 
-const { db } = createDb(process.env.DATABASE_URL!);
-
 async function urlMap(ids: (string | null)[]) {
+  const db = getDb();
   const clean = [...new Set(ids.filter(Boolean) as string[])];
   if (!clean.length) return new Map<string, string>();
   const rows = await db.select().from(assets).where(inArray(assets.id, clean));
@@ -30,6 +29,7 @@ async function urlMap(ids: (string | null)[]) {
 }
 
 export async function getEvents(activeOnly: boolean) {
+  const db = getDb();
   const rows = await db
     .select()
     .from(tcEvents)
@@ -55,6 +55,7 @@ export async function getEvents(activeOnly: boolean) {
 }
 
 export async function getGallery() {
+  const db = getDb();
   const rows = await db
     .select()
     .from(galleryImages)
@@ -65,6 +66,7 @@ export async function getGallery() {
 }
 
 export async function getReviews() {
+  const db = getDb();
   const rows = await db
     .select()
     .from(whatsappReviews)

@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import { FaWhatsapp, FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { client, urlFor } from "../../sanity/lib/client";
 
-interface ReviewImage {
+export interface ReviewImage {
   id: string;
   url: string;
   title?: string;
@@ -24,34 +23,13 @@ const mockReviews: ReviewImage[] = [
   },
 ];
 
-export default function WhatsappReviewsSection() {
-  const [reviews, setReviews] = useState<ReviewImage[]>([]);
-  const [loading, setLoading] = useState(true);
-
+export default function WhatsappReviewsSection({
+  reviews: propReviews = [],
+}: {
+  reviews?: ReviewImage[];
+}) {
+  const reviews = propReviews.length > 0 ? propReviews : mockReviews;
   const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    client
-      .fetch(`*[_type == "whatsappReview"] | order(_createdAt desc)`)
-      .then((data) => {
-        if (data && data.length > 0) {
-          const formatted = data.map((item: any) => ({
-            id: item._id,
-            url: urlFor(item.screenshot).url(),
-            title: item.title,
-          }));
-          setReviews(formatted);
-        } else {
-          setReviews(mockReviews);
-        }
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch WhatsApp reviews:", err);
-        setReviews(mockReviews);
-        setLoading(false);
-      });
-  }, []);
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
@@ -66,14 +44,6 @@ export default function WhatsappReviewsSection() {
       });
     }
   };
-
-  if (loading) {
-    return (
-      <section className="w-full py-16 flex justify-center items-center h-60">
-        <div className="animate-spin h-8 w-8 border-4 border-[#FBC333] border-t-transparent rounded-full" />
-      </section>
-    );
-  }
 
   return (
     <section id="whatsapp-reviews" className="py-16 md:py-24 w-full relative overflow-hidden bg-transparent">

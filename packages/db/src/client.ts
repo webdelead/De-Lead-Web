@@ -21,13 +21,18 @@ export function createDb(url: string, opts?: { max?: number }) {
   return { db, sql };
 }
 
-let _db: DB | undefined;
+/**
+ * Shared singleton for app runtime (Next server). Uses DATABASE_URL (pooler).
+ * Cached on `globalThis` so `next dev` HMR reloads reuse one connection pool
+ * instead of leaking a new one on every edit (which exhausts the Supabase
+ * pooler and makes queries hang).
+ */
+const _g = globalThis as unknown as { __deleadDb?: DB };
 
-/** Shared singleton for app runtime (Next server). Uses DATABASE_URL (pooler). */
 export function getDb(): DB {
-  if (_db) return _db;
+  if (_g.__deleadDb) return _g.__deleadDb;
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set");
-  _db = createDb(url, { max: 1 }).db;
-  return _db;
+  _g.__deleadDb = createDb(url, { max: 1 }).db;
+  return _g.__deleadDb;
 }

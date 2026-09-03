@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import {
   FaCalendarAlt,
@@ -18,7 +18,20 @@ import { useBookingModal } from "../context/ModalContext";
 
 import Tag from "./Tag";
 import StatCard from "./StatCard";
-import { client, urlFor } from "../../sanity/lib/client";
+
+export type TcEvent = {
+  _id: string;
+  title: string;
+  logo: string;
+  description: string;
+  date: string;
+  location: string;
+  audience?: string;
+  duration?: string;
+  inclusion?: string;
+  isFeatured?: boolean;
+  stats?: { icon: string; title: string; text: string }[];
+};
 
 /* ─── animation styles injected once ─────────────────────────────────────── */
 const ANIMATION_CSS = `
@@ -43,28 +56,11 @@ const ANIMATION_CSS = `
   }
 `;
 
-export default function EventSection() {
+export default function EventSection({ events = [] }: { events?: TcEvent[] }) {
   const sectionRef = useRef<HTMLElement>(null);
   const { openBookingModal } = useBookingModal();
-  const [events, setEvents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    client
-      .fetch(`*[_type == "event"] | order(order asc, date desc)`)
-      .then((data) => {
-        setEvents(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch events from Sanity:", err);
-        setLoading(false);
-      });
-  }, []);
-
-  useEffect(() => {
-    if (loading) return;
-
     if (!document.getElementById("__event-anim-styles")) {
       const style = document.createElement("style");
       style.id = "__event-anim-styles";
@@ -108,21 +104,10 @@ export default function EventSection() {
         observer.disconnect();
       }
     };
-  }, [loading, events]);
-
-  if (loading) {
-    return (
-      <section id="events" className="w-full py-20 px-6 flex justify-center items-center min-h-[400px]">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin h-10 w-10 border-4 border-[#FBC333] border-t-transparent rounded-full" />
-          <p className="text-white/60 text-sm tracking-wider font-semibold uppercase">Loading Programs...</p>
-        </div>
-      </section>
-    );
-  }
+  }, [events]);
 
   if (events.length === 0) {
-    return null; // Don't show the events section if there are no events in Sanity
+    return null; // Don't show the events section if there are no events
   }
 
   return (
@@ -156,7 +141,7 @@ export default function EventSection() {
               >
                 {event.logo ? (
                   <Image
-                    src={urlFor(event.logo).url()}
+                    src={event.logo}
                     alt={event.title}
                     width={450}
                     height={300}

@@ -2,6 +2,11 @@ import dynamic from "next/dynamic";
 import HeroSection from "../components/HeroSection";
 import ScrollColorBackground from "../components/ScrollColorBackground";
 import VideoSection from "../components/Videosection";
+import { getEvents, getGallery, getReviews } from "../lib/tc-db";
+
+// ISR: cache the rendered page for an hour; the dashboard's "Publish to site"
+// button hits /api/revalidate for an instant refresh. No per-visitor DB hit.
+export const revalidate = 3600;
 
 // Dynamically import below-the-fold Client Components to reduce initial JS payload
 const StatsSection = dynamic(() => import("../components/StatsSection"));
@@ -21,7 +26,13 @@ const ScrollJourneySection = dynamic(
 const GallerySection = dynamic(() => import("../components/GallerySection"));
 const FAQSection = dynamic(() => import("../components/FAQSection"));
 
-export default function Home() {
+export default async function Home() {
+  const [events, gallery, reviews] = await Promise.all([
+    getEvents(false),
+    getGallery(),
+    getReviews(),
+  ]);
+
   return (
     <main className="w-full flex items-center justify-center flex-col">
       <ScrollColorBackground>
@@ -30,12 +41,14 @@ export default function Home() {
         <StatsSection />
         <AboutSection />
         <MarqueeSection />
-        <EventsSection />
+        <EventsSection events={events} />
         <TestimonialsSection />
-        <WhatsappReviewsSection />
+        <WhatsappReviewsSection
+          reviews={reviews.map((r) => ({ id: r._id, url: r.screenshot, title: r.title }))}
+        />
         <LearningSection />
         <ScrollJourneySection />
-        <GallerySection />
+        <GallerySection items={gallery.map((g) => ({ image: g.image }))} />
         <FAQSection />
       </ScrollColorBackground>
     </main>
