@@ -86,59 +86,75 @@ async function up(localRel: string, bucket: string, key: string, vertical: strin
    WALK2LEAD — projects, testimonials, gallery, press
    ============================================================ */
 
-const W2L_PROJECTS: [string, string, string, string][] = [
+/* [title, category, imgPath, description, imgAlt] — strings must stay
+ * byte-identical to the approved static markup (apps/walk2lead S10). */
+const W2L_PROJECTS: [string, string, string, string, string][] = [
   ["Waste-Collecting River Boat", "Environment", "projects/expo-project-3.png",
-   "An Arduino-based boat using ultrasonic sensors to detect floating waste, DC-motor propellers and a front-mounted collection net — a low-cost answer to river and sea cleaning."],
+   "An Arduino-based boat using ultrasonic sensors to detect floating waste, DC-motor propellers and a front-mounted collection net, a low-cost answer to river and sea cleaning.",
+   "Students presenting the Waste-Collecting River Boat"],
   ["Medicine Delivery Robot", "Healthcare", "projects/expo-robot.jpg",
-   "An autonomous assistant designed to support patients and reduce waiting time inside healthcare facilities."],
+   "An autonomous assistant designed to support patients and reduce waiting time inside healthcare facilities.",
+   "Students presenting the Medicine Delivery Robot"],
   ["Urine Bag Fill Alert", "Healthcare", "projects/kids-present.jpg",
-   "Automatically monitors urine bag levels and alerts hospital staff when full, for timely intervention and better hygiene."],
+   "Automatically monitors urine bag levels and alerts hospital staff when full, for timely intervention, better hygiene, real patient impact.",
+   "Students demonstrating the Urine Bag Fill Alert"],
   ["Three-Wire Fault Line Detector", "Electrical Safety", "projects/three-wire-detector.jpg",
-   "An Arduino Uno with push buttons and an LCD screen that gives real-time, safe status alerts for each line in a three-wire electrical system."],
+   "An Arduino Uno with push buttons and an LCD screen that gives real-time, safe status alerts for each line in a three-wire electrical system.",
+   "Students presenting the Three-Wire Fault Line Detector"],
   ["Life Guard", "Flood Safety", "projects/expo-lifeguard.jpg",
-   "An automatic hydraulic lift that detects rising floodwater and elevates living spaces and beds to protect occupants — an affordable add-on for homes in flood-prone areas."],
+   "An automatic hydraulic lift that detects rising floodwater and elevates living spaces and beds to protect occupants — an affordable add-on for homes in flood-prone areas.",
+   "Students presenting the Life Guard hydraulic house project"],
   ["Money Eating Monster", "Awareness", "projects/money-eating-monster.jpg",
-   "An interactive smart piggy bank: a sensor detects each coin and a servo makes the monster “eat” it, turning saving into a game for children."],
+   "An interactive smart piggy bank: a sensor detects each coin and a servo mechanism makes the monster \"eat\" it, turning saving into a game for children.",
+   "Students presenting the Money Eating Monster smart piggy bank"],
   ["Gas Stove Automation System", "Home Safety", "projects/gas-stove.jpg",
-   "A servo-controlled gas knob with ultrasonic boil detection and a smoke sensor that automatically shuts off the stove when unsafe conditions are detected."],
+   "A servo-controlled gas knob with ultrasonic boil detection and a smoke sensor that automatically shuts off the stove when unsafe conditions are detected.",
+   "Students presenting the Gas Stove Automation System"],
   ["Smart Gas Detection System", "Home Safety", "projects/smart-gas-detection.jpg",
-   "An MQ-2 sensor detects gas leaks and automatically opens windows, cuts power via relay, and activates an exhaust fan to clear the space."],
+   "An MQ-2 sensor detects gas leaks and automatically opens windows, cuts power via relay, and activates an exhaust fan to clear the space.",
+   "Students presenting the Smart Gas Detection System"],
   ["Aqua Guard", "Marine Safety", "projects/aqua-guard.jpg",
-   "Real-time passenger counter and weight monitor for small boats; if tilt is detected, motors pump water to the opposite side to restore balance and prevent capsizing."],
+   "Real-time passenger counter and weight monitor for small boats; if tilt is detected, motors pump water to the opposite side to restore balance and prevent capsizing.",
+   "Students presenting Aqua Guard"],
   ["Air Quality Checker", "Environment", "projects/air-quality-checker.jpg",
-   "An MQ135 sensor detects CO₂ and harmful gases in real time, giving homes and schools an affordable way to monitor air quality and protect health."],
+   "An MQ135 sensor detects CO₂ and harmful gases in real time, giving homes and schools an affordable way to monitor air quality and protect health.",
+   "Students presenting the Air Quality Checker"],
   ["Smart Farming Robot", "Agriculture", "projects/smart-farming-robot.jpg",
-   "An automated assistant for crop monitoring and irrigation, reducing manual labour and continuous supervision for small-plot farming."],
+   "An automated assistant for crop monitoring and irrigation, reducing manual labour and continuous supervision for small-plot farming.",
+   "Students presenting the Smart Farming Robot"],
   ["AutoShine", "Hygiene", "projects/autoshine.jpg",
-   "Ultrasonic sensors detect footwear at an entrance and activate 360-degree rotating brushes for touchless, automatic shoe cleaning."],
+   "Ultrasonic sensors detect footwear at an entrance and activate 360-degree rotating brushes for touchless, automatic shoe cleaning.",
+   "Students presenting AutoShine"],
   ["Automatic Seeder and Tiller", "Agriculture", "projects/automatic-seeder.jpg",
-   "A battery-powered robot that simultaneously tills soil and sows seeds with uniform spacing, cutting labour costs for small-scale farmers."],
+   "A battery-powered robot that simultaneously tills soil and sows seeds with uniform spacing, cutting labour costs for small-scale farmers.",
+   "Students presenting the Automatic Seeder and Tiller"],
 ];
 
-// [quote, name, role, avatarFile|null, sourceNote]
-const W2L_TESTIMONIALS: [string, string, string, string | null, string][] = [
+/* [quote, name, role, avatarFile|null, sourceNote, photoStyle] — first two are
+ * the "feature" quotes; strings byte-identical to static markup (S12). */
+const W2L_TESTIMONIALS: [string, string, string, string | null, string, string][] = [
   ["The Walk2Lead Robotics TechQuest reflects our vision of empowering young minds with the skills needed for tomorrow's world. By bringing structured robotics and technology training to government school students, we are ensuring that innovation and opportunity reach those who need it most. We are proud to support a project that is shaping a generation of thinkers and leaders.",
-   "Mr. V. Noushad", "Managing Director, Walkaroo Foundation", "people/v-noushad.png", "feature"],
-  ["Walk2Lead Robotics TechQuest is an exciting and inspiring learning initiative created to introduce students of government schools, especially those in rural and coastal areas, to the world of robotics and technology. It offers a 52-hour, hands-on learning journey for students of Classes 6 and 7, filled with fun activities, simple coding tasks, and guided robotics projects — nurturing curiosity and problem-solving skills so young learners can imagine boldly, explore freely, and grow with confidence.",
-   "Dr. Sumitra Binu", "Walkaroo Foundation", "people/sumitra.png", "feature"],
-  ["I was initially skeptical, wondering if students this young could both comprehend the theory and deliver a functional project. My own students proved my doubts wrong by successfully completing their project and taking the top prize at the district expo.",
-   "Mr. Abdul Rahoof", "School Coordinator, GUPS Veemboor", "people/abdul-rahoof.png", ""],
+   "Mr. V. Noushad", "Managing Director, Walkaroo Foundation", "people/v-noushad.png", "feature", ""],
+  ["Walk2Lead Robotics TechQuest is an exciting and inspiring learning initiative created to introduce students of government schools, especially those in rural and coastal areas, to the world of robotics and technology. This project aims to bridge the learning gap by bringing high-quality STEM education to children who often have limited access to such opportunities. The programme offers a 52-hour, hands-on learning journey for students of Classes 6 and 7, filled with fun activities, simple coding tasks, and guided robotics projects. By nurturing curiosity and problem-solving skills at a young age, this project hopes to empower young learners to imagine boldly, explore freely, and grow with confidence in a rapidly changing world.",
+   "Dr. Sumitra Binu", "Walkaroo Foundation", "people/sumitra.png", "feature", "object-position: 50% 10%"],
+  ["I was initially skeptical, wondering if students this young could both comprehend the theory and deliver a functional project. Instead of just answering my question to the trainers, my own students proved my doubts wrong by successfully completing their project and taking the top prize at the district expo.",
+   "Mr. Abdul Rahoof", "School Coordinator, GUPS Veemboor", "people/abdul-rahoof.png", "", ""],
   ["The Walk2Lead programme has been a watershed moment for our government schools. The collaboration successfully integrated high-quality AI training into our system, proving we can prepare every child for the digital future when committed partners join hands.",
-   "Dr. Babu Varghese", "Principal, DIET Malappuram", "people/babu-varghese.png", ""],
+   "Dr. Babu Varghese", "Principal, DIET Malappuram", "people/babu-varghese.png", "", ""],
   ["I was thrilled to help launch this initiative. The hands-on, engaging approach to robotics immediately sparked genuine curiosity and confidence among the kids. Walk2Lead lays a strong, practical foundation for innovation in our community.",
-   "Dr. Abdunnasar U K", "Principal, DIET Kozhikode", "people/abdunnasar-uk.png", ""],
+   "Dr. Abdunnasar U K", "Principal, DIET Kozhikode", "people/abdunnasar-uk.png", "", ""],
   ["The training was exceptional due to its scientific planning and high standards. It gave students from ordinary government schools a rare, international-level training opportunity, filling the school with pride.",
-   "Mrs. S. Bindu", "Headmistress, Thavanur KM GUPS", "people/s-bindu.png", ""],
+   "Mrs. S. Bindu", "Headmistress, Thavanur KM GUPS", "people/s-bindu.png", "", ""],
   ["Out of 400 children, 30, including mine, were selected for robotics training. The three-month training quickly led to a noticeable, positive change in the children, boosting their interest and confidence. My children presented their project well in the district competition.",
-   "A Proud Parent", "Phase 2, Malappuram", null, ""],
+   "A Proud Parent", "Phase 2, Malappuram", null, "", ""],
   ["Out of 400 children, 30 were selected for robotics training sponsored by Walkaroo, De' Lead International, and DIET. The three-month journey brought a noticeable, positive change, boosting their interest and confidence. My students presented their project well at the district competition — a very useful, joy-filled, and transformative experience.",
-   "Mrs. Shahina", "HM, GUPS Mundothuparamba", "people/shahina.png", ""],
+   "Mrs. Shahina", "HM, GUPS Mundothuparamba", "people/shahina.png", "", ""],
   ["Watching such young students excel in such a technological area is itself impressive. Happy to be a part of it.",
-   "Mrs. Nisha Subramaniam", "Principal, SSVM International", "people/nisha-subramaniam.png", ""],
+   "Mrs. Nisha Subramaniam", "Principal, SSVM International", "people/nisha-subramaniam.png", "", ""],
   ["The students clearly understand the project, the concepts, and how to present in a pitch-level manner. It's truly an admirable outcome of this programme.",
-   "Mr. Ram Kamal Manoj", "Managing Trustee, TechTop · Advisor, Dept. of School Education, Govt. of Andhra Pradesh", "people/ram-kamal-manoj.png", ""],
+   "Mr. Ram Kamal Manoj", "Managing Trustee, TechTop · Advisor, Dept. of School Education, Govt. of Andhra Pradesh", "people/ram-kamal-manoj.png", "", ""],
   ["The presentations and projects were on par with a college-level final project. The kind of training received by the students is commendable — and this age group works remarkably well in learning and understanding concepts. These are some smart kids.",
-   "Mr. Harikrishnan M", "Asst. Professor, IEDC Nodal Officer", "people/harikrishnan-m.png", ""],
+   "Mr. Harikrishnan M", "Asst. Professor, IEDC Nodal Officer", "people/harikrishnan-m.png", "", ""],
 ];
 
 const W2L_GALLERY: [string, string][] = [
@@ -247,8 +263,8 @@ async function main() {
   // ---- Walk2Lead projects ----
   await db.delete(w2lProjects);
   for (let i = 0; i < W2L_PROJECTS.length; i++) {
-    const [title, category, img, description] = W2L_PROJECTS[i]!;
-    const assetId = await up(`walk2lead/public/assets/${img}`, "walk2lead", `projects/${img.split("/").pop()}`, "walk2lead", title);
+    const [title, category, img, description, imgAlt] = W2L_PROJECTS[i]!;
+    const assetId = await up(`walk2lead/public/assets/${img}`, "walk2lead", `projects/${img.split("/").pop()}`, "walk2lead", imgAlt);
     await db.insert(w2lProjects).values({ title, category, description, assetId, sortOrder: i });
   }
   console.log(`✔ w2l_projects: ${W2L_PROJECTS.length}`);
