@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "De' Lead International | Learn, Develop & Lead",
   description: DESC,
   alternates: { canonical: "/" },
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: "/favicon.svg?v=2" },
   openGraph: {
     type: "website",
     siteName: "De' Lead International",

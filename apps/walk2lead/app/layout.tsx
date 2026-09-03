@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Walk2Lead Robotics Tech Quest | Implemented by De' Lead International",
   description: DESC,
   alternates: { canonical: "/" },
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: "/favicon.svg?v=2" },
   openGraph: {
     type: "website",
     siteName: "Walk2Lead",
