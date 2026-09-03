@@ -1,0 +1,12 @@
+import type { NextConfig } from "next";
+import { config } from "dotenv";
+import { resolve } from "node:path";
+config({ path: resolve(process.cwd(), "../../.env") });
+const nextConfig: NextConfig = {
+  transpilePackages: ["@delead/db", "@delead/ui", "@delead/brand"],
+  serverExternalPackages: ["postgres"],
+  eslint: { ignoreDuringBuilds: true },
+  output: "standalone",
+  images: { remotePatterns: [{ protocol: "https", hostname: "*.supabase.co" }] },
+};
+export default nextConfig;
