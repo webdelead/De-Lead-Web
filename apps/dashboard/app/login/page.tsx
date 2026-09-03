@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
 import { LoginForm } from "@/components/login-form";
@@ -27,9 +26,8 @@ export default async function LoginPage({
           }}
         />
         <div className="relative flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/95">
-            <Image src="/delead-mark.png" alt="" width={26} height={26} />
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/delead-mark.svg" alt="" className="h-10 w-10" />
           <span className="text-lg font-semibold tracking-tight">De&apos; Lead International</span>
         </div>
         <div className="relative max-w-md space-y-4">
@@ -51,7 +49,8 @@ export default async function LoginPage({
         <div className="w-full max-w-sm">
           <div className="mb-8 lg:hidden">
             <div className="flex items-center gap-2.5">
-              <Image src="/delead-mark.png" alt="" width={28} height={28} className="rounded-md" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/delead-mark.svg" alt="" className="h-7 w-7" />
               <span className="text-lg font-semibold tracking-tight">De&apos; Lead Admin</span>
             </div>
           </div>

@@ -30,7 +30,7 @@ export function Topbar({ name, email, role }: { name: string; email: string; rol
     <header className="flex h-14 items-center justify-between border-b bg-background/80 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <div className="flex items-center gap-2 font-semibold tracking-tight md:hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/delead-mark.png" alt="" className="h-6 w-6 rounded-[5px]" />
+        <img src="/delead-mark.svg" alt="" className="h-6 w-6 rounded-[5px]" />
         <span>
           De&apos; Lead <span className="text-muted-foreground">Admin</span>
         </span>

@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { getSession } from "@/lib/authz";
 import { buildNav } from "@/lib/nav";
@@ -21,7 +20,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           href="/"
           className="flex items-center gap-2.5 border-b px-4 py-3.5 text-sm font-semibold tracking-tight"
         >
-          <Image src="/delead-mark.png" alt="" width={26} height={26} className="rounded-[6px]" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/delead-mark.svg" alt="" className="h-[26px] w-[26px]" />
           <span>
             De&apos; Lead <span className="text-muted-foreground">Admin</span>
           </span>
