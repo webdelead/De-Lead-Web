@@ -1,0 +1,298 @@
+---
+import Base from "../layouts/Base.astro";
+import SiteHeader from "@delead/ui/astro/SiteHeader.astro";
+import SiteFooter from "@delead/ui/astro/SiteFooter.astro";
+import LeadForm from "@delead/ui/astro/LeadForm.astro";
+import Marquee from "@delead/ui/astro/Marquee.astro";
+import Stat from "@delead/ui/astro/Stat.astro";
+import { VERTICAL_LIST, GOAL_FINDER } from "@delead/brand/verticals";
+import { getHubContent } from "../lib/content";
+
+const { testimonials, press, posts, stats, gallery } = await getHubContent();
+
+const navLinks = [
+  { label: "About", href: "#about" },
+  { label: "Ecosystem", href: "#ecosystem" },
+  { label: "Press", href: "#press" },
+  { label: "Voices", href: "#voices" },
+  { label: "Contact", href: "#contact" },
+];
+
+const partners = [
+  "DP World", "Kayzan Group", "RAG Business Hub", "Al Ahalia Group",
+  "First Emirates", "NIT Calicut", "Walkaroo Foundation",
+];
+---
+<Base
+  title="De' Lead International | Learn, Develop & Lead"
+  description="An education-innovation ecosystem running Corporate Training, TinkerChamps, MakerChamps, DLI Education, Goal Finder and the DLI Foundation (Walk2Lead CSR) across India and the UAE."
+>
+  <SiteHeader
+    current="deleadint"
+    logoLight="/assets/logo/logo-delead-white.png"
+    logoDark="/assets/logo/logo-delead-dark.png"
+    links={navLinks}
+    ctaLabel="Partner with us"
+    ctaHref="#contact"
+  />
+
+  <!-- HERO -->
+  <section
+    id="top"
+    class="relative flex min-h-[92svh] flex-col justify-center overflow-hidden bg-[linear-gradient(155deg,#750649_0%,#4a0330_45%,#2e0112_100%)] px-6 pb-16 pt-32 text-white lg:min-h-screen"
+  >
+    <div class="mx-auto w-full max-w-[1240px]">
+      <p class="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-white/70">
+        Education · Technology · Leadership
+      </p>
+      <h1 class="max-w-[16ch] font-[var(--font-display)] text-[clamp(2.8rem,7vw,5.5rem)] font-semibold leading-[1.04] tracking-tight">
+        Where learning is <em class="text-[#f3c8dc]">lived</em>, not lectured.
+      </h1>
+      <p class="mt-6 max-w-[52ch] text-lg text-white/80">
+        One ecosystem across India and the UAE — camps, CSR programmes, corporate
+        tracks and tech courses — all built on the same idea: people learn by doing.
+      </p>
+      <div class="mt-9 flex flex-wrap gap-3">
+        <a href="#ecosystem" class="ui-btn ui-btn--cream">See the ecosystem</a>
+        <a href="#contact" class="ui-btn ui-btn--ghost">Talk to us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STAT BAND -->
+  <section class="bg-[var(--color-ink)]">
+    <div class="mx-auto grid max-w-[1240px] grid-cols-3">
+      {stats.map((s) => (
+        <div class="border-l border-white/10 px-4 py-6 first:border-l-0 sm:px-8 sm:py-9">
+          <Stat value={s.value} suffix={s.suffix} label={s.label} onDark />
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- PARTNERS MARQUEE -->
+  <section class="border-b border-[var(--color-line)] bg-[var(--color-cream)] py-12">
+    <p class="mb-6 text-center text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-ink-soft)]">
+      Schools, foundations and companies we've worked with
+    </p>
+    <Marquee>
+      {[...partners, ...partners].map((p, i) => (
+        <span
+          class="shrink-0 whitespace-nowrap font-[var(--font-display)] text-lg text-[var(--color-ink-soft)]/70"
+          aria-hidden={i >= partners.length ? "true" : undefined}
+        >{p}</span>
+      ))}
+    </Marquee>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="bg-white px-6 py-24">
+    <div class="mx-auto max-w-[1240px]">
+      <div class="mx-auto max-w-[760px] text-center" data-reveal>
+        <span class="ui-eyebrow">About us</span>
+        <h2 class="mt-3 font-[var(--font-display)] text-[clamp(2rem,3.6vw,3rem)] font-semibold tracking-tight">
+          An education segment, reforming itself
+        </h2>
+        <p class="mt-4 text-lg text-[var(--color-ink-soft)]">
+          Founded in 2022, De' Lead International moves beyond traditional classrooms
+          with technology-driven programmes, career mentoring, leadership development
+          and corporate training — delivered hands-on, online and offline, across two
+          countries.
+        </p>
+      </div>
+      <div class="mt-12 grid gap-5 md:grid-cols-2" data-reveal="stagger">
+        <div class="rounded-[22px] bg-[var(--color-magenta)] p-9 text-white">
+          <h3 class="font-[var(--font-display)] text-xl font-semibold">Our mission</h3>
+          <p class="mt-2 text-white/85">
+            Make learning experiential and future-ready — equipping students and
+            professionals with the technology, leadership and life skills a
+            fast-changing world actually asks for, not just a syllabus.
+          </p>
+        </div>
+        <div class="rounded-[22px] bg-[var(--color-magenta-deep)] p-9 text-white">
+          <h3 class="font-[var(--font-display)] text-xl font-semibold">Our vision</h3>
+          <p class="mt-2 text-white/85">
+            Be the region's most trusted education-innovation partner, carrying one
+            hands-on philosophy from a single classroom in Kozhikode to camps, CSR
+            programmes and corporate tracks across India and the UAE.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ECOSYSTEM -->
+  <section id="ecosystem" class="bg-[var(--color-cream-2)] px-6 py-24">
+    <div class="mx-auto max-w-[1240px]">
+      <div class="max-w-[640px]" data-reveal>
+        <span class="ui-eyebrow">The ecosystem</span>
+        <h2 class="mt-3 font-[var(--font-display)] text-[clamp(2rem,4vw,3.2rem)] font-semibold tracking-tight">
+          Six verticals, one idea
+        </h2>
+        <p class="mt-4 text-[var(--color-ink-soft)]">
+          Each wears its own name, logo and colours. All of them exist because we
+          think people learn by doing.
+        </p>
+      </div>
+
+      <div class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-reveal="stagger">
+        {VERTICAL_LIST.filter((v) => v.slug !== "deleadint").map((v) => (
+          <a
+            href={v.host}
+            class="group flex flex-col justify-between rounded-2xl border border-[var(--color-line)] bg-white p-7 transition-transform hover:-translate-y-1"
+            style={`--card-accent:${v.accent}`}
+          >
+            <div>
+              <span
+                class="inline-block h-2 w-10 rounded-full"
+                style="background:var(--card-accent)"
+              ></span>
+              <h3 class="mt-4 font-[var(--font-display)] text-xl font-semibold">{v.name}</h3>
+            </div>
+            <span class="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[var(--color-ink-soft)] group-hover:text-[var(--color-ink)]">
+              Visit site <span aria-hidden="true">→</span>
+            </span>
+          </a>
+        ))}
+        <a
+          href={GOAL_FINDER.url}
+          target="_blank"
+          rel="noopener"
+          class="group flex flex-col justify-between rounded-2xl border border-[var(--color-line)] bg-white p-7 transition-transform hover:-translate-y-1"
+        >
+          <div>
+            <span class="inline-block h-2 w-10 rounded-full" style="background:#0145d5"></span>
+            <h3 class="mt-4 font-[var(--font-display)] text-xl font-semibold">{GOAL_FINDER.name}</h3>
+          </div>
+          <span class="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-[var(--color-ink-soft)] group-hover:text-[var(--color-ink)]">
+            Visit site <span aria-hidden="true">↗</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  {press.length > 0 && (
+    <section id="press" class="bg-white px-6 py-24">
+      <div class="mx-auto max-w-[1240px]">
+        <div class="max-w-[640px]" data-reveal>
+          <span class="ui-eyebrow">Achievements &amp; press</span>
+          <h2 class="mt-3 font-[var(--font-display)] text-[clamp(1.9rem,3.4vw,2.8rem)] font-semibold tracking-tight">
+            Recognised beyond the classroom
+          </h2>
+        </div>
+        <div class="mt-10 flex gap-4 overflow-x-auto pb-3" data-reveal>
+          {press.map((p) => (
+            <img
+              src={p._assets.assetId}
+              alt={p.title || "Press coverage"}
+              loading="lazy"
+              class="h-64 w-auto shrink-0 rounded-xl border border-[var(--color-line)] object-cover shadow-sm"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- VOICES -->
+  {testimonials.length > 0 && (
+    <section id="voices" class="bg-[var(--color-ink)] px-6 py-24 text-white">
+      <div class="mx-auto grid max-w-[1240px] gap-12 lg:grid-cols-[0.8fr_1.2fr]">
+        <div data-reveal>
+          <span class="ui-eyebrow" data-on-dark>What people notice</span>
+          <h2 class="mt-3 font-[var(--font-display)] text-[clamp(1.9rem,3.4vw,2.8rem)] font-semibold tracking-tight">
+            Not our words, theirs
+          </h2>
+          <p class="mt-4 max-w-[34ch] text-white/70">
+            Voices from the schools, parents and companies we've worked with.
+          </p>
+        </div>
+        <div class="grid gap-5" data-reveal="stagger">
+          {testimonials.map((t) => (
+            <figure class="rounded-2xl bg-white/5 p-8">
+              <blockquote class="font-[var(--font-serif)] text-xl italic leading-relaxed">
+                &ldquo;{t.quote}&rdquo;
+              </blockquote>
+              <figcaption class="mt-5 text-sm">
+                <span class="font-semibold">{t.authorName}</span>
+                <span class="text-white/60"> · {t.authorRole}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- JOURNAL -->
+  {posts.length > 0 && (
+    <section id="journal" class="bg-[var(--color-cream-2)] px-6 py-24">
+      <div class="mx-auto max-w-[1240px]">
+        <div class="max-w-[640px]" data-reveal>
+          <span class="ui-eyebrow">The Journal</span>
+          <h2 class="mt-3 font-[var(--font-display)] text-[clamp(1.9rem,3.4vw,2.8rem)] font-semibold tracking-tight">
+            Field notes from the ecosystem
+          </h2>
+        </div>
+        <div class="mt-10 grid gap-6 md:grid-cols-3" data-reveal="stagger">
+          {posts.map((p) => (
+            <a href={`/journal/${p.slug}`} class="group flex flex-col">
+              {p._assets.coverAssetId && (
+                <img src={p._assets.coverAssetId} alt="" loading="lazy" class="mb-4 aspect-[4/3] w-full rounded-xl object-cover" />
+              )}
+              <span class="text-xs font-bold uppercase tracking-[0.06em] text-[var(--color-magenta)]">// {p.tag}</span>
+              <h3 class="mt-2 font-[var(--font-serif)] text-xl font-bold leading-snug">{p.title}</h3>
+              <p class="mt-2 text-sm text-[var(--color-ink-soft)]">{p.excerpt}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- CONTACT -->
+  <section id="contact" class="bg-white px-6 py-24">
+    <div class="mx-auto grid max-w-[1240px] gap-12 lg:grid-cols-2">
+      <div data-reveal>
+        <span class="ui-eyebrow">Get in touch</span>
+        <h2 class="mt-3 font-[var(--font-display)] text-[clamp(1.9rem,3.4vw,2.8rem)] font-semibold tracking-tight">
+          Tell us what you're building
+        </h2>
+        <p class="mt-4 max-w-[46ch] text-[var(--color-ink-soft)]">
+          A school, a CSR budget, a team offsite, or a career decision — tell us the
+          vertical and we'll get back within a couple of working days.
+        </p>
+      </div>
+      <div data-reveal>
+        <LeadForm
+          source="deleadint"
+          interests={[
+            "Corporate Training",
+            "TinkerChamps",
+            "MakerChamps",
+            "DLI Education",
+            "Goal Finder",
+            "DLI Foundation · Walk2Lead",
+            "Something else",
+          ]}
+        />
+      </div>
+    </div>
+  </section>
+
+  <SiteFooter
+    columns={[
+      {
+        title: "Company",
+        links: [
+          { label: "About", href: "#about" },
+          { label: "Ecosystem", href: "#ecosystem" },
+          { label: "Press", href: "#press" },
+          { label: "Journal", href: "#journal" },
+        ],
+      },
+    ]}
+  />
+</Base>

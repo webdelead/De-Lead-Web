@@ -1,0 +1,28 @@
+{
+  "name": "@delead/site-deleadint",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev --port 4321",
+    "build": "astro build",
+    "preview": "astro preview",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "@delead/brand": "workspace:*",
+    "@delead/db": "workspace:*",
+    "@delead/ui": "workspace:*",
+    "@fontsource-variable/inter": "^5.1.1",
+    "@fontsource/caveat": "^5.1.1",
+    "@fontsource/instrument-sans": "^5.1.1",
+    "@fontsource/lora": "^5.1.1",
+    "astro": "^5.14.1",
+    "marked": "^15.0.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "dotenv": "^16.4.7",
+    "tailwindcss": "^4.0.0"
+  }
+}

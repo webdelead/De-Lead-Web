@@ -1,0 +1,14 @@
+@import "tailwindcss";
+@import "@delead/brand/theme.css";
+@import "@delead/brand/reset.css";
+@import "@delead/ui/styles.css";
+
+@import "@fontsource/instrument-sans/400.css";
+@import "@fontsource/instrument-sans/600.css";
+@import "@fontsource/instrument-sans/700.css";
+@import "@fontsource-variable/inter";
+@import "@fontsource/lora/400-italic.css";
+@import "@fontsource/lora/600.css";
+@import "@fontsource/caveat/700.css";
+
+/* hub keeps the house magenta as its accent (default in theme.css) */
