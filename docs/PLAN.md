@@ -211,7 +211,7 @@ Fresh content appears when:
   `x-revalidate-secret: REVALIDATE_SECRET` → `revalidatePath("/", "layout")`.
 
 Forms: every site ships a lead `<form data-lead-source="...">` + `public/js/lead-capture.js`
-→ `POST {PUBLIC_LEAD_ENDPOINT}` (the
+→ `POST {NEXT_PUBLIC_LEAD_ENDPOINT}` (the
 dashboard's `/api/lead`). The endpoint:
 1. validates (zod) + rate-limits (IP hash, simple in-memory + `leads` recent check),
 2. `INSERT` into `leads`,
@@ -252,7 +252,7 @@ app, Root Directory `apps/<app>`) **or** a single **VPS** (`caddy` reverse-proxy
 `pm2`/systemd running each `node .next/standalone/.../server.js` on its own port). Same build
 either way: `pnpm install && pnpm --filter <app> build`.
 
-Per app, set env: `DATABASE_URL` (pooler), `PUBLIC_LEAD_ENDPOINT`, `SUPABASE_URL`,
+Per app, set env: `DATABASE_URL` (pooler), `NEXT_PUBLIC_LEAD_ENDPOINT`, `SUPABASE_URL`,
 `REVALIDATE_SECRET` (same value everywhere), and its own `SITE_URL_<KEY>`. The dashboard also
 needs the Supabase keys + `SITE_URL_*` for every vertical so Publish can reach them.
 

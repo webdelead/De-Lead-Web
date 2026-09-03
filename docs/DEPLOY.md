@@ -54,7 +54,7 @@ apps with `output: "standalone"` and on-demand ISR. **No build hooks, no Cloudfl
 3. **Environment variables** (Production + Preview):
    - `DATABASE_URL` = transaction pooler URI
    - `SUPABASE_URL` = `https://dslvxzcqcuqhfqqaohfb.supabase.co`
-   - `PUBLIC_LEAD_ENDPOINT` = `https://admin.deleadint.com/api/lead`
+   - `NEXT_PUBLIC_LEAD_ENDPOINT` = `https://admin.deleadint.com/api/lead`
    - `REVALIDATE_SECRET` = the shared secret (identical on every site + the dashboard)
    - `SITE_URL_<VERTICAL>` = its own canonical origin
 4. **Custom domains** → add the subdomain:
@@ -104,7 +104,7 @@ Two projects, same repo:
    `DATABASE_URL`, `DIRECT_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`,
    `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
    `STORAGE_PROVIDER=supabase`, `CRON_SECRET`,
-   `APPS_SCRIPT_URL_*` (all six), `PUBLIC_LEAD_ENDPOINT`,
+   `APPS_SCRIPT_URL_*` (all six), `NEXT_PUBLIC_LEAD_ENDPOINT`,
    `REVALIDATE_SECRET` (so "Publish" can reach the sites), `SITE_URL_*` (all seven).
    tinkerchamps needs `DATABASE_URL`, `SUPABASE_URL`, `APPS_SCRIPT_URL_TINKERCHAMPS`,
    `REVALIDATE_SECRET`.

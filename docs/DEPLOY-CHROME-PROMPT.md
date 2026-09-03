@@ -81,7 +81,7 @@ AUTH_SECRET=<<from .env>>
 STORAGE_PROVIDER=supabase
 CRON_SECRET=c09f86d7e716173469dfa4b5fd6e67b1992273eb4206ee1e71f3ade150f03c5e
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
 SITE_URL_DELEADINT=https://deleadint.com
 SITE_URL_WALK2LEAD=https://w2l.deleadint.com
 SITE_URL_MAKERCHAMPS=https://mc.deleadint.com
@@ -102,7 +102,7 @@ APPS_SCRIPT_URL_TINKERCHAMPS=https://script.google.com/macros/s/AKfycbxEbaNm8YFw
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
 SITE_URL_DELEADINT=https://deleadint.com
 ```
 
@@ -111,7 +111,7 @@ SITE_URL_DELEADINT=https://deleadint.com
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
 SITE_URL_WALK2LEAD=https://w2l.deleadint.com
 ```
 
@@ -120,7 +120,7 @@ SITE_URL_WALK2LEAD=https://w2l.deleadint.com
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
 SITE_URL_MAKERCHAMPS=https://mc.deleadint.com
 ```
 
@@ -129,7 +129,7 @@ SITE_URL_MAKERCHAMPS=https://mc.deleadint.com
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
 SITE_URL_CORPORATE=https://corporate.deleadint.com
 ```
 
@@ -138,7 +138,7 @@ SITE_URL_CORPORATE=https://corporate.deleadint.com
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
 SITE_URL_DLI_EDUCATION=https://edu.deleadint.com
 ```
 
@@ -147,7 +147,7 @@ SITE_URL_DLI_EDUCATION=https://edu.deleadint.com
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
 SITE_URL_TINKERCHAMPS=https://tc.deleadint.com
 APPS_SCRIPT_URL_TINKERCHAMPS=https://script.google.com/macros/s/AKfycbxEbaNm8YFwOyQHlLlXsmFxCKv0f9FxnYgjIZ6z_uYFidX35maEgFAKxSSgpP6JU3lC/exec
 ```

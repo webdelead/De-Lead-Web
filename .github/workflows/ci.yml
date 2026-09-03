@@ -42,7 +42,7 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
           REVALIDATE_SECRET: ci-placeholder
-          PUBLIC_LEAD_ENDPOINT: https://admin.deleadint.com/api/lead
+          NEXT_PUBLIC_LEAD_ENDPOINT: https://admin.deleadint.com/api/lead
 
   test:
     runs-on: ubuntu-latest
