@@ -1,6 +1,5 @@
 import dynamic from "next/dynamic";
 import HeroSection from "../components/HeroSection";
-import ScrollColorBackground from "../components/ScrollColorBackground";
 import VideoSection from "../components/Videosection";
 
 // Dynamically import below-the-fold Client Components to reduce initial JS payload
@@ -23,21 +22,19 @@ const FAQSection = dynamic(() => import("../components/FAQSection"));
 
 export default function Home() {
   return (
-    <main className="w-full flex items-center justify-center flex-col">
-      <ScrollColorBackground>
-        <HeroSection />
-        <VideoSection />
-        <StatsSection />
-        <AboutSection />
-        <MarqueeSection />
-        <EventsSection />
-        <TestimonialsSection />
-        <WhatsappReviewsSection />
-        <LearningSection />
-        <ScrollJourneySection />
-        <GallerySection />
-        <FAQSection />
-      </ScrollColorBackground>
+    <main className="flex w-full flex-col items-center justify-center bg-primary-purple">
+      <HeroSection />
+      <VideoSection />
+      <StatsSection />
+      <AboutSection />
+      <MarqueeSection />
+      <EventsSection />
+      <TestimonialsSection />
+      <WhatsappReviewsSection />
+      <LearningSection />
+      <ScrollJourneySection />
+      <GallerySection />
+      <FAQSection />
     </main>
   );
 }
