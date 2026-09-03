@@ -1,98 +1,123 @@
-# Manual checklist — things only you can do
+# What you need to do / decide
 
-Console / infra / QA steps that the phase branches **can't** do in code. Work through
-this once all phases are merged. Grouped by the phase that added the item.
+Everything the phase branches couldn't do in code. Grouped by urgency, not by phase.
+Most of it is optional hardening you can do gradually — the **Required now** list is short.
 
 ---
 
-## Phase 1 (branch `phase-1-security-hardening`, commit `3942aeb`)
+## ✅ Required now (before real use)
 
-- [ ] After merge, confirm **CI is green** (it was red before — duplicate pnpm version, now fixed).
-- [ ] Dashboard Vercel env: set `CRON_SECRET` (any long random string). Optional today
-      (route is soft-guarded), will be made mandatory later.
+1. **Run the DB migration** — creates the `outbox` table (reliable Google-Sheet delivery):
+   ```bash
+   pnpm --filter @delead/db migrate
+   ```
+   (Lead/booking still work without it — there's a fallback — but do it.)
 
-## Phase 2 (commit `1a36e2c`)
+2. **Vercel → Node 24** — in *each* project: Settings → Build & Development → Node.js Version → **24.x**. Redeploy.
 
-- [ ] `pnpm --filter @delead/db migrate` — applies migration `0002` (the `outbox` table).
-- [ ] **RO/APP DB roles**: set `DELEAD_WEB_RO_PASSWORD` + `DELEAD_WEB_APP_PASSWORD` in `.env`,
-      run `pnpm --filter @delead/db roles`. Then build the two connection strings
-      (`DATABASE_URL` → `delead_web_app`, `DATABASE_URL_RO` → `delead_web_ro`) and set them
-      in **each app's** Vercel env. See `docs/DEPLOY.md` §5a.
-- [ ] New workflow `.github/workflows/outbox.yml`: confirm the `DIRECT_URL` repo secret exists
-      (same as the other workflows), then run it once via *Run workflow* — expect `picked 0`.
-- [ ] **Cloudflare Turnstile**: create a widget for `deleadint.com` + subdomains. Set
-      `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (all site apps + dashboard) and `TURNSTILE_SECRET_KEY`
-      (dashboard + tinkerchamps). Add the widget to each form and POST its token as
-      `turnstileToken`. **Needs pixel-freeze sign-off** before editing `apps/*/public` markup.
-      Once forms send a token, set `TURNSTILE_ENFORCE=true`.
-- [ ] **Supabase Auth** (dashboard → Authentication): turn on leaked-password protection;
-      enable CAPTCHA on auth endpoints; set Redirect URLs allow-list to the exact
-      `admin.deleadint.com/auth/callback` + `/reset-password`; shorten JWT / session expiry.
-      MFA/TOTP is deferred by decision.
-- [ ] (future, droplet only) set up `pg_dump` cron + off-box copy — Supabase's daily backups
-      go away the day Postgres moves off Supabase.
+3. **Check CI is green** — GitHub → Actions tab → the latest run on `main` should be ✓.
+   (It was red from a pnpm-version bug + a build/DB issue; both fixed on `main` now.)
 
-## Phase 3 (this branch)
+That's it for "must do".
 
-- [ ] **Vercel: bump each project's Node version to 24** (Project → Settings → Node.js Version).
-      Local `.nvmrc` + CI are already on 24; `engines.node` is now `>=24`.
-- [ ] GitHub → Settings → Code security: confirm **Dependabot** is enabled (config added at
-      `.github/dependabot.yml` — weekly minor/patch PRs, majors ignored).
-- [ ] CI now runs `typecheck` (blocking) + `lint` (non-blocking) + `pnpm audit` + `build`.
-      After merge, check the run is green; skim the audit output for anything real.
-- [ ] Lib bumps landed: `drizzle-orm` 0.38→0.45, `drizzle-kit`→0.31, `@supabase/ssr` 0.5→0.12,
-      `@supabase/supabase-js`→2.114, `marked` 15→18, `@studio-freight/lenis`→`lenis` 1.3,
-      `@types/node`→24. Builds + typecheck pass. **Smoke-test after deploy**: dashboard login
-      (supabase/ssr), a lead + a booking (drizzle/outbox), a journal page (marked),
-      TinkerChamps smooth-scroll (lenis).
-- [ ] **Deferred — Phase 3b (its own branch + QA):** Next 15→16 + React 19.0→19.2 for the
-      5 sites + dashboard (TinkerChamps is already on 16). Includes `next lint` → flat ESLint
-      config across all apps, and folding `next`/`react` into the pnpm catalog. **Requires
-      visual diff of each marketing site against its `../<Name>` static folder** — pixel-frozen.
-- [ ] **Deferred:** `zod` 3→4 (breaking; small migration) — do with Phase 4.
+---
 
-## Phase 4 (this branch)
+## 🚦 Decisions (needed before a real traffic push, not before launch)
 
-- [ ] Nothing infra-only here — it's mostly code. After merge, smoke-test: dashboard
-      login + a lead + a booking + a journal page still work; "Last login" in Users now
-      populates; drag-reorder still saves.
-- [ ] CSP added to the dashboard (enforced, conservative). If the admin UI shows blank
-      panels / blocked requests, check the browser console for CSP violations and widen the
-      directive in `apps/dashboard/next.config.ts`.
-- [ ] `zod` bumped 3 → 4 (only `/api/lead` uses it; build + schema tests pass). No action
-      unless a lead submission starts 422-ing.
-- [ ] **Deferred — Phase 4b:** the journal **block / rich-text editor** (TipTap). Still a
-      raw-Markdown textarea + DOMPurify. Needs: `blog_posts.body_md` → `body_json` migration,
-      a dashboard editor component, a server renderer, and a one-off convert of existing posts.
-- [ ] **Deferred:** decide `assets.width` / `assets.height` — populate on upload (adds `sharp`)
-      or drop the columns. Currently unused, left as-is.
-- [ ] Marketing-site CSP (report-only → enforce) — deferred to Phase 4b; needs per-site
-      testing (Google Fonts, external images) against the frozen designs.
+- **Postgres host.** Free Supabase will hit connection/egress limits first under load.
+  Either budget **Supabase Pro (~$25/mo)** or start the **$6 droplet** migration (you then
+  own backups + pooling — see `docs/DEPLOY.md` §5d). No rush until you're about to promote.
+- **Image host — you said "in a few days".** When ready: Cloudflare R2 (the adapter is
+  built). Steps are in "Optional" below.
 
-## Phase 5 (this branch) — pre-traffic
+---
 
-**Code that landed:**
-- CSV exports (`/api/export/leads`, `/api/export/bookings`) now **stream** in 1000-row
-  pages — no row cap, no OOM at scale.
-- The **R2 storage adapter is implemented** (`aws4fetch`, S3 API) in
-  `apps/dashboard/lib/storage.ts`; `migrate-storage.ts` rewritten to match.
+## 🛡️ Optional hardening (do gradually; nothing breaks without it)
 
-**You do:**
-- [ ] **Image host → Cloudflare R2** (decided). Create the bucket + an API token, fill
-      `R2_ACCOUNT_ID` / `R2_ACCESS_KEY_ID` / `R2_SECRET_ACCESS_KEY` / `R2_BUCKET` /
-      `R2_PUBLIC_BASE_URL`, run `pnpm --filter @delead/db migrate:storage`, then set
-      `STORAGE_PROVIDER=r2` in every app's Vercel env and redeploy. Verify a site image
-      loads from the R2 URL before deleting the Supabase Storage originals.
-- [ ] **Load-test** the three dynamic paths at expected peak: `/api/lead`, `/api/booking`,
-      a cold ISR regen (e.g. `POST /api/revalidate` then hit `/`). Watch Supabase
-      connection count and function duration.
-- [ ] **Decide the Postgres host** (stance #5 = ~$6 droplet). If staying on Supabase,
-      the free tier will hit egress/connection limits first — budget Supabase Pro (~$25/mo)
-      or start the droplet migration (own backups/pooling — see DEPLOY.md §5d).
+### Turnstile (bot check on the lead + booking forms)
+Currently **does nothing** — the server code is inert until you add keys.
+1. Cloudflare dashboard → **Turnstile** → Add widget → domain `deleadint.com` (covers subdomains).
+2. Copy the **Site Key** and **Secret Key**.
+3. In each site's Vercel env: `NEXT_PUBLIC_TURNSTILE_SITE_KEY=<site key>`.
+   In dashboard + tinkerchamps Vercel env: `TURNSTILE_SECRET_KEY=<secret key>`.
+4. Add the Turnstile widget `<div>` to each form and send its token as `turnstileToken`
+   in the POST body. *(This edits the client-approved site markup — get sign-off first.)*
+5. Once forms send tokens and you've watched the logs for false failures, set
+   `TURNSTILE_ENFORCE=true`.
 
-**Deferred — Phase 5b (bigger refactors, only if a list grows past ~500 rows):**
-- Server-side search + pagination for the dashboard resource lists
-  (`c/[vertical]/[resource]/page.tsx` + `resource-list.tsx`) — currently `limit(500)` +
-  client-side filter, mirroring the `leads` page's server-side pattern.
-- Granular ISR revalidation (`revalidateTag` per section) instead of the whole-site
-  `revalidatePath("/", "layout")` — only matters once a site is genuinely multi-page.
+### Supabase Auth toggles (Supabase dashboard → Authentication)
+- **Attack Protection** → turn on **leaked-password protection** and the **CAPTCHA** option.
+- **URL Configuration → Redirect URLs** → keep only the exact
+  `https://admin.deleadint.com/auth/callback` and `.../reset-password`.
+- **Sessions** → shorten the JWT / session expiry (e.g. 8h) for an admin tool.
+- MFA: skipped by your decision.
+
+### `CRON_SECRET` (optional)
+The Vercel keep-alive cron route is soft-guarded, so this is optional. If you want it
+locked: generate a value (`openssl rand -base64 33`), set `CRON_SECRET` in the dashboard's
+Vercel env — Vercel Cron sends it automatically.
+
+### RO / APP database roles (portable, defence-in-depth)
+Splits DB access so a bug on a marketing site can't read `leads`/`users` or write anything.
+Everything works without it (falls back to one connection).
+1. Put strong random values in `.env`: `DELEAD_WEB_RO_PASSWORD`, `DELEAD_WEB_APP_PASSWORD`.
+2. `pnpm --filter @delead/db roles`
+3. Build two connection strings (Supabase pooler user = `<role>.<project-ref>`):
+   `DATABASE_URL` → `delead_web_app`, `DATABASE_URL_RO` → `delead_web_ro`. Set both in
+   every app's Vercel env. Details: `docs/DEPLOY.md` §5a.
+
+### Dependabot
+Config is committed (`.github/dependabot.yml`). GitHub usually auto-enables it — check
+Settings → Code security. Nothing else to do.
+
+---
+
+## 📦 Image host → Cloudflare R2 (when you're ready — "a few days")
+
+1. Cloudflare → R2 → create a bucket + an API token (Object Read & Write).
+2. Fill `.env`: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`,
+   `R2_PUBLIC_BASE_URL` (a public custom domain or the r2.dev URL).
+3. Copy existing images across: `pnpm --filter @delead/db migrate:storage`
+4. Set `STORAGE_PROVIDER=r2` in every app's Vercel env, redeploy.
+5. Confirm a site image loads from the R2 URL, then delete the Supabase Storage originals.
+
+---
+
+## 🔬 How to load-test (before promoting to real traffic)
+
+Install a load tool (`brew install oha` — or `k6`, `bombardier`). Then:
+
+```bash
+# 50 concurrent clients, 30s, against the lead endpoint
+oha -z 30s -c 50 -m POST \
+  -H 'content-type: application/json' \
+  -d '{"source":"deleadint","name":"loadtest"}' \
+  https://admin.deleadint.com/api/lead
+
+# same for booking
+oha -z 30s -c 50 -m POST -H 'content-type: application/json' \
+  -d '{"parentName":"x","studentName":"x","classGrade":"8","phone":"0","place":"x"}' \
+  https://tc.deleadint.com/api/booking
+
+# cold ISR regen: publish, then hit the homepage
+curl -X POST -H "x-revalidate-secret: <REVALIDATE_SECRET>" https://deleadint.com/api/revalidate
+oha -z 15s -c 30 https://deleadint.com/
+```
+
+While it runs, watch:
+- **Supabase dashboard → Database → Connection Pooling** graph — if it pins at the max, you
+  need Pro / the droplet.
+- **Vercel → project → Logs / Observability** — p95 function duration. Spiking = same conclusion.
+
+---
+
+## Deferred code work (I can do these on request — not blocking)
+
+- **Phase 3b:** Next 15 → 16 + React 19.2 for the 6 non-TC apps. Needs a visual diff of each
+  marketing site against its `../<Name>` static folder (pixel-frozen).
+- **Phase 4b:** journal **block / rich-text editor** (TipTap) — replaces the Markdown textarea.
+  Schema migration + editor component + server renderer + convert existing posts.
+- **Phase 4b:** marketing-site CSP (needs per-site testing vs Google Fonts / external images).
+- **Phase 5b:** server-side search + pagination on dashboard content lists — only matters
+  once a single list exceeds ~500 rows (you're far from that).
+- **Phase 5b:** granular ISR revalidation — only matters once a site is genuinely multi-page.
