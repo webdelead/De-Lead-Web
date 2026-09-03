@@ -1,0 +1,203 @@
+---
+import Base from "../layouts/Base.astro";
+import SiteHeader from "@delead/ui/astro/SiteHeader.astro";
+import SiteFooter from "@delead/ui/astro/SiteFooter.astro";
+import LeadForm from "@delead/ui/astro/LeadForm.astro";
+import Stat from "@delead/ui/astro/Stat.astro";
+import { getContent } from "../lib/content";
+
+const { testimonials, press, projects, phases, stats } = await getContent();
+
+const navLinks = [
+  { label: "Program", href: "#program" },
+  { label: "Phases", href: "#phases" },
+  { label: "Impact", href: "#impact" },
+  { label: "Projects", href: "#projects" },
+  { label: "Partner", href: "#contact" },
+];
+---
+<Base
+  title="Walk2Lead — CSR robotics in Kerala's government schools"
+  description="Walk2Lead brings hands-on robotics, coding and AI into rural government schools across Kerala. Funded by Walkaroo Foundation, implemented end-to-end by De' Lead International."
+>
+  <SiteHeader
+    current="walk2lead"
+    logoLight="/assets/walk2lead-logo-white.svg"
+    logoDark="/assets/walk2lead-logo.svg"
+    links={navLinks}
+    ctaLabel="Partner with us"
+    ctaHref="#contact"
+  />
+
+  <!-- HERO -->
+  <section id="top" class="relative flex min-h-[88svh] flex-col justify-center overflow-hidden bg-[linear-gradient(160deg,#c81c1c_0%,#7c0d0d_60%,#3f0606_100%)] px-6 pb-16 pt-32 text-white">
+    <div class="mx-auto w-full max-w-[1240px]">
+      <p class="mb-5 text-xs font-bold uppercase tracking-[0.18em] text-white/70">A DLI Foundation CSR programme</p>
+      <h1 class="max-w-[18ch] font-[var(--font-serif)] text-[clamp(2.6rem,6.5vw,5rem)] font-bold leading-[1.06]">
+        44 government schools. 1,300+ students. One working robot at a time.
+      </h1>
+      <p class="mt-6 max-w-[56ch] text-lg text-white/80">
+        A 3-month, 52-hour robotics, coding and AI programme for Classes 6 &amp; 7 in rural and
+        coastal Kerala. <strong class="font-semibold text-white">Funded by Walkaroo Foundation,
+        implemented end-to-end by De' Lead International.</strong>
+      </p>
+      <div class="mt-9 flex flex-wrap gap-3">
+        <a href="#contact" class="ui-btn ui-btn--cream">Partner with us for your CSR project</a>
+        <a href="#program" class="ui-btn ui-btn--ghost">How it works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- IMPACT STATS -->
+  <section id="impact" class="bg-[var(--color-ink)]">
+    <div class="mx-auto grid max-w-[1240px] grid-cols-3">
+      {stats.map((s) => (
+        <div class="border-l border-white/10 px-4 py-7 first:border-l-0 sm:px-10 sm:py-10">
+          <Stat value={s.value} suffix={s.suffix} label={s.label} onDark />
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- PROGRAM -->
+  <section id="program" class="bg-white px-6 py-24">
+    <div class="mx-auto max-w-[1240px]">
+      <div class="max-w-[680px]" data-reveal>
+        <span class="ui-eyebrow">The programme</span>
+        <h2 class="mt-3 font-[var(--font-serif)] text-[clamp(2rem,4vw,3.2rem)] font-bold">
+          A 3-month journey from curiosity to a working robot
+        </h2>
+        <p class="mt-4 text-[var(--color-ink-soft)]">
+          Two-stage selection to ~30 students per school. Around 26 sessions with Arduino kits,
+          sensors, coding and AI-assisted building. School expos feed a district Innovators Expo
+          judged by an external panel, tracked on a real-time monitoring portal.
+        </p>
+      </div>
+      <div class="mt-12 grid gap-4 sm:grid-cols-3" data-reveal="stagger">
+        {[
+          ["Learn", "Electronics, sensors and block-to-text coding, taught through building."],
+          ["Build", "Every student ships a working prototype that solves a real local problem."],
+          ["Pitch", "School expo → district Innovators Expo, judged by external experts."],
+        ].map(([h, p]) => (
+          <div class="rounded-2xl border border-[var(--color-line)] bg-[var(--color-cream)] p-7">
+            <h3 class="font-[var(--font-serif)] text-xl font-bold text-[var(--color-w2l)]">{h}</h3>
+            <p class="mt-2 text-sm text-[var(--color-ink-soft)]">{p}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- PHASES -->
+  {phases.length > 0 && (
+    <section id="phases" class="bg-[var(--color-cream-2)] px-6 py-24">
+      <div class="mx-auto max-w-[1240px]">
+        <div class="max-w-[640px]" data-reveal>
+          <span class="ui-eyebrow">Scaled on results</span>
+          <h2 class="mt-3 font-[var(--font-serif)] text-[clamp(1.9rem,3.4vw,2.8rem)] font-bold">
+            Every phase, funded on the results of the last
+          </h2>
+        </div>
+        <div class="mt-10 overflow-x-auto" data-reveal>
+          <table class="w-full min-w-[560px] border-collapse text-left">
+            <thead>
+              <tr class="border-b border-[var(--color-line)] text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
+                <th class="py-3 pr-4">Phase</th><th class="py-3 pr-4">Districts</th>
+                <th class="py-3 pr-4">Schools</th><th class="py-3 pr-4">Students</th><th class="py-3">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {phases.map((ph) => (
+                <tr class="border-b border-[var(--color-line)]/60">
+                  <td class="py-3 pr-4 font-semibold">{ph.label}</td>
+                  <td class="py-3 pr-4 text-[var(--color-ink-soft)]">{ph.districts}</td>
+                  <td class="py-3 pr-4">{ph.schools}</td>
+                  <td class="py-3 pr-4">{ph.students}</td>
+                  <td class="py-3 capitalize text-[var(--color-w2l)]">{ph.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- PROJECTS -->
+  {projects.length > 0 && (
+    <section id="projects" class="bg-white px-6 py-24">
+      <div class="mx-auto max-w-[1240px]">
+        <div class="max-w-[640px]" data-reveal>
+          <span class="ui-eyebrow">Student builds</span>
+          <h2 class="mt-3 font-[var(--font-serif)] text-[clamp(1.9rem,3.4vw,2.8rem)] font-bold">What 12-year-olds built</h2>
+        </div>
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal="stagger">
+          {projects.map((pr) => (
+            <article class="overflow-hidden rounded-2xl border border-[var(--color-line)] bg-[var(--color-cream)]">
+              {pr._url && <img src={pr._url} alt={pr.title} loading="lazy" class="aspect-[4/3] w-full object-cover" />}
+              <div class="p-6">
+                <span class="text-xs font-bold uppercase tracking-wide text-[var(--color-w2l)]">{pr.category}</span>
+                <h3 class="mt-1 font-[var(--font-serif)] text-lg font-bold">{pr.title}</h3>
+                <p class="mt-2 text-sm text-[var(--color-ink-soft)]">{pr.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- QUOTES -->
+  {testimonials.length > 0 && (
+    <section class="bg-[var(--color-ink)] px-6 py-24 text-white">
+      <div class="mx-auto max-w-[1240px]">
+        <h2 class="max-w-[640px] font-[var(--font-serif)] text-[clamp(1.9rem,3.4vw,2.8rem)] font-bold" data-reveal>
+          The foundation, the government, the schools, and the parents
+        </h2>
+        <div class="mt-10 grid gap-5 md:grid-cols-2" data-reveal="stagger">
+          {testimonials.map((t) => (
+            <figure class="rounded-2xl bg-white/5 p-8">
+              <blockquote class="font-[var(--font-serif)] text-lg italic leading-relaxed">&ldquo;{t.quote}&rdquo;</blockquote>
+              <figcaption class="mt-4 text-sm"><span class="font-semibold">{t.authorName}</span><span class="text-white/60"> · {t.authorRole}</span></figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- PRESS -->
+  {press.length > 0 && (
+    <section class="bg-white px-6 py-20">
+      <div class="mx-auto max-w-[1240px]">
+        <h2 class="font-[var(--font-serif)] text-2xl font-bold" data-reveal>Kerala media covered it</h2>
+        <div class="mt-8 flex gap-4 overflow-x-auto pb-3" data-reveal>
+          {press.map((p) => (
+            <img src={p._url} alt={p.title || "Press coverage"} loading="lazy" class="h-56 w-auto shrink-0 rounded-xl border border-[var(--color-line)] object-cover" />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- CONTACT -->
+  <section id="contact" class="bg-[var(--color-cream-2)] px-6 py-24">
+    <div class="mx-auto grid max-w-[1240px] gap-12 lg:grid-cols-2">
+      <div data-reveal>
+        <span class="ui-eyebrow">Partner with us</span>
+        <h2 class="mt-3 font-[var(--font-serif)] text-[clamp(1.9rem,3.4vw,2.8rem)] font-bold">
+          Let's plan your CSR programme together
+        </h2>
+        <p class="mt-4 max-w-[46ch] text-[var(--color-ink-soft)]">
+          De' Lead International designs the curriculum, trains the trainers and runs every phase.
+          Tell us your CSR goals and district focus.
+        </p>
+      </div>
+      <div data-reveal>
+        <LeadForm source="walk2lead" interests={["CSR partnership", "Sponsor a district", "Sponsor a school", "Just exploring"]} submitLabel="Start the conversation" />
+      </div>
+    </div>
+  </section>
+
+  <SiteFooter brandName="Walk2Lead" blurb="A CSR robotics, coding and AI programme funded by Walkaroo Foundation and implemented end-to-end by De' Lead International." />
+</Base>

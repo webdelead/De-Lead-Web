@@ -1,0 +1,92 @@
+---
+import Base from "../layouts/Base.astro";
+import SiteHeader from "@delead/ui/astro/SiteHeader.astro";
+import SiteFooter from "@delead/ui/astro/SiteFooter.astro";
+import LeadForm from "@delead/ui/astro/LeadForm.astro";
+import { getContent } from "../lib/content";
+
+const { coursesStudents, outcomes } = await getContent();
+const tracks = [...new Set(coursesStudents.map((c) => c.track))];
+
+const navLinks = [
+  { label: "Home", href: "/" },
+  { label: "Professionals", href: "/professionals" },
+  { label: "Courses", href: "#catalogue" },
+  { label: "Stories", href: "#heroes" },
+];
+---
+<Base
+  title="DLI Students — technology courses | DLI Education"
+  description="Python, web development, robotics, 3D design, data analytics, Gen AI and block coding for students aged 7 to college. Real projects, a mentor per learner, a certificate at the end."
+  path="/students"
+>
+  <SiteHeader current="dli-education" brandHref="/" logoLight="/assets/logo/logo-delead-white.png" logoDark="/assets/logo/logo-delead-dark.png" links={navLinks} ctaLabel="Enquire" ctaHref="#contact" />
+
+  <section class="relative flex min-h-[64svh] flex-col justify-center bg-[linear-gradient(160deg,#142653,#0a1533)] px-6 pb-14 pt-32 text-white">
+    <div class="mx-auto w-full max-w-[1240px]">
+      <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-dli-teal)]">For students</p>
+      <h1 class="max-w-[18ch] font-[var(--font-rounded)] text-[clamp(2.4rem,6vw,4.4rem)] font-extrabold leading-[1.05]">
+        Technology courses, built to be built
+      </h1>
+      <p class="mt-5 max-w-[54ch] text-lg text-white/80">
+        {coursesStudents.length} tracks across AI &amp; data, coding &amp; web, design and robotics.
+        Group or 1-to-1. Online, offline or inside a camp.
+      </p>
+    </div>
+  </section>
+
+  <section id="catalogue" class="bg-white px-6 py-20">
+    <div class="mx-auto max-w-[1240px]">
+      <div class="flex flex-wrap gap-2" data-reveal>
+        <span class="rounded-full bg-[var(--color-dli-teal)] px-3 py-1 text-xs font-semibold text-white">All</span>
+        {tracks.map((t) => (
+          <span class="rounded-full border border-[var(--color-line)] px-3 py-1 text-xs">{t}</span>
+        ))}
+      </div>
+      <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-reveal="stagger">
+        {coursesStudents.map((c) => (
+          <article class="flex flex-col rounded-2xl border border-[var(--color-line)] bg-[var(--color-cream)] p-6">
+            <span class="text-xs font-bold uppercase tracking-wide text-[var(--color-dli-teal)]">{c.track}</span>
+            <h3 class="mt-1 font-[var(--font-rounded)] text-lg font-bold">{c.title}</h3>
+            <p class="mt-2 flex-1 text-sm text-[var(--color-ink-soft)]">{c.description}</p>
+            <div class="mt-4 flex items-center justify-between text-xs text-[var(--color-ink-soft)]">
+              <span>{c.level} · {c.ageLabel}</span>
+              <span class="font-semibold text-[var(--color-ink)]">{c.durationLabel}</span>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {outcomes.length > 0 && (
+    <section id="heroes" class="bg-[var(--color-cream-2)] px-6 py-20">
+      <div class="mx-auto max-w-[1240px]">
+        <h2 class="font-[var(--font-rounded)] text-[clamp(1.8rem,3.2vw,2.6rem)] font-extrabold" data-reveal>Student stories</h2>
+        <div class="mt-8 grid gap-5 md:grid-cols-3" data-reveal="stagger">
+          {outcomes.map((o) => (
+            <figure class="rounded-2xl bg-white p-7">
+              <div class="font-[var(--font-rounded)] font-bold">{o.name}</div>
+              <div class="text-xs text-[var(--color-ink-soft)]">{o.place}</div>
+              <p class="mt-3 text-sm text-[var(--color-ink-soft)]">{o.win}</p>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section id="contact" class="bg-white px-6 py-20">
+    <div class="mx-auto grid max-w-[1240px] gap-12 lg:grid-cols-2">
+      <div data-reveal>
+        <span class="ui-eyebrow">Enrol or ask</span>
+        <h2 class="mt-3 font-[var(--font-rounded)] text-[clamp(1.8rem,3.2vw,2.6rem)] font-extrabold">Start a student on a track</h2>
+      </div>
+      <div data-reveal>
+        <LeadForm source="dli_education" interests={coursesStudents.map((c) => c.title)} submitLabel="Send enquiry" />
+      </div>
+    </div>
+  </section>
+
+  <SiteFooter brandName="DLI Education" blurb="The technology and future-skills learning arm of De' Lead International." />
+</Base>

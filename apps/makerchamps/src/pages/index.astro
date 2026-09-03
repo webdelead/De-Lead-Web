@@ -1,0 +1,196 @@
+---
+import Base from "../layouts/Base.astro";
+import SiteHeader from "@delead/ui/astro/SiteHeader.astro";
+import SiteFooter from "@delead/ui/astro/SiteFooter.astro";
+import LeadForm from "@delead/ui/astro/LeadForm.astro";
+import Stat from "@delead/ui/astro/Stat.astro";
+import { getContent } from "../lib/content";
+
+const { testimonials, stats, nextSeason } = await getContent();
+
+const navLinks = [
+  { label: "Modules", href: "#modules" },
+  { label: "Why NIT", href: "#why" },
+  { label: "Safety", href: "#safety" },
+  { label: "Stories", href: "#stories" },
+];
+
+const modules = [
+  ["01", "Expert Mentors & Real-World Insights", "International trainers, NIT professors and students, and NIT-TBI founders."],
+  ["02", "NIT Campus Exploration & Lab Visits", "Guided campus walks and lab visits with the researchers who work there."],
+  ["03", "Team Management & Leadership Skills", "Mixed teams learn to lead, listen and collaborate under real conditions."],
+  ["04", "STEM Learning & Science Experiments", "Physics and chemistry that spark real ‘aha’ moments — not a textbook."],
+  ["05", "Design Thinking & Entrepreneurship", "The framework used at IDEO and Stanford, applied to real problems."],
+  ["06", "Maker Mindset & Prototype Building", "They go home with something built by their own hands."],
+  ["07", "Entrepreneur Idea Pitching Training", "Stand up. Speak clearly. Sell the idea. The skill that opens every door."],
+];
+---
+<Base
+  title="MakerChamps — Residential Innovation Bootcamp at NIT Calicut"
+  description="A 2-day, 1-night residential innovation bootcamp on the NIT Calicut campus for class 8–12. 60 seats per season. By De' Lead International × Nlightened ZenSolutions."
+>
+  <SiteHeader
+    current="makerchamps"
+    logoLight="/assets/brand/makerchamps-logo-on-dark.webp"
+    logoDark="/assets/brand/makerchamps-logo.png"
+    links={navLinks}
+    ctaLabel="Enquire now"
+    ctaHref="#enquire"
+  />
+
+  <!-- HERO -->
+  <section id="top" class="relative flex min-h-[90svh] flex-col justify-center overflow-hidden bg-[linear-gradient(160deg,#021e5d_0%,#04123a_100%)] px-6 pb-16 pt-32 text-white">
+    <div class="mx-auto w-full max-w-[1240px]">
+      <p class="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-mc-lime)]">Think · Make · Transform</p>
+      <h1 class="max-w-[16ch] font-[var(--font-grotesk)] text-[clamp(2.8rem,7vw,5.6rem)] font-extrabold uppercase leading-[0.98]">
+        Two days on <span class="text-[var(--color-mc-orange)]">NIT Calicut campus</span> that show who they can become
+      </h1>
+      <p class="mt-6 max-w-[54ch] text-lg text-white/80">
+        A residential innovation bootcamp on the NIT Calicut campus for class 8–12. Real
+        labs, real engineers, seven hands-on modules — only 60 seats a season.
+      </p>
+      {nextSeason?.active && (
+        <div class="mt-6 inline-flex items-center gap-3 rounded-full bg-[var(--color-mc-lime)] px-5 py-2 font-[var(--font-grotesk)] text-sm font-bold text-[#04123a]">
+          <span>{nextSeason.label}</span><span class="opacity-70">|</span><span>{nextSeason.dates}</span>
+          <span class="opacity-70">|</span><span>{nextSeason.campus}</span>
+        </div>
+      )}
+      <div class="mt-9 flex flex-wrap gap-3">
+        <a href="#enquire" class="ui-btn ui-btn--primary" style="--accent:var(--color-mc-orange);--accent-ink:#04123a">Reserve a seat</a>
+        <a href="#modules" class="ui-btn ui-btn--ghost">See what they'll do</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="bg-white">
+    <div class="mx-auto grid max-w-[1240px] grid-cols-3">
+      {stats.map((s) => (
+        <div class="border-l border-[var(--color-line)] px-4 py-8 first:border-l-0 sm:px-10">
+          <Stat value={s.value} suffix={s.suffix} label={s.label} />
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ABOUT / WHY -->
+  <section id="why" class="bg-[var(--color-cream)] px-6 py-24">
+    <div class="mx-auto max-w-[1240px]">
+      <div class="max-w-[720px]" data-reveal>
+        <span class="ui-eyebrow">What is MakerChamps</span>
+        <h2 class="mt-3 font-[var(--font-grotesk)] text-[clamp(2rem,4vw,3.2rem)] font-extrabold">
+          Exposure that widens how they think
+        </h2>
+        <p class="mt-4 text-[var(--color-ink-soft)]">
+          Before it's about building anything, MakerChamps is about your child stepping onto a
+          top-ranked engineering campus and realising what's possible. Co-hosted with
+          <strong>Nlightened ZenSolutions</strong>, incubated inside NIT Calicut's Technology
+          Business Incubator, in association with the Centre for Holistic Teaching &amp; Learning —
+          so the programme runs <em>from inside</em> NIT, not a rented hall nearby.
+        </p>
+      </div>
+      <div class="mt-10 grid gap-4 sm:grid-cols-3" data-reveal="stagger">
+        {[
+          ["De' Lead International", "Designs and runs every MakerChamps batch — hands-on learning across India and the UAE."],
+          ["Nlightened ZenSolutions", "A startup incubated inside NIT Calicut's Technology Business Incubator."],
+          ["Centre for Holistic Teaching & Learning", "NIT Calicut's own centre — the reason students get real classroom, lab and faculty access."],
+        ].map(([h, p]) => (
+          <div class="rounded-2xl border border-[var(--color-line)] bg-white p-7">
+            <h3 class="font-[var(--font-grotesk)] text-lg font-bold">{h}</h3>
+            <p class="mt-2 text-sm text-[var(--color-ink-soft)]">{p}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- MODULES -->
+  <section id="modules" class="bg-white px-6 py-24">
+    <div class="mx-auto max-w-[1240px]">
+      <div class="max-w-[640px]" data-reveal>
+        <span class="ui-eyebrow">Inside MakerChamps</span>
+        <h2 class="mt-3 font-[var(--font-grotesk)] text-[clamp(1.9rem,3.4vw,2.8rem)] font-extrabold">7 modules, skills for life</h2>
+      </div>
+      <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" data-reveal="stagger">
+        {modules.map(([n, h, p]) => (
+          <div class="rounded-2xl border border-[var(--color-line)] bg-[var(--color-cream)] p-7">
+            <span class="font-[var(--font-grotesk)] text-2xl font-extrabold text-[var(--color-mc-orange)]">{n}</span>
+            <h3 class="mt-2 font-[var(--font-grotesk)] text-lg font-bold">{h}</h3>
+            <p class="mt-2 text-sm text-[var(--color-ink-soft)]">{p}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- SAFETY -->
+  <section id="safety" class="bg-[linear-gradient(160deg,#021e5d,#04123a)] px-6 py-24 text-white">
+    <div class="mx-auto max-w-[1240px]">
+      <div class="max-w-[640px]" data-reveal>
+        <span class="ui-eyebrow" data-on-dark style="--accent:var(--color-mc-lime)">Your peace of mind</span>
+        <h2 class="mt-3 font-[var(--font-grotesk)] text-[clamp(1.9rem,3.4vw,2.8rem)] font-extrabold">Your child is safe with us</h2>
+      </div>
+      <div class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-reveal="stagger">
+        {[
+          ["Supervised, always", "Mentors and faculty monitor every session on campus."],
+          ["Safe overnight stay", "Supervised on-campus accommodation, separate for boys and girls."],
+          ["Staying in touch", "A dedicated mentor per group shares updates at set times — phone-free by design."],
+          ["Meals & rest, built in", "Veg and non-veg options, with prayer, freshen-up and rest time each day."],
+        ].map(([h, p]) => (
+          <div class="rounded-2xl bg-white/5 p-6">
+            <h3 class="font-[var(--font-grotesk)] font-bold">{h}</h3>
+            <p class="mt-2 text-sm text-white/70">{p}</p>
+          </div>
+        ))}
+      </div>
+      <div class="mt-8 flex flex-wrap gap-2 text-sm" data-reveal>
+        {["Laptops welcome", "Max 60 students", "Completion certificate", "Class 8 to 12"].map((c) => (
+          <span class="rounded-full border border-white/20 px-4 py-1.5">{c}</span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- STORIES -->
+  {testimonials.length > 0 && (
+    <section id="stories" class="bg-white px-6 py-24">
+      <div class="mx-auto max-w-[1240px]">
+        <h2 class="max-w-[640px] font-[var(--font-grotesk)] text-[clamp(1.9rem,3.4vw,2.8rem)] font-extrabold" data-reveal>
+          From parents. From students.
+        </h2>
+        <div class="mt-10 grid gap-5 md:grid-cols-2" data-reveal="stagger">
+          {testimonials.map((t) => (
+            <figure class="rounded-2xl border border-[var(--color-line)] bg-[var(--color-cream)] p-8">
+              <p class="text-[var(--color-ink-soft)]">&ldquo;{t.quote}&rdquo;</p>
+              <figcaption class="mt-4 text-sm font-semibold">{t.authorName}<span class="font-normal text-[var(--color-ink-soft)]"> · {t.authorRole}</span></figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- ENQUIRE -->
+  <section id="enquire" class="bg-[var(--color-cream-2)] px-6 py-24">
+    <div class="mx-auto grid max-w-[1240px] gap-12 lg:grid-cols-2">
+      <div data-reveal>
+        <span class="ui-eyebrow">Only 60 seats per season</span>
+        <h2 class="mt-3 font-[var(--font-grotesk)] text-[clamp(1.9rem,3.4vw,2.8rem)] font-extrabold">
+          Give them two days that change how they see themselves
+        </h2>
+        <p class="mt-4 max-w-[44ch] text-[var(--color-ink-soft)]">
+          Reach out directly, or leave your details and our team will call you back.
+        </p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a href="https://wa.me/918075566081?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20MakerChamps" class="ui-btn ui-btn--primary" target="_blank" rel="noopener" style="--accent:#25d366;--accent-ink:#04231a">WhatsApp us</a>
+          <a href="mailto:info@deleadint.com?subject=MakerChamps%20Enquiry" class="ui-btn ui-btn--ghost">Email us</a>
+        </div>
+      </div>
+      <div data-reveal>
+        <LeadForm source="makerchamps" interests={["8", "9", "10", "11", "12"]} submitLabel="Send enquiry" note="We'll get back to you within 24 hours. No spam, ever." />
+      </div>
+    </div>
+  </section>
+
+  <SiteFooter brandName="MakerChamps" blurb="A De' Lead International programme, run in partnership with Nlightened ZenSolutions on the NIT Calicut campus." />
+</Base>

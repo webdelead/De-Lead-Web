@@ -1,0 +1,67 @@
+---
+import Base from "../layouts/Base.astro";
+import SiteHeader from "@delead/ui/astro/SiteHeader.astro";
+import SiteFooter from "@delead/ui/astro/SiteFooter.astro";
+import LeadForm from "@delead/ui/astro/LeadForm.astro";
+import { getContent } from "../lib/content";
+
+const { coursesPros } = await getContent();
+
+const navLinks = [
+  { label: "Home", href: "/" },
+  { label: "Students", href: "/students" },
+  { label: "Tracks", href: "#tracks" },
+  { label: "Contact", href: "#contact" },
+];
+---
+<Base
+  title="DLI Professionals — future skills | DLI Education"
+  description="Applied Gen AI, design thinking, leadership and communication training for educators, HR teams and institutions. Cohort or 1-to-1."
+  path="/professionals"
+>
+  <SiteHeader current="dli-education" brandHref="/" logoLight="/assets/logo/logo-delead-white.png" logoDark="/assets/logo/logo-delead-dark.png" links={navLinks} ctaLabel="Enquire" ctaHref="#contact" />
+
+  <section class="relative flex min-h-[64svh] flex-col justify-center bg-[linear-gradient(160deg,#142653,#0a1533)] px-6 pb-14 pt-32 text-white">
+    <div class="mx-auto w-full max-w-[1240px]">
+      <p class="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-dli-teal)]">For professionals</p>
+      <h1 class="max-w-[18ch] font-[var(--font-rounded)] text-[clamp(2.4rem,6vw,4.4rem)] font-extrabold leading-[1.05]">
+        Future skills for the way your team actually works
+      </h1>
+      <p class="mt-5 max-w-[54ch] text-lg text-white/80">
+        Applied Gen AI, design thinking, leadership and communication — for educators, HR teams
+        and institutions. Cohort or 1-to-1.
+      </p>
+    </div>
+  </section>
+
+  <section id="tracks" class="bg-white px-6 py-20">
+    <div class="mx-auto max-w-[1240px]">
+      <h2 class="font-[var(--font-rounded)] text-[clamp(1.8rem,3.2vw,2.6rem)] font-extrabold" data-reveal>The tracks</h2>
+      <div class="mt-8 grid gap-4 sm:grid-cols-2" data-reveal="stagger">
+        {coursesPros.map((c) => (
+          <article class="rounded-2xl border border-[var(--color-line)] bg-[var(--color-cream)] p-7">
+            <span class="text-xs font-bold uppercase tracking-wide text-[var(--color-dli-navy)]">{c.track}</span>
+            <h3 class="mt-1 font-[var(--font-rounded)] text-lg font-bold">{c.title}</h3>
+            <p class="mt-2 text-sm text-[var(--color-ink-soft)]">{c.description}</p>
+            <p class="mt-3 text-xs text-[var(--color-ink-soft)]">{c.format} · {c.durationLabel}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="bg-[var(--color-cream-2)] px-6 py-20">
+    <div class="mx-auto grid max-w-[1240px] gap-12 lg:grid-cols-2">
+      <div data-reveal>
+        <span class="ui-eyebrow">Bring it to your team</span>
+        <h2 class="mt-3 font-[var(--font-rounded)] text-[clamp(1.8rem,3.2vw,2.6rem)] font-extrabold">Plan a cohort</h2>
+        <p class="mt-4 max-w-[46ch] text-[var(--color-ink-soft)]">Tell us the team and the outcome you're after — we'll shape the programme around it.</p>
+      </div>
+      <div data-reveal>
+        <LeadForm source="dli_education" interests={coursesPros.map((c) => c.title)} submitLabel="Send enquiry" />
+      </div>
+    </div>
+  </section>
+
+  <SiteFooter brandName="DLI Education" blurb="The technology and future-skills learning arm of De' Lead International." />
+</Base>

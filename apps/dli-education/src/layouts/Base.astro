@@ -1,0 +1,30 @@
+---
+import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
+import Seo from "@delead/ui/astro/Seo.astro";
+
+interface Props { title: string; description: string; path?: string }
+const { title, description, path = "" } = Astro.props;
+const site = Astro.site?.toString().replace(/\/$/, "") ?? "https://edu.deleadint.com";
+const canonical = site + (path || Astro.url.pathname);
+---
+<!doctype html>
+<html lang="en" data-vertical="dli-education">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" />
+    <Seo title={title} description={description} canonical={canonical} siteName="DLI Education" themeColor="#142653" ogImage={`${site}/og.jpg`} />
+    <ClientRouter />
+  </head>
+  <body>
+    <slot />
+    <script>
+      import { initReveal } from "@delead/ui/client/reveal";
+      import { initCountUp } from "@delead/ui/client/countUp";
+      const boot = () => { initReveal(); initCountUp(); };
+      boot();
+      document.addEventListener("astro:after-swap", boot);
+    </script>
+  </body>
+</html>
