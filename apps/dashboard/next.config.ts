@@ -7,7 +7,7 @@ config({ path: resolve(process.cwd(), "../../.env") });
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@delead/db", "@delead/ui", "@delead/brand"],
-  serverExternalPackages: ["postgres", "@node-rs/argon2"],
+  serverExternalPackages: ["postgres"],
   eslint: { ignoreDuringBuilds: true },
   images: {
     remotePatterns: [

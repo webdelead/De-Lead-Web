@@ -160,17 +160,11 @@ CREATE TABLE "student_outcomes" (
 
 CREATE TABLE "tc_bookings" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"student_name" text NOT NULL,
-	"student_age" text NOT NULL,
-	"class_grade" text NOT NULL,
-	"gender" text NOT NULL,
-	"school" text DEFAULT '' NOT NULL,
-	"district" text NOT NULL,
-	"place" text NOT NULL,
 	"parent_name" text NOT NULL,
-	"email" text NOT NULL,
+	"student_name" text NOT NULL,
+	"class_grade" text NOT NULL,
 	"phone" text NOT NULL,
-	"selected_program" text DEFAULT '' NOT NULL,
+	"place" text NOT NULL,
 	"meta" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
@@ -230,13 +224,11 @@ CREATE TABLE "user_vertical_access" (
 );
 
 CREATE TABLE "users" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"id" uuid PRIMARY KEY NOT NULL,
 	"email" text NOT NULL,
-	"password_hash" text NOT NULL,
 	"name" text NOT NULL,
 	"role" "user_role" DEFAULT 'staff' NOT NULL,
 	"is_active" boolean DEFAULT true NOT NULL,
-	"must_change_password" boolean DEFAULT false NOT NULL,
 	"last_login_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL

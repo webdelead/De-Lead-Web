@@ -30,7 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createUser, resetUserPassword, setUserAccess, setUserActive } from "@/lib/actions/users";
+import { inviteUser, sendUserReset, setUserAccess, setUserActive } from "@/lib/actions/users";
 
 type Grant = { vertical: string; level: "view" | "edit" };
 interface U {
@@ -41,6 +41,10 @@ interface U {
   isActive: boolean;
   lastLoginAt: string | null;
   grants: Grant[];
+}
+
+function verticalName(list: { key: string; name: string }[], key: string) {
+  return list.find((v) => v.key === key)?.name ?? key;
 }
 
 export function UsersView({
@@ -54,7 +58,6 @@ export function UsersView({
   const [pending, start] = useTransition();
   const [creating, setCreating] = useState(false);
   const [access, setAccess] = useState<U | null>(null);
-  const [tempPw, setTempPw] = useState<string | null>(null);
 
   return (
     <div className="space-y-4">
@@ -94,7 +97,9 @@ export function UsersView({
                     <span className="text-muted-foreground">none</span>
                   ) : (
                     <span>
-                      {u.grants.map((g) => `${verticalName(verticals, g.vertical)} (${g.level})`).join(", ")}
+                      {u.grants
+                        .map((g) => `${verticalName(verticals, g.vertical)} (${g.level})`)
+                        .join(", ")}
                     </span>
                   )}
                 </TableCell>
@@ -120,14 +125,16 @@ export function UsersView({
                     <Button
                       variant="ghost"
                       size="sm"
+                      disabled={pending}
                       onClick={() =>
                         start(async () => {
-                          const r = await resetUserPassword(u.id);
-                          if (r.ok) setTempPw(r.tempPassword!);
+                          const r = await sendUserReset(u.id);
+                          if (r.ok) toast.success("Password-reset email sent.");
+                          else toast.error(r.error);
                         })
                       }
                     >
-                      Reset PW
+                      Send reset
                     </Button>
                   </div>
                 </TableCell>
@@ -138,11 +145,10 @@ export function UsersView({
       </div>
 
       {creating && (
-        <CreateUserDialog
+        <InviteDialog
           onClose={() => setCreating(false)}
-          onCreated={(pw) => {
+          onDone={() => {
             setCreating(false);
-            setTempPw(pw);
             router.refresh();
           }}
         />
@@ -159,45 +165,11 @@ export function UsersView({
           }}
         />
       )}
-
-      <Dialog open={!!tempPw} onOpenChange={(o) => !o && setTempPw(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Temporary password</DialogTitle>
-            <DialogDescription>
-              Copy this now — it won't be shown again. The user must change it on first sign-in.
-            </DialogDescription>
-          </DialogHeader>
-          <code className="block rounded bg-muted p-3 text-center text-lg font-semibold tracking-wider">
-            {tempPw}
-          </code>
-          <DialogFooter>
-            <Button
-              onClick={() => {
-                navigator.clipboard.writeText(tempPw ?? "");
-                toast.success("Copied");
-              }}
-            >
-              Copy
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
 
-function verticalName(list: { key: string; name: string }[], key: string) {
-  return list.find((v) => v.key === key)?.name ?? key;
-}
-
-function CreateUserDialog({
-  onClose,
-  onCreated,
-}: {
-  onClose: () => void;
-  onCreated: (pw: string) => void;
-}) {
+function InviteDialog({ onClose, onDone }: { onClose: () => void; onDone: () => void }) {
   const [pending, start] = useTransition();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -209,7 +181,7 @@ function CreateUserDialog({
         <DialogHeader>
           <DialogTitle>Invite user</DialogTitle>
           <DialogDescription>
-            Creates the account with a temporary password. Set which verticals they can touch
+            Supabase emails them a link to set their own password. Grant per-vertical access
             afterwards with “Access”.
           </DialogDescription>
         </DialogHeader>
@@ -243,13 +215,16 @@ function CreateUserDialog({
             disabled={pending || !name || !email}
             onClick={() =>
               start(async () => {
-                const r = await createUser({ name, email, role });
+                const r = await inviteUser({ name, email, role });
                 if (!r.ok) toast.error(r.error);
-                else onCreated(r.tempPassword!);
+                else {
+                  toast.success("Invitation email sent.");
+                  onDone();
+                }
               })
             }
           >
-            Create
+            Send invite
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -282,8 +257,7 @@ function AccessDialog({
         <DialogHeader>
           <DialogTitle>{user.name} — access</DialogTitle>
           <DialogDescription>
-            Choose what this staffer can do per vertical. “View” = read only; “Edit” = manage
-            content + publish. Leads follow the same grants.
+            “View” = read only; “Edit” = manage content + publish. Leads follow the same grants.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-2">

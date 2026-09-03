@@ -1,44 +1,57 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { hash } from "@node-rs/argon2";
 import { getDb, users, userVerticalAccess, eq, sql } from "@delead/db";
 import { requireSuperAdmin } from "@/lib/authz";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { writeAudit } from "@/lib/audit";
 import { DB_VERTICAL_KEYS } from "@delead/brand/verticals";
 
-const ARGON = { memoryCost: 19456, timeCost: 2, parallelism: 1 };
+const SITE = process.env.SITE_URL_DASHBOARD || "http://localhost:3100";
 
-function randomPassword() {
-  return "DL-" + Math.random().toString(36).slice(2, 8) + Math.random().toString(36).slice(2, 6);
-}
-
-export async function createUser(input: { name: string; email: string; role: "staff" | "super_admin" }) {
+/** Invite: creates the Supabase Auth user + profile row and emails them a
+ *  set-password link. */
+export async function inviteUser(input: {
+  name: string;
+  email: string;
+  role: "staff" | "super_admin";
+}) {
   const session = await requireSuperAdmin();
-  const db = getDb();
   const email = input.email.trim().toLowerCase();
-  const [existing] = await db.select().from(users).where(sql`lower(${users.email}) = ${email}`).limit(1);
+  const db = getDb();
+
+  const [existing] = await db
+    .select()
+    .from(users)
+    .where(sql`lower(${users.email}) = ${email}`)
+    .limit(1);
   if (existing) return { ok: false, error: "A user with that email already exists." };
 
-  const tempPassword = randomPassword();
-  const [u] = await db
+  const { data, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+    redirectTo: `${SITE}/auth/callback?next=/reset-password`,
+    data: { name: input.name.trim() },
+  });
+  if (error || !data.user) return { ok: false, error: error?.message ?? "Invite failed." };
+
+  await db
     .insert(users)
     .values({
-      name: input.name.trim(),
+      id: data.user.id,
       email,
-      passwordHash: await hash(tempPassword, ARGON),
+      name: input.name.trim(),
       role: input.role,
-      mustChangePassword: true,
+      isActive: true,
     })
-    .returning();
+    .onConflictDoUpdate({ target: users.id, set: { name: input.name.trim(), role: input.role } });
+
   await writeAudit({
     userId: session.user.id,
-    userEmail: session.user.email!,
+    userEmail: session.user.email,
     action: "invite",
     entity: "users",
-    entityId: u!.id,
+    entityId: data.user.id,
   });
   revalidatePath("/users");
-  return { ok: true, tempPassword };
+  return { ok: true };
 }
 
 export async function setUserAccess(input: {
@@ -56,7 +69,7 @@ export async function setUserAccess(input: {
   }
   await writeAudit({
     userId: session.user.id,
-    userEmail: session.user.email!,
+    userEmail: session.user.email,
     action: "access_change",
     entity: "users",
     entityId: input.userId,
@@ -71,9 +84,13 @@ export async function setUserActive(userId: string, isActive: boolean) {
   if (userId === session.user.id) return { ok: false, error: "You can't deactivate yourself." };
   const db = getDb();
   await db.update(users).set({ isActive }).where(eq(users.id, userId));
+  // also block/unblock the auth user so tokens stop working immediately
+  await supabaseAdmin.auth.admin.updateUserById(userId, {
+    ban_duration: isActive ? "none" : "876000h",
+  });
   await writeAudit({
     userId: session.user.id,
-    userEmail: session.user.email!,
+    userEmail: session.user.email,
     action: isActive ? "reactivate" : "deactivate",
     entity: "users",
     entityId: userId,
@@ -82,38 +99,18 @@ export async function setUserActive(userId: string, isActive: boolean) {
   return { ok: true };
 }
 
-export async function resetUserPassword(userId: string) {
-  const session = await requireSuperAdmin();
+/** Send the user a password-reset email. */
+export async function sendUserReset(userId: string) {
+  await requireSuperAdmin();
   const db = getDb();
-  const tempPassword = randomPassword();
-  await db
-    .update(users)
-    .set({ passwordHash: await hash(tempPassword, ARGON), mustChangePassword: true })
-    .where(eq(users.id, userId));
-  await writeAudit({
-    userId: session.user.id,
-    userEmail: session.user.email!,
-    action: "reset_password",
-    entity: "users",
-    entityId: userId,
+  const [u] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  if (!u) return { ok: false, error: "User not found." };
+  const { error } = await supabaseAdmin.auth.admin.generateLink({
+    type: "recovery",
+    email: u.email,
+    options: { redirectTo: `${SITE}/reset-password` },
   });
-  return { ok: true, tempPassword };
-}
-
-export async function changeOwnPassword(current: string, next: string) {
-  const { auth } = await import("@/auth");
-  const { verify } = await import("@node-rs/argon2");
-  const session = await auth();
-  if (!session?.user?.id) return { ok: false, error: "not signed in" };
-  if (next.length < 8) return { ok: false, error: "Password must be at least 8 characters." };
-  const db = getDb();
-  const [u] = await db.select().from(users).where(eq(users.id, session.user.id)).limit(1);
-  if (!u || !(await verify(u.passwordHash, current).catch(() => false))) {
-    return { ok: false, error: "Current password is wrong." };
-  }
-  await db
-    .update(users)
-    .set({ passwordHash: await hash(next, ARGON), mustChangePassword: false })
-    .where(eq(users.id, session.user.id));
+  // generateLink both creates the link and (for recovery) triggers the email
+  if (error) return { ok: false, error: error.message };
   return { ok: true };
 }

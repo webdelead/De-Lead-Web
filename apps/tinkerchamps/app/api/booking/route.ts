@@ -7,9 +7,10 @@ export async function POST(request: Request) {
   try {
     const payload = await request.json();
 
-    if (!payload.studentName || !payload.email || !payload.phone) {
+    // single form: parentName, studentName, classGrade, phone, place
+    if (!payload.parentName || !payload.studentName || !payload.phone || !payload.classGrade || !payload.place) {
       return NextResponse.json(
-        { success: false, error: "Missing required booking fields (studentName, email, phone)" },
+        { success: false, error: "Missing required booking fields." },
         { status: 400 },
       );
     }
@@ -18,17 +19,11 @@ export async function POST(request: Request) {
     const [row] = await db
       .insert(tcBookings)
       .values({
-        studentName: payload.studentName,
-        studentAge: String(payload.studentAge ?? ""),
-        classGrade: payload.classGrade ?? "",
-        gender: payload.gender ?? "",
-        school: payload.school ?? "",
-        district: payload.district ?? "",
-        place: payload.place ?? "",
-        parentName: payload.parentName ?? "",
-        email: payload.email,
-        phone: payload.phone,
-        selectedProgram: payload.selectedProgram ?? "",
+        parentName: String(payload.parentName),
+        studentName: String(payload.studentName),
+        classGrade: String(payload.classGrade),
+        phone: String(payload.phone),
+        place: String(payload.place),
       })
       .returning({ id: tcBookings.id });
 

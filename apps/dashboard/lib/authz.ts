@@ -1,31 +1,91 @@
 import "server-only";
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import type { Session } from "next-auth";
-import type { VerticalSlug } from "@delead/brand/verticals";
-import { VERTICALS } from "@delead/brand/verticals";
+import { supabaseServer } from "@/lib/supabase/server";
+import { getDb, users, userVerticalAccess, eq } from "@delead/db";
+import { VERTICALS, type VerticalSlug } from "@delead/brand/verticals";
 
 export type Level = "view" | "edit";
+export type Grant = { vertical: string; level: Level };
 
-/** db enum key ("dli_education") for a slug ("dli-education") */
+export interface SessionUser {
+  id: string;
+  email: string;
+  name: string;
+  role: "super_admin" | "staff";
+  grants: Grant[];
+}
+export interface Session {
+  user: SessionUser;
+}
+
 export function dbKey(slug: VerticalSlug): string {
   return VERTICALS[slug].key;
 }
 export function slugFromDbKey(key: string): VerticalSlug | undefined {
-  return (Object.values(VERTICALS).find((v) => v.key === key)?.slug) as VerticalSlug | undefined;
+  return Object.values(VERTICALS).find((v) => v.key === key)?.slug as VerticalSlug | undefined;
 }
 
+/** Current signed-in user + profile + grants. Redirects to /login if not authed
+ *  or the profile is missing / deactivated. */
 export async function getSession(): Promise<Session> {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/login");
-  return session;
+  const supabase = await supabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const db = getDb();
+  const [profile] = await db.select().from(users).where(eq(users.id, user.id)).limit(1);
+  if (!profile || !profile.isActive) {
+    await supabase.auth.signOut();
+    redirect("/login?error=no-access");
+  }
+
+  const grants =
+    profile.role === "super_admin"
+      ? []
+      : ((await db
+          .select({ vertical: userVerticalAccess.vertical, level: userVerticalAccess.level })
+          .from(userVerticalAccess)
+          .where(eq(userVerticalAccess.userId, user.id))) as Grant[]);
+
+  return {
+    user: {
+      id: profile.id,
+      email: profile.email,
+      name: profile.name,
+      role: profile.role,
+      grants,
+    },
+  };
+}
+
+/** Non-redirecting variant for API routes. */
+export async function getOptionalSession(): Promise<Session | null> {
+  const supabase = await supabaseServer();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+  const db = getDb();
+  const [profile] = await db.select().from(users).where(eq(users.id, user.id)).limit(1);
+  if (!profile || !profile.isActive) return null;
+  const grants =
+    profile.role === "super_admin"
+      ? []
+      : ((await db
+          .select({ vertical: userVerticalAccess.vertical, level: userVerticalAccess.level })
+          .from(userVerticalAccess)
+          .where(eq(userVerticalAccess.userId, user.id))) as Grant[]);
+  return {
+    user: { id: profile.id, email: profile.email, name: profile.name, role: profile.role, grants },
+  };
 }
 
 export function isSuperAdmin(session: Session): boolean {
   return session.user.role === "super_admin";
 }
 
-/** verticals (db keys) the user can see at >= level */
 export function visibleVerticals(session: Session, level: Level = "view"): string[] {
   if (isSuperAdmin(session)) return Object.values(VERTICALS).map((v) => v.key);
   return session.user.grants
@@ -40,7 +100,6 @@ export function canAccess(session: Session, verticalDbKey: string, level: Level 
   return level === "view" ? true : g.level === "edit";
 }
 
-/** Guard a page/action. Throws (via notFound-style redirect) when denied. */
 export async function requireAccess(verticalDbKey: string, level: Level = "view"): Promise<Session> {
   const session = await getSession();
   if (!canAccess(session, verticalDbKey, level)) redirect("/403");

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getOptionalSession } from "@/lib/authz";
 import { canAccess } from "@/lib/authz";
 import { getDb, tcBookings, desc } from "@delead/db";
 import { toCsv } from "@/lib/csv";
 
 export async function GET() {
-  const session = await auth();
+  const session = await getOptionalSession();
   if (!session?.user?.id || !canAccess(session, "tinkerchamps", "view")) {
     return new NextResponse("forbidden", { status: 403 });
   }
@@ -14,17 +14,11 @@ export async function GET() {
   const csv = toCsv(
     rows.map((b) => ({
       date: b.createdAt.toISOString(),
-      student: b.studentName,
-      age: b.studentAge,
-      class: b.classGrade,
-      gender: b.gender,
-      school: b.school,
-      district: b.district,
-      place: b.place,
       parent: b.parentName,
-      email: b.email,
+      student: b.studentName,
+      class: b.classGrade,
       phone: b.phone,
-      program: b.selectedProgram,
+      location: b.place,
     })),
   );
   return new NextResponse(csv, {

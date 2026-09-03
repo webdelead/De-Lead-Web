@@ -1,4 +1,4 @@
-import type { Session } from "next-auth";
+import type { Session } from "@/lib/authz";
 import { VERTICAL_LIST, verticalByKey } from "@delead/brand/verticals";
 import { RESOURCES } from "@/lib/resources";
 import { isSuperAdmin, visibleVerticals } from "@/lib/authz";

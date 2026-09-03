@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { VERTICALS, type VerticalSlug } from "@delead/brand/verticals";
 import { requireAccess } from "@/lib/authz";
-import { getDb, tcBookings, desc, ilike, or, and, sql } from "@delead/db";
+import { getDb, tcBookings, desc, ilike, or } from "@delead/db";
 import {
   Table,
   TableBody,
@@ -30,7 +30,7 @@ export default async function BookingsPage({
         ilike(tcBookings.studentName, `%${sp.q}%`),
         ilike(tcBookings.parentName, `%${sp.q}%`),
         ilike(tcBookings.phone, `%${sp.q}%`),
-        ilike(tcBookings.email, `%${sp.q}%`),
+        ilike(tcBookings.place, `%${sp.q}%`),
       )
     : undefined;
 
@@ -39,7 +39,7 @@ export default async function BookingsPage({
     .from(tcBookings)
     .where(where)
     .orderBy(desc(tcBookings.createdAt))
-    .limit(500);
+    .limit(1000);
 
   return (
     <div className="space-y-4">
@@ -56,7 +56,7 @@ export default async function BookingsPage({
         <input
           name="q"
           defaultValue={sp.q}
-          placeholder="Search student, parent, phone, email…"
+          placeholder="Search parent, student, phone, location…"
           className="h-9 w-full max-w-sm rounded-md border px-3 text-sm"
         />
       </form>
@@ -65,18 +65,17 @@ export default async function BookingsPage({
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
+              <TableHead>Parent</TableHead>
               <TableHead>Student</TableHead>
               <TableHead>Class</TableHead>
-              <TableHead>Parent</TableHead>
               <TableHead>Phone</TableHead>
-              <TableHead>District</TableHead>
-              <TableHead>Program</TableHead>
+              <TableHead>Location</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {rows.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
+                <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
                   No bookings.
                 </TableCell>
               </TableRow>
@@ -86,14 +85,11 @@ export default async function BookingsPage({
                   <TableCell className="whitespace-nowrap text-muted-foreground">
                     {new Date(b.createdAt).toLocaleDateString()}
                   </TableCell>
-                  <TableCell className="font-medium">
-                    {b.studentName} <span className="text-muted-foreground">· {b.studentAge}</span>
-                  </TableCell>
+                  <TableCell className="font-medium">{b.parentName}</TableCell>
+                  <TableCell>{b.studentName}</TableCell>
                   <TableCell>{b.classGrade}</TableCell>
-                  <TableCell>{b.parentName}</TableCell>
                   <TableCell className="text-muted-foreground">{b.phone}</TableCell>
-                  <TableCell>{b.district}</TableCell>
-                  <TableCell>{b.selectedProgram || "—"}</TableCell>
+                  <TableCell>{b.place}</TableCell>
                 </TableRow>
               ))
             )}

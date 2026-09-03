@@ -50,16 +50,16 @@ const ordered = {
    AUTH & ACCESS
    ============================================================ */
 
+/* Profile row, one per Supabase Auth user. `id` = auth.users.uid (not random).
+   Passwords, email verification and reset are handled entirely by Supabase Auth. */
 export const users = pgTable(
   "users",
   {
-    id: id(),
+    id: uuid("id").primaryKey(),
     email: text("email").notNull(),
-    passwordHash: text("password_hash").notNull(),
     name: text("name").notNull(),
     role: userRole("role").default("staff").notNull(),
     isActive: boolean("is_active").default(true).notNull(),
-    mustChangePassword: boolean("must_change_password").default(false).notNull(),
     lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
     ...timestamps,
   },
@@ -174,21 +174,17 @@ export const tcEvents = pgTable(
   (t) => [uniqueIndex("tc_events_slug_uk").on(t.slug)],
 );
 
+/* Single-form booking: 5 fields. The wider Sanity-era set (age, gender, school,
+   district, email, program) was dropped 2026-09 — re-addable later. */
 export const tcBookings = pgTable(
   "tc_bookings",
   {
     id: id(),
-    studentName: text("student_name").notNull(),
-    studentAge: text("student_age").notNull(),
-    classGrade: text("class_grade").notNull(),
-    gender: text("gender").notNull(),
-    school: text("school").default("").notNull(),
-    district: text("district").notNull(),
-    place: text("place").notNull(),
     parentName: text("parent_name").notNull(),
-    email: text("email").notNull(),
+    studentName: text("student_name").notNull(),
+    classGrade: text("class_grade").notNull(),
     phone: text("phone").notNull(),
-    selectedProgram: text("selected_program").default("").notNull(),
+    place: text("place").notNull(), // "Location"
     meta: jsonb("meta").$type<Record<string, unknown>>().default({}).notNull(),
     createdAt: timestamps.createdAt,
   },

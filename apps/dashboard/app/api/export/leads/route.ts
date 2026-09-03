@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getOptionalSession } from "@/lib/authz";
 import { visibleVerticals } from "@/lib/authz";
 import { getDb, leads, and, or, ilike, inArray, eq, desc } from "@delead/db";
 import { verticalByKey } from "@delead/brand/verticals";
 import { toCsv } from "@/lib/csv";
 
 export async function GET(req: Request) {
-  const session = await auth();
+  const session = await getOptionalSession();
   if (!session?.user?.id) return new NextResponse("unauthorized", { status: 401 });
 
   const url = new URL(req.url);
