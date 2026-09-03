@@ -11,6 +11,10 @@ export function createDb(url: string, opts?: { max?: number }) {
     prepare: false,
     max: opts?.max ?? 1,
     idle_timeout: 20,
+    // recycle pooled connections so a long-running dev/server process never
+    // reuses one the Supabase pooler has already closed (was causing
+    // "canceling statement due to statement timeout" on the next query)
+    max_lifetime: 60 * 10,
     connect_timeout: 15,
   });
   const db = drizzle(sql, { schema, casing: "snake_case" });
