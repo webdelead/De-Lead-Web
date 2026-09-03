@@ -1,13 +1,11 @@
 import { defineConfig } from "astro/config";
-import tailwind from "@tailwindcss/vite";
-import { config } from "dotenv";
 import { resolve } from "node:path";
 
-config({ path: resolve(process.cwd(), "../../.env") });
-
+// static, exact port of the client-approved design. No Tailwind, no shared UI —
+// each site keeps its own original css/styles.css + js/main.js (in public/).
 export default defineConfig({
-  site: process.env.SITE_URL_MAKERCHAMPS || "https://mc.deleadint.com",
   output: "static",
-  vite: { plugins: [tailwind()], ssr: { noExternal: ["@delead/ui", "@delead/brand"] } },
-  build: { inlineStylesheets: "auto" },
+  envDir: resolve(process.cwd(), "../.."),
+  build: { assets: "_astro" },
+  devToolbar: { enabled: false },
 });
