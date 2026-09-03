@@ -22,17 +22,33 @@ export function createDb(url: string, opts?: { max?: number }) {
 }
 
 /**
- * Shared singleton for app runtime (Next server). Uses DATABASE_URL (pooler).
- * Cached on `globalThis` so `next dev` HMR reloads reuse one connection pool
- * instead of leaking a new one on every edit (which exhausts the Supabase
- * pooler and makes queries hang).
+ * Shared pools for app runtime (Next server), cached on `globalThis` so `next
+ * dev` HMR reloads reuse one pool instead of leaking a new one per edit.
  */
-const _g = globalThis as unknown as { __deleadDb?: DB };
+const _g = globalThis as unknown as { __deleadDb?: DB; __deleadRoDb?: DB };
 
+/**
+ * Read/write pool — dashboard + write API routes (leads, bookings). Uses
+ * DATABASE_URL: the `delead_web_app` role once the RO/APP split is applied
+ * (packages/db/scripts/roles.sql), otherwise whatever DATABASE_URL points at.
+ */
 export function getDb(): DB {
   if (_g.__deleadDb) return _g.__deleadDb;
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set");
   _g.__deleadDb = createDb(url, { max: 1 }).db;
   return _g.__deleadDb;
+}
+
+/**
+ * Read-only pool for the marketing sites' SSR/ISR content queries. Uses
+ * DATABASE_URL_RO (the `delead_web_ro`, SELECT-only role) when set; falls back
+ * to DATABASE_URL so nothing breaks before the split is provisioned.
+ */
+export function getReadDb(): DB {
+  if (_g.__deleadRoDb) return _g.__deleadRoDb;
+  const url = process.env.DATABASE_URL_RO || process.env.DATABASE_URL;
+  if (!url) throw new Error("DATABASE_URL_RO / DATABASE_URL is not set");
+  _g.__deleadRoDb = createDb(url, { max: 1 }).db;
+  return _g.__deleadRoDb;
 }

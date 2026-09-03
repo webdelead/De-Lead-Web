@@ -1,8 +1,8 @@
 import "server-only";
-import { getDb, courses, studentOutcomes, eq, and, asc } from "@delead/db";
+import { getReadDb, courses, studentOutcomes, eq, and, asc } from "@delead/db";
 
 export async function getCourses(audience: "students" | "professionals") {
-  const db = getDb();
+  const db = getReadDb();
   return db
     .select()
     .from(courses)
@@ -11,7 +11,7 @@ export async function getCourses(audience: "students" | "professionals") {
 }
 
 export async function getStudentOutcomes() {
-  const db = getDb();
+  const db = getReadDb();
   return db
     .select()
     .from(studentOutcomes)

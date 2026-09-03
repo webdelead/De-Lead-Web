@@ -15,6 +15,13 @@
       "when": 1788422869371,
       "tag": "0001_secret_ultragirl",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788451222921,
+      "tag": "0002_curvy_ozymandias",
+      "breakpoints": true
     }
   ]
 }

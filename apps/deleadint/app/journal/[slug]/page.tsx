@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getDb, blogPosts, eq } from "@delead/db";
+import { getReadDb, blogPosts, eq } from "@delead/db";
 import { getPost } from "@/lib/content";
 import { renderMarkdown } from "@/lib/markdown";
 import { Nav } from "@/components/Nav";
@@ -9,7 +9,7 @@ import { Footer } from "@/components/Footer";
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const db = getDb();
+  const db = getReadDb();
   const rows = await db
     .select({ slug: blogPosts.slug })
     .from(blogPosts)

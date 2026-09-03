@@ -122,6 +122,9 @@ Two projects, same repo:
 - [ ] TinkerChamps → gallery / events / reviews render; make a test booking → **Bookings**.
 - [ ] Edit a testimonial in the dashboard → **Publish to site** → confirm the CF rebuild.
 - [ ] Run the Supabase keep-alive workflow once.
+- [ ] `pnpm --filter @delead/db migrate` — applies the `outbox` table (migration `0002`).
+- [ ] Provision the RO/APP roles (§5a) and set `DATABASE_URL_RO`.
+- [ ] Trigger `.github/workflows/outbox.yml` once (`workflow_dispatch`) — expect `picked 0`.
 
 ## 5. Apps Script — per-site Sheet backup + email notifier
 
@@ -141,6 +144,68 @@ For **each** marketing site (and one for TinkerChamps bookings — already exist
 6. Redeploy the dashboard so it picks up the new var.
 
 Until a URL is set, submissions still save to Postgres — only the Sheet row + email are skipped.
+
+**Reliable delivery (Phase 2).** The Sheet mirror is no longer a bare fire-and-forget
+`fetch`. `/api/lead` and `/api/booking` write an `outbox` row in the *same transaction*
+as the lead/booking, so it can't be lost if the request dies. Delivery:
+- opportunistic — every `/api/lead` / `/api/booking` write also drains a few pending rows;
+- periodic — `.github/workflows/outbox.yml` runs `pnpm --filter @delead/db outbox:flush`
+  every 30 min (needs the `DIRECT_URL` GitHub secret). Retries with exponential backoff,
+  gives up after 8 attempts (`status = 'failed'`, `last_error` recorded).
+
+Apps Script quotas still apply (~100 emails/day on a consumer Google account) — a
+campaign-day surge can still hit them, but nothing is silently dropped and the queue
+drains once the quota resets.
+
+## 5a. Portable RO / APP database roles (Phase 2)
+
+Standard Postgres roles so an SSR bug on a marketing site can't write anything or read
+`leads` / `users` / `audit_log` / `tc_bookings`. Works identically on Supabase and a
+self-hosted droplet.
+
+1. Set `DELEAD_WEB_RO_PASSWORD` and `DELEAD_WEB_APP_PASSWORD` in `.env` (strong, random).
+2. `pnpm --filter @delead/db roles` — creates `delead_web_ro` (SELECT on content only)
+   and `delead_web_app` (full DML, no DDL), applies grants + default privileges, and
+   sets each to `LOGIN` with the password from the env var.
+3. Build two connection strings (Supabase pooler username is `<role>.<project-ref>`):
+   - `DATABASE_URL`    → `delead_web_app`  (dashboard + write APIs)
+   - `DATABASE_URL_RO` → `delead_web_ro`   (the 5 marketing sites' SSR/ISR reads)
+   Set both in `.env` and in each app's Vercel env. Migrations/seed keep using `DIRECT_URL`
+   (the owner).
+4. `getReadDb()` falls back to `DATABASE_URL` when `DATABASE_URL_RO` is unset, so you can
+   roll this out one app at a time.
+
+## 5b. Cloudflare Turnstile on the public forms (Phase 2)
+
+Server-side check is wired into `/api/lead` and `/api/booking` but **inert** until
+`TURNSTILE_SECRET_KEY` is set — and even then it only *logs* failures until you set
+`TURNSTILE_ENFORCE=true` (monitor-first, because the pixel-frozen site forms don't send
+a token yet).
+
+1. Cloudflare dash → Turnstile → add a widget for `deleadint.com` + subdomains.
+2. Set `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (all site apps + dashboard) and
+   `TURNSTILE_SECRET_KEY` (dashboard + tinkerchamps).
+3. Add the widget to the forms and send its token as `turnstileToken` in the POST body.
+   (Site form markup is client-approved / pixel-frozen — get sign-off on the widget
+   placement before editing `apps/*/public` markup.)
+4. Watch the logs for `turnstile check failed (monitor mode)`, then flip
+   `TURNSTILE_ENFORCE=true`.
+
+## 5c. Supabase Auth hardening (Phase 2 — dashboard toggles, no lock-in)
+
+Supabase dashboard → Authentication:
+- **Leaked-password protection**: on (HaveIBeenPwned check).
+- **Bot & abuse protection / CAPTCHA**: on for the auth endpoints (Turnstile/hCaptcha).
+- **URL Configuration → Redirect URLs**: allow-list only the exact
+  `https://admin.deleadint.com/auth/callback` and `/reset-password` URLs.
+- **Sessions / JWT expiry**: shorten to something sane for an admin tool (e.g. 1–8h).
+- MFA (TOTP): **deferred by decision** — revisit if the team grows.
+
+## 5d. Backups become your job on a droplet
+
+While on Supabase you get daily backups. The day Postgres moves to a `$6` droplet
+(the "stay portable" plan), set up your own: a `pg_dump` cron + an off-box copy
+(e.g. to R2). No app change — just don't forget it during the cutover.
 
 ## 6. Move DNS to Cloudflare (optional, mail-safe)
 

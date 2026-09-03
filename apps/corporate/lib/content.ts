@@ -1,6 +1,6 @@
 import "server-only";
 import {
-  getDb,
+  getReadDb,
   testimonials,
   galleryImages,
   trackRecord,
@@ -22,7 +22,7 @@ async function withUrl<T extends Record<string, unknown>>(rows: T[], key: keyof 
   const ids = [...new Set(rows.map((r) => r[key]).filter(Boolean) as string[])];
   const map = new Map<string, { url: string; alt: string }>();
   if (ids.length) {
-    const db = getDb();
+    const db = getReadDb();
     for (const a of await db.select().from(assets).where(inArray(assets.id, ids)))
       map.set(a.id, { url: publicUrl(a), alt: a.alt ?? "" });
   }
@@ -33,7 +33,7 @@ async function withUrl<T extends Record<string, unknown>>(rows: T[], key: keyof 
 }
 
 export async function getTrackRecord() {
-  const db = getDb();
+  const db = getReadDb();
   return db
     .select()
     .from(trackRecord)
@@ -42,7 +42,7 @@ export async function getTrackRecord() {
 }
 
 export async function getTestimonials() {
-  const db = getDb();
+  const db = getReadDb();
   return db
     .select()
     .from(testimonials)
@@ -51,7 +51,7 @@ export async function getTestimonials() {
 }
 
 export async function getGallery() {
-  const db = getDb();
+  const db = getReadDb();
   const rows = await db
     .select()
     .from(galleryImages)

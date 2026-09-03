@@ -396,6 +396,29 @@ export const pingLog = pgTable("ping_log", {
   checkedAt: timestamp("checked_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+/* Transactional outbox for outbound webhooks (Google Apps Script mirror of
+   leads / bookings). The row is written in the same tx as the lead/booking, so
+   it survives a dropped request; a drain (opportunistic on the next write +
+   a periodic GitHub Action) POSTs it with retry + backoff. */
+export const outboxStatus = pgEnum("outbox_status", ["pending", "sent", "failed"]);
+
+export const outbox = pgTable(
+  "outbox",
+  {
+    id: id(),
+    kind: text("kind").notNull(), // "lead" | "booking"
+    targetUrl: text("target_url").notNull(),
+    payload: jsonb("payload").$type<Record<string, unknown>>().notNull(),
+    status: outboxStatus("status").default("pending").notNull(),
+    attempts: integer("attempts").default(0).notNull(),
+    lastError: text("last_error"),
+    nextAttemptAt: timestamp("next_attempt_at", { withTimezone: true }).defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+  },
+  (t) => [index("outbox_drain_idx").on(t.status, t.nextAttemptAt)],
+);
+
 /* per-vertical "unpublished changes" tracking + last deploy trigger */
 export const publishState = pgTable(
   "publish_state",
@@ -417,6 +440,7 @@ export type TcBooking = typeof tcBookings.$inferSelect;
 export type Testimonial = typeof testimonials.$inferSelect;
 export type PressClipping = typeof pressClippings.$inferSelect;
 export type BlogPost = typeof blogPosts.$inferSelect;
+export type OutboxRow = typeof outbox.$inferSelect;
 export type Course = typeof courses.$inferSelect;
 export type GalleryImage = typeof galleryImages.$inferSelect;
 export type WhatsappReview = typeof whatsappReviews.$inferSelect;

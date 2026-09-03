@@ -1,6 +1,6 @@
 import "server-only";
 import {
-  getDb,
+  getReadDb,
   testimonials,
   pressClippings,
   blogPosts,
@@ -23,7 +23,7 @@ async function resolveAssets<T extends Record<string, unknown>>(rows: T[], key: 
   const ids = [...new Set(rows.map((r) => r[key]).filter(Boolean) as string[])];
   const map = new Map<string, string>();
   if (ids.length) {
-    const db = getDb();
+    const db = getReadDb();
     for (const a of await db.select().from(assets).where(inArray(assets.id, ids)))
       map.set(a.id, publicUrl(a));
   }
@@ -31,7 +31,7 @@ async function resolveAssets<T extends Record<string, unknown>>(rows: T[], key: 
 }
 
 export async function getPress() {
-  const db = getDb();
+  const db = getReadDb();
   const rows = await db
     .select()
     .from(pressClippings)
@@ -41,7 +41,7 @@ export async function getPress() {
 }
 
 export async function getVoices() {
-  const db = getDb();
+  const db = getReadDb();
   return db
     .select()
     .from(testimonials)
@@ -50,7 +50,7 @@ export async function getVoices() {
 }
 
 export async function getPosts() {
-  const db = getDb();
+  const db = getReadDb();
   const rows = await db
     .select()
     .from(blogPosts)
@@ -61,7 +61,7 @@ export async function getPosts() {
 }
 
 export async function getPost(slug: string) {
-  const db = getDb();
+  const db = getReadDb();
   const [row] = await db.select().from(blogPosts).where(eq(blogPosts.slug, slug)).limit(1);
   if (!row) return null;
   const [withUrl] = await resolveAssets([row], "coverAssetId");

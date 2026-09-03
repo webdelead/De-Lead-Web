@@ -6,6 +6,7 @@
 CREATE TYPE "public"."access_level" AS ENUM('view', 'edit');
 CREATE TYPE "public"."content_status" AS ENUM('draft', 'published');
 CREATE TYPE "public"."course_audience" AS ENUM('students', 'professionals');
+CREATE TYPE "public"."outbox_status" AS ENUM('pending', 'sent', 'failed');
 CREATE TYPE "public"."storage_provider" AS ENUM('supabase', 'r2');
 CREATE TYPE "public"."user_role" AS ENUM('super_admin', 'staff');
 CREATE TYPE "public"."vertical" AS ENUM('deleadint', 'walk2lead', 'makerchamps', 'corporate', 'dli_education', 'tinkerchamps');
@@ -94,6 +95,19 @@ CREATE TABLE "leads" (
 	"ip_hash" text,
 	"meta" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+
+CREATE TABLE "outbox" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"kind" text NOT NULL,
+	"target_url" text NOT NULL,
+	"payload" jsonb NOT NULL,
+	"status" "outbox_status" DEFAULT 'pending' NOT NULL,
+	"attempts" integer DEFAULT 0 NOT NULL,
+	"last_error" text,
+	"next_attempt_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"sent_at" timestamp with time zone
 );
 
 CREATE TABLE "ping_log" (
@@ -292,6 +306,7 @@ CREATE INDEX "courses_audience_idx" ON "courses" USING btree ("audience","sort_o
 CREATE INDEX "gallery_vertical_idx" ON "gallery_images" USING btree ("vertical","sort_order");
 CREATE INDEX "leads_source_created_idx" ON "leads" USING btree ("source","created_at");
 CREATE INDEX "leads_created_idx" ON "leads" USING btree ("created_at");
+CREATE INDEX "outbox_drain_idx" ON "outbox" USING btree ("status","next_attempt_at");
 CREATE INDEX "press_vertical_idx" ON "press_clippings" USING btree ("vertical","sort_order");
 CREATE UNIQUE INDEX "site_settings_vertical_key_uk" ON "site_settings" USING btree ("vertical","key");
 CREATE INDEX "site_stats_vertical_idx" ON "site_stats" USING btree ("vertical","group_key","sort_order");

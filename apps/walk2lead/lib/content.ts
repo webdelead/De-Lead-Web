@@ -1,6 +1,6 @@
 import "server-only";
 import {
-  getDb,
+  getReadDb,
   testimonials,
   pressClippings,
   galleryImages,
@@ -23,7 +23,7 @@ async function withUrl<T extends Record<string, unknown>>(rows: T[], key: keyof 
   const ids = [...new Set(rows.map((r) => r[key]).filter(Boolean) as string[])];
   const map = new Map<string, { url: string; alt: string }>();
   if (ids.length) {
-    const db = getDb();
+    const db = getReadDb();
     for (const a of await db.select().from(assets).where(inArray(assets.id, ids)))
       map.set(a.id, { url: publicUrl(a), alt: a.alt ?? "" });
   }
@@ -34,7 +34,7 @@ async function withUrl<T extends Record<string, unknown>>(rows: T[], key: keyof 
 }
 
 export async function getProjects() {
-  const db = getDb();
+  const db = getReadDb();
   const rows = await db
     .select()
     .from(w2lProjects)
@@ -44,7 +44,7 @@ export async function getProjects() {
 }
 
 export async function getGallery() {
-  const db = getDb();
+  const db = getReadDb();
   const rows = await db
     .select()
     .from(galleryImages)
@@ -54,7 +54,7 @@ export async function getGallery() {
 }
 
 export async function getPress() {
-  const db = getDb();
+  const db = getReadDb();
   const rows = await db
     .select()
     .from(pressClippings)
@@ -64,7 +64,7 @@ export async function getPress() {
 }
 
 export async function getVoices() {
-  const db = getDb();
+  const db = getReadDb();
   const rows = await db
     .select()
     .from(testimonials)

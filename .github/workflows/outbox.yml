@@ -1,0 +1,29 @@
+name: Outbox drain
+
+# Delivers queued lead/booking webhooks (Google Sheet mirror) that weren't sent
+# at request time. Opportunistic draining also runs on every /api/lead and
+# /api/booking write; this is the safety net for quiet periods.
+# If Actions minutes get tight, drop to hourly — nothing is lost, just delayed.
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: outbox-drain
+  cancel-in-progress: false
+
+jobs:
+  drain:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --filter @delead/db --frozen-lockfile=false
+      - run: pnpm --filter @delead/db outbox:flush
+        env:
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
