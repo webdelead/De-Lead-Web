@@ -1,4 +1,3 @@
-// build-skip test: touch walk2lead only — expect the other 6 Vercel projects to skip
 import type { NextConfig } from "next";
 import { config } from "dotenv";
 import { resolve } from "node:path";
