@@ -57,6 +57,20 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
   client components and orthogonal to ISR.)
 - **Subdomains**: `w2l` `mc` `tc` `corporate` `edu` `admin` on `deleadint.com`
   (`walk2lead`/`makerchamps`/`tinkerchamps` 301 → short forms).
+- **Vercel deploy state (2026-09)**: all 7 apps are live as separate Vercel projects
+  (`delead-dashboard`, `deleadint`, `walk2lead`, `makerchamps`, `delead-corporate`,
+  `dli-education`, `tinkerchamps`), all building from this repo. **Custom domains not cut
+  over yet** — serving on `*.vercel.app`. Two env sets live in the sibling `../env/<app>/`
+  folder (outside the repo): `.env` = real custom-domain values, `.env.vercel` = the
+  `*.vercel.app` testing values currently in Vercel. On cutover, swap `SITE_URL_*` +
+  `NEXT_PUBLIC_*_ENDPOINT` back to `.env` and redeploy (dashboard first — it holds the
+  `/api/lead` + `/api/booking` CORS allow-list, keyed on `SITE_URL_*`).
+- **Every Vercel project has Ignored Build Step = "Only build if there are changes"**
+  (Settings → Build & Deployment) so a one-app change only rebuilds that project; shared
+  `packages/*` changes still rebuild every dependent. Don't revert it to "Automatic".
+- **Keep-alive**: `.github/workflows/supabase-ping.yml` + `outbox.yml` both need the
+  `DIRECT_URL` **repo secret** (set) — session-pooler URL, `:5432`. Vercel Cron
+  `/api/cron/ping` (daily) is the second pinger.
 - **DNS is Hostinger, mail is Zoho** (a Cloudflare-DNS migration is planned — see `docs/DEPLOY.md`).
   Never touch `MX` or mail `TXT`/`CNAME` (SPF/DKIM/DMARC) records.
 - Dev ports: dashboard 3100, tinkerchamps 3200, deleadint 4321, walk2lead 4322, makerchamps 4323,

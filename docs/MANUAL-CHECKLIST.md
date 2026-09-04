@@ -7,18 +7,38 @@ Most of it is optional hardening you can do gradually — the **Required now** l
 
 ## ✅ Required now (before real use)
 
-1. **Run the DB migration** — creates the `outbox` table (reliable Google-Sheet delivery):
-   ```bash
-   pnpm --filter @delead/db migrate
-   ```
-   (Lead/booking still work without it — there's a fallback — but do it.)
+1. ~~**Run the DB migration** (`outbox` table)~~ — **DONE** (migrations 0002 + 0003 applied to prod).
+2. ~~**Vercel → Node 24** in each project~~ — **DONE** (all 7 projects).
+3. ~~**Check CI is green**~~ — **DONE** (green on `main`).
+4. ~~**Deploy all 7 apps + wire keep-alive**~~ — **DONE.** All live on `*.vercel.app`;
+   `supabase-ping.yml` + `outbox.yml` have the `DIRECT_URL` repo secret; both run green.
 
-2. **Vercel → Node 24** — in *each* project: Settings → Build & Development → Node.js Version → **24.x**. Redeploy.
+**Still on you:**
+- **Change the seeded admin password** (`webdelead@gmail.com`) — first login → account menu.
+- **Enable "Dependabot security updates"** — GitHub → Settings → Advanced Security (alerts + graph already on).
+- **Smoke-test** each `.vercel.app` site's form → dashboard **Leads** / **Bookings** (see below).
 
-3. **Check CI is green** — GitHub → Actions tab → the latest run on `main` should be ✓.
-   (It was red from a pnpm-version bug + a build/DB issue; both fixed on `main` now.)
+---
 
-That's it for "must do".
+## 🌐 Custom-domain cutover (when DNS is ready)
+
+Currently every project serves on `*.vercel.app` and Vercel env holds the values from
+`../env/<app>/.env.vercel`. The real values are in `../env/<app>/.env`. To cut over:
+
+1. In each Vercel project → Settings → Domains → add the real host → add the CNAME it shows
+   in **Hostinger DNS** (never touch MX / SPF / DKIM / DMARC).
+2. Swap `SITE_URL_*` and `NEXT_PUBLIC_LEAD_ENDPOINT` / `NEXT_PUBLIC_BOOKING_ENDPOINT` in
+   Vercel env from the `.env.vercel` values back to the `.env` values.
+   Helper: `../push-vercel-env.sh` (edit the map/source file) or the dashboard UI.
+3. Redeploy — **dashboard first** (it holds the lead/booking CORS allow-list), then the sites.
+4. Supabase → Auth → URL Configuration → set Site URL + redirect URLs to `admin.deleadint.com`.
+
+### Testing the Google Sheet / email path without spamming real inboxes
+In each vertical's Apps Script (`Extensions → Apps Script` from its Sheet): change the
+notification recipient to a test address, **Save**, then **Deploy → Manage deployments →
+Edit (pencil) → New version → Deploy** (keeps the same `/exec` URL — do NOT create a new
+deployment). Revert + redeploy the same way when done, and delete test rows from the Sheet.
+Better: read the recipient from a Script Property (`NOTIFY`) so you flip it with no redeploy.
 
 ---
 
