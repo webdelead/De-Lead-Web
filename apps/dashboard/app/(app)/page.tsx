@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import { getSession, visibleVerticals, isSuperAdmin } from "@/lib/authz";
 import { getDb, leads, publishState, pingLog, sql, and, gte, inArray, desc } from "@delead/db";
 import { verticalByKey } from "@delead/brand/verticals";
+import { formatDate, formatDateTime } from "@delead/shared/dates";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
@@ -55,7 +56,7 @@ export default async function DashboardHome() {
       {pingStale && (
         <Alert variant="warning" title="The database hasn't been pinged recently">
           It&apos;s been more than 3 days since the last keep-alive ping{" "}
-          {lastPing ? `(${new Date(lastPing).toLocaleString()})` : "(never)"}. A free Supabase
+          {lastPing ? `(${formatDateTime(lastPing)})` : "(never)"}. A free Supabase
           project pauses after ~7 days idle — check the GitHub Actions / Vercel cron so it keeps
           running.
         </Alert>
@@ -104,7 +105,7 @@ export default async function DashboardHome() {
         </Stat>
         <Stat
           title="Database"
-          sub={lastPing ? new Date(lastPing).toLocaleDateString() : "never pinged"}
+          sub={lastPing ? formatDate(lastPing) : "never pinged"}
           value={pingStale ? "Stale" : "Healthy"}
           icon={<Database className="h-4 w-4" />}
           accent={pingStale ? "var(--destructive)" : "var(--accent-emerald)"}
@@ -136,7 +137,7 @@ export default async function DashboardHome() {
                   </div>
                   <div className="flex flex-shrink-0 items-center gap-3 text-xs text-muted-foreground">
                     <Badge variant="muted">{verticalByKey(l.source)?.shortName}</Badge>
-                    {new Date(l.createdAt).toLocaleDateString()}
+                    {formatDate(l.createdAt)}
                   </div>
                 </li>
               ))}

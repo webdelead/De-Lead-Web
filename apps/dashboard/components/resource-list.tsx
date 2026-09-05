@@ -1,6 +1,7 @@
 "use client";
 import { snakeToCamel as camel } from "@delead/shared/strings";
-import { useMemo, useRef, useState, useTransition } from "react";
+import { formatDate } from "@delead/shared/dates";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -35,7 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GripVertical, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { GripVertical, ImageOff, LayoutGrid, List, Loader2, Pencil, Plus, Save, Trash2 } from "lucide-react";
 import { ResourceForm } from "@/components/resource-form";
 import { deleteRow, reorderRows } from "@/lib/actions/content";
 import type { ResourceDef } from "@/lib/resources";
@@ -66,30 +67,83 @@ export function ResourceList({
   const [editing, setEditing] = useState<Row | null | undefined>(undefined); // undefined=closed, null=new
   const [confirm, setConfirm] = useState<Row | null>(null);
 
-  // drag-to-reorder
+  // grid vs list — only relevant for image-forward resources; grid by default,
+  // remembered per resource in localStorage
+  const [view, setView] = useState<"list" | "grid">(def.imageForward ? "grid" : "list");
+  useEffect(() => {
+    if (!def.imageForward) return;
+    try {
+      const saved = localStorage.getItem(`dlead-view:${resource}`);
+      if (saved === "list" || saved === "grid") setView(saved);
+    } catch {
+      // ignore — storage may be unavailable (private mode, etc.)
+    }
+  }, [resource, def.imageForward]);
+  function setViewPersist(v: "list" | "grid") {
+    setView(v);
+    try {
+      localStorage.setItem(`dlead-view:${resource}`, v);
+    } catch {
+      // ignore
+    }
+  }
+
+  // drag-to-reorder — dragging only updates local state instantly (no server
+  // call, no disabling overlay); a Save button persists it when the user is
+  // ready, and a beforeunload guard warns if they try to leave with an
+  // unsaved order.
   const dragFrom = useRef<number | null>(null);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [overIdx, setOverIdx] = useState<number | null>(null);
+  const [order, setOrder] = useState<Row[]>(rows);
+  const [orderDirty, setOrderDirty] = useState(false);
+  const [savingOrder, startSavingOrder] = useTransition();
+
+  // resync from the server-provided rows whenever they change (edits,
+  // deletes, a completed save) — but never while an unsaved reorder is
+  // pending, or a drag-drop would get silently discarded.
+  useEffect(() => {
+    if (!orderDirty) setOrder(rows);
+  }, [rows, orderDirty]);
+
+  useEffect(() => {
+    if (!orderDirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [orderDirty]);
 
   const filtered = useMemo(() => {
-    if (!q) return rows;
+    if (!q) return order;
     const needle = q.toLowerCase();
-    return rows.filter((r) =>
+    return order.filter((r) =>
       def.search.some((k) => String(r[camel(k)] ?? "").toLowerCase().includes(needle)),
     );
-  }, [q, rows, def.search]);
+  }, [q, order, def.search]);
 
-  const canReorder = def.orderable && canEdit && !q;
+  const canReorder = def.orderable && canEdit && !q && !savingOrder;
 
   function commitReorder(from: number, to: number) {
     if (from === to || from < 0 || to < 0) return;
-    const next = [...rows];
-    const [moved] = next.splice(from, 1);
-    next.splice(to, 0, moved!);
-    start(async () => {
+    setOrder((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved!);
+      return next;
+    });
+    setOrderDirty(true);
+  }
+
+  function saveOrder() {
+    startSavingOrder(async () => {
       try {
-        await reorderRows({ resource, vertical: vertical as never, ids: next.map((r) => r.id) });
+        await reorderRows({ resource, vertical: vertical as never, ids: order.map((r) => r.id) });
+        setOrderDirty(false);
         router.refresh();
+        toast.success("Order saved");
       } catch {
         toast.error("Couldn't save the new order");
       }
@@ -148,6 +202,41 @@ export function ResourceList({
           </Select>
         )}
         <div className="flex-1" />
+        {def.orderable && canEdit && orderDirty && (
+          <Button size="sm" onClick={saveOrder} loading={savingOrder}>
+            <Save className="h-4 w-4" /> Save order
+          </Button>
+        )}
+        {def.imageForward && (
+          <div className="flex items-center rounded-md border p-0.5">
+            <button
+              type="button"
+              aria-pressed={view === "grid"}
+              title="Grid view"
+              onClick={() => setViewPersist("grid")}
+              className={`rounded px-2 py-1 transition-colors ${
+                view === "grid"
+                  ? "bg-muted text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              aria-pressed={view === "list"}
+              title="List view"
+              onClick={() => setViewPersist("list")}
+              className={`rounded px-2 py-1 transition-colors ${
+                view === "list"
+                  ? "bg-muted text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <List className="h-4 w-4" />
+            </button>
+          </div>
+        )}
         {canEdit && (
           <Button size="sm" onClick={() => setEditing(null)}>
             <Plus className="h-4 w-4" /> New {def.singular.toLowerCase()}
@@ -162,6 +251,155 @@ export function ResourceList({
         </Alert>
       )}
 
+      {def.orderable && canEdit && orderDirty && !q && (
+        <Alert variant="info">
+          You&apos;ve changed the order but haven&apos;t saved it yet — click{" "}
+          <span className="font-medium text-foreground">Save order</span> above, or your changes
+          will be lost if you reload or leave this page.
+        </Alert>
+      )}
+
+      {def.imageForward && view === "grid" ? (
+        <div className="relative">
+          {pending && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-background/60 backdrop-blur-[1px]">
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            </div>
+          )}
+          {filtered.length === 0 ? (
+            <div className="rounded-lg border bg-background py-14 text-center text-muted-foreground">
+              Nothing here yet.{" "}
+              {canEdit && (
+                <button className="text-primary underline" onClick={() => setEditing(null)}>
+                  Add the first one
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+              {filtered.map((r, idx) => {
+                const imgCol = def.columns.find((c) => c.kind === "image");
+                const textCols = def.columns.filter((c) => c.kind !== "image" && c.kind !== "bool");
+                const boolCol = def.columns.find((c) => c.kind === "bool");
+                const asset = imgCol
+                  ? assetMap[String(r[camel(imgCol.key)] ?? "")]
+                  : undefined;
+                return (
+                  <div
+                    key={r.id}
+                    draggable={canReorder}
+                    data-dragging={canReorder && dragIdx === idx ? "true" : undefined}
+                    data-drop-target={
+                      canReorder && overIdx === idx && dragIdx !== null && dragIdx !== idx
+                        ? "true"
+                        : undefined
+                    }
+                    onDragStart={
+                      canReorder
+                        ? (e) => {
+                            dragFrom.current = idx;
+                            setDragIdx(idx);
+                            e.dataTransfer.effectAllowed = "move";
+                            e.dataTransfer.setData("text/plain", String(idx));
+                          }
+                        : undefined
+                    }
+                    onDragOver={
+                      canReorder
+                        ? (e) => {
+                            e.preventDefault();
+                            e.dataTransfer.dropEffect = "move";
+                            if (overIdx !== idx) setOverIdx(idx);
+                          }
+                        : undefined
+                    }
+                    onDrop={
+                      canReorder
+                        ? (e) => {
+                            e.preventDefault();
+                            if (dragFrom.current !== null) commitReorder(dragFrom.current, idx);
+                            endDrag();
+                          }
+                        : undefined
+                    }
+                    onDragEnd={canReorder ? endDrag : undefined}
+                    className="group flex flex-col overflow-hidden rounded-lg border bg-background transition-shadow data-[dragging=true]:opacity-40 data-[drop-target=true]:ring-2 data-[drop-target=true]:ring-primary"
+                  >
+                    <div
+                      style={{ position: "relative", height: 180, width: "100%", overflow: "hidden" }}
+                      className={`bg-muted ${canReorder ? "cursor-grab active:cursor-grabbing" : ""}`}
+                    >
+                      {asset ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={asset.url}
+                          alt={asset.alt}
+                          draggable={false}
+                          // draggable=false above stops the browser's native image-drag — without
+                          // it, a click that moves a couple px (trackpads do this constantly) reads
+                          // as a native image drag, and dropping it anywhere without a drop handler
+                          // makes the browser navigate the tab to the raw image URL — which looks
+                          // exactly like "clicking the image opens it". Row reordering still works
+                          // via the card's own `draggable` on the wrapping div, unaffected by this.
+                          // inline styles here on purpose, not just `h-full w-full object-cover` —
+                          // a fixed pixel height (not just aspect-ratio) is what actually keeps
+                          // every card's photo the same size regardless of the source image's own
+                          // dimensions (some uploads are tall portrait scans, some are wide), and
+                          // doing it inline sidesteps any chance of Tailwind's own `img{height:auto}`
+                          // preflight reset winning the cascade.
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                          }}
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-muted-foreground">
+                          <ImageOff className="h-6 w-6" />
+                        </div>
+                      )}
+                      {canReorder && (
+                        <span className="absolute left-1.5 top-1.5 rounded bg-background/80 p-1 opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
+                          <GripVertical className="h-3.5 w-3.5 text-muted-foreground" />
+                        </span>
+                      )}
+                      {boolCol && (
+                        <span className="absolute right-1.5 top-1.5">
+                          {renderCell(boolCol, r, assetMap)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex flex-1 flex-col gap-0.5 p-3">
+                      {textCols[0] && (
+                        <div className="text-sm font-medium leading-snug">
+                          {renderCell(textCols[0], r, assetMap)}
+                        </div>
+                      )}
+                      {textCols[1] && (
+                        <div className="text-xs text-muted-foreground">
+                          {renderCell(textCols[1], r, assetMap)}
+                        </div>
+                      )}
+                    </div>
+                    {canEdit && (
+                      <div className="flex justify-end gap-1 border-t px-2 py-1.5">
+                        <Button variant="ghost" size="icon" onClick={() => setEditing(r)}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => setConfirm(r)}>
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      ) : (
       <div className="relative rounded-lg border bg-background">
         {pending && (
           <div className="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-background/60 backdrop-blur-[1px]">
@@ -268,9 +506,10 @@ export function ResourceList({
           </TableBody>
         </Table>
       </div>
+      )}
 
       <Sheet open={editing !== undefined} onOpenChange={(o) => !o && setEditing(undefined)}>
-        <SheetContent>
+        <SheetContent className={def.imageForward ? "sm:max-w-2xl" : undefined}>
           <SheetHeader>
             <SheetTitle>
               {editing ? `Edit ${def.singular.toLowerCase()}` : `New ${def.singular.toLowerCase()}`}
@@ -338,7 +577,7 @@ function renderCell(
     const a = typeof val === "string" ? assetMap[val] : undefined;
     return a ? (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={a.url} alt={a.alt} className="h-10 w-10 rounded object-cover" />
+      <img src={a.url} alt={a.alt} draggable={false} className="h-10 w-10 rounded object-cover" />
     ) : (
       <span className="text-muted-foreground">—</span>
     );
@@ -346,7 +585,7 @@ function renderCell(
   if (c.kind === "bool") return <Badge variant={val ? "success" : "muted"}>{val ? "Yes" : "No"}</Badge>;
   if (c.kind === "badge") return <Badge variant="secondary">{String(val ?? "—")}</Badge>;
   if (c.kind === "date")
-    return <span className="text-muted-foreground">{val ? new Date(String(val)).toLocaleDateString() : "—"}</span>;
+    return <span className="text-muted-foreground">{val ? formatDate(String(val)) : "—"}</span>;
   const s = String(val ?? "");
   return <span className="line-clamp-1 max-w-xs">{s || "—"}</span>;
 }

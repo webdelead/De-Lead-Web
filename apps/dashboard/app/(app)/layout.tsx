@@ -1,14 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { getSession } from "@/lib/authz";
-import { buildNav } from "@/lib/nav";
+import { buildSidebar } from "@/lib/nav";
 import { Sidebar } from "@/components/sidebar";
 import { Topbar } from "@/components/topbar";
 import { NavProgress } from "@/components/nav-progress";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
-  const groups = buildNav(session);
+  const sidebar = buildSidebar(session);
 
   return (
     <div className="grid h-screen grid-rows-[auto_1fr] md:grid-cols-[240px_1fr] md:grid-rows-1">
@@ -27,7 +27,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </span>
         </Link>
         <div className="min-h-0 flex-1 overflow-y-auto">
-          <Sidebar groups={groups} />
+          <Sidebar {...sidebar} />
         </div>
       </aside>
       <div className="flex min-h-0 flex-col">

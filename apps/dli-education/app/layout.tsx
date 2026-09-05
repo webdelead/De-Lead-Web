@@ -42,7 +42,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <link rel="stylesheet" href="/css/styles.css" />
       </head>
-      <body>
+      {/* browser extensions (ColorZilla, Grammarly, etc.) add attributes to
+          <body> before React hydrates — ignore that specific mismatch */}
+      <body suppressHydrationWarning>
         {children}
         <Script src="/js/main.js" strategy="afterInteractive" />
         <Script

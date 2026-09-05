@@ -5,6 +5,7 @@ import {
   getReadDb,
   testimonials,
   pressClippings,
+  galleryImages,
   blogPosts,
   assets,
   eq,
@@ -37,6 +38,30 @@ export function getPress() {
   }, []);
 }
 
+export const GALLERY_BATCH = 8;
+
+/** One page of the Gallery grid — used for the initial SSR render and by
+ *  /api/gallery for the "Load more" button, so only `limit` rows (plus URLs)
+ *  are ever fetched per request instead of pulling every photo up front. */
+export function getGalleryPage(offset: number, limit: number) {
+  return buildSafe(
+    async () => {
+      const db = getReadDb();
+      const rows = await db
+        .select()
+        .from(galleryImages)
+        .where(and(eq(galleryImages.vertical, "deleadint"), eq(galleryImages.isActive, true)))
+        .orderBy(asc(galleryImages.sortOrder))
+        .limit(limit + 1)
+        .offset(offset);
+      const hasMore = rows.length > limit;
+      const items = await resolveAssets(hasMore ? rows.slice(0, limit) : rows, "assetId");
+      return { items, hasMore };
+    },
+    { items: [], hasMore: false },
+  );
+}
+
 export function getVoices() {
   return buildSafe(async () => {
     const db = getReadDb();
@@ -57,6 +82,18 @@ export function getPosts() {
       .where(eq(blogPosts.status, "published"))
       .orderBy(desc(blogPosts.publishedAt))
       .limit(5);
+    return resolveAssets(rows, "coverAssetId");
+  }, []);
+}
+
+export function getAllPosts() {
+  return buildSafe(async () => {
+    const db = getReadDb();
+    const rows = await db
+      .select()
+      .from(blogPosts)
+      .where(eq(blogPosts.status, "published"))
+      .orderBy(desc(blogPosts.publishedAt));
     return resolveAssets(rows, "coverAssetId");
   }, []);
 }

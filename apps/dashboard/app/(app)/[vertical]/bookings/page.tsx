@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { VERTICALS, type VerticalSlug } from "@delead/brand/verticals";
 import { requireAccess } from "@/lib/authz";
 import { getDb, tcBookings, desc, ilike, or } from "@delead/db";
+import { formatDate } from "@delead/shared/dates";
 import {
   Table,
   TableBody,
@@ -83,7 +84,7 @@ export default async function BookingsPage({
               rows.map((b) => (
                 <TableRow key={b.id}>
                   <TableCell className="whitespace-nowrap text-muted-foreground">
-                    {new Date(b.createdAt).toLocaleDateString()}
+                    {formatDate(b.createdAt)}
                   </TableCell>
                   <TableCell className="font-medium">{b.parentName}</TableCell>
                   <TableCell>{b.studentName}</TableCell>

@@ -71,14 +71,14 @@
   // ---------- click-and-drag horizontal scroll (journal row) ----------
   var dragRow = document.querySelector(".blog-row");
   if (dragRow) {
+    var DRAG_SLOP = 8; // px of travel before a press counts as a drag, not a click
     var isDown = false;
     var dragStartX = 0;
     var dragStartScroll = 0;
     var moved = false;
     dragRow.addEventListener("mousedown", function (e) {
       isDown = true;
-      moved = false;
-      dragRow.classList.add("dragging");
+      moved = false; // don't add .dragging yet — a plain click must stay a click
       dragStartX = e.pageX;
       dragStartScroll = dragRow.scrollLeft;
     });
@@ -88,19 +88,25 @@
     });
     window.addEventListener("mousemove", function (e) {
       if (!isDown) return;
-      e.preventDefault();
       var delta = e.pageX - dragStartX;
-      if (Math.abs(delta) > 4) moved = true;
-      dragRow.scrollLeft = dragStartScroll - delta;
+      if (!moved && Math.abs(delta) > DRAG_SLOP) {
+        moved = true;
+        dragRow.classList.add("dragging");
+      }
+      if (moved) {
+        e.preventDefault();
+        dragRow.scrollLeft = dragStartScroll - delta;
+      }
     });
-    // suppress the click on a card right after a drag, so links/cards don't
-    // register an accidental click at the end of a drag gesture
+    // only when a real drag happened: swallow the trailing click so a card
+    // link doesn't fire at the end of the gesture
     dragRow.addEventListener(
       "click",
       function (e) {
         if (moved) {
           e.preventDefault();
           e.stopPropagation();
+          moved = false;
         }
       },
       true
@@ -150,31 +156,132 @@
   }
 
   // ---------- soft fade between the stacked vertical cards ----------
-  // On desktop each .v-card is sticky and the next one scrolls up to cover it.
-  // Instead of a hard edge, ramp each covering card's opacity from 0 -> 1 as
-  // its top travels from one viewport-height away up to the top of the screen.
+  // Each .v-card is sticky (all widths — see .v-card in styles.css) and the
+  // next one scrolls up to cover it. Instead of a hard edge, ramp each
+  // covering card's opacity + a small rise from 0 -> 1 as its top travels
+  // from FADE_SPAN viewport-heights away up to the top of the screen — a
+  // span a bit wider than one full viewport so the handoff between cards
+  // reads as slow and continuous rather than snapping in at the last moment.
+  // rAF-throttled so a fast scroll/trackpad fling can't fire this faster
+  // than the browser can paint — that's what read as "stops"/stutter before,
+  // not the animation itself.
   var vCards = Array.prototype.slice.call(
     document.querySelectorAll(".v-stack .v-card")
   );
   if (vCards.length) {
-    var fadeCards = function () {
-      var desktop = window.innerWidth >= 901;
+    var FADE_SPAN = 1.35;
+    var ticking = false;
+    var applyFade = function () {
+      ticking = false;
       var vh = window.innerHeight || 1;
       vCards.forEach(function (card, i) {
-        if (!desktop || i === 0) {
+        if (i === 0) {
           card.style.opacity = "";
+          card.style.transform = "";
           return;
         }
         var top = card.getBoundingClientRect().top;
-        var o = 1 - top / vh;
+        var o = 1 - top / (vh * FADE_SPAN);
         o = o < 0 ? 0 : o > 1 ? 1 : o;
         card.style.opacity = o.toFixed(3);
+        card.style.transform = reduceMotion ? "" : "translateY(" + ((1 - o) * 28).toFixed(1) + "px)";
       });
+    };
+    var fadeCards = function () {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(applyFade);
     };
     window.addEventListener("scroll", fadeCards, { passive: true });
     window.addEventListener("resize", fadeCards);
-    fadeCards();
+    applyFade();
   }
+
+  // (testimonials are now the React <VoicesCarousel> — no scroll handler here)
+
+  // ---------- vertical card photo stacks (ecosystem section): click the
+  // peeking back photo to bring it forward — same is-front/is-back swap as
+  // the MakerChamps hero collage, just scoped to each .vc-media instead of
+  // needing to guard against a <a> navigating underneath it. ----------
+  document.querySelectorAll(".vc-media").forEach(function (media) {
+    var imgs = media.querySelectorAll("img.is-front, img.is-back");
+    if (imgs.length < 2) return; // single-photo card (Goal Finder) — nothing to wire
+    media.addEventListener("click", function (e) {
+      var back = media.querySelector("img.is-back");
+      if (!back || e.target !== back) return;
+      imgs.forEach(function (im) {
+        im.classList.toggle("is-front");
+        im.classList.toggle("is-back");
+      });
+    });
+  });
+
+  // ---------- gallery lightbox (same pattern as Walk2Lead) ----------
+  var lb = document.getElementById("lightbox");
+  var lbi = document.getElementById("lightbox-img");
+  function wireLightboxImg(im) {
+    im.addEventListener("click", function () {
+      lbi.src = im.src;
+      lbi.alt = im.alt || "";
+      lb.classList.add("open");
+    });
+  }
+  if (lb && lbi) {
+    document.querySelectorAll(".gallery-grid img").forEach(wireLightboxImg);
+    lb.addEventListener("click", function () {
+      lb.classList.remove("open");
+    });
+  }
+
+  // ---------- gallery "Load more" ----------
+  // mirrors the wide/tall accent rhythm from components/Gallery.tsx —
+  // keep the two in sync if that pattern ever changes.
+  (function () {
+    var btn = document.getElementById("gallery-load-more");
+    var grid = document.getElementById("gallery-grid");
+    if (!btn || !grid) return;
+    var WIDE = [0, 7];
+    var TALL = [1, 5];
+
+    btn.addEventListener("click", function () {
+      var offset = Number(btn.dataset.offset || "0");
+      btn.disabled = true;
+      btn.textContent = "Loading…";
+      fetch("/api/gallery?offset=" + offset)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          (data.items || []).forEach(function (item, i) {
+            var slot = (offset + i) % 10;
+            var fig = document.createElement("figure");
+            if (WIDE.indexOf(slot) !== -1) fig.className = "g-wide";
+            else if (TALL.indexOf(slot) !== -1) fig.className = "g-tall";
+            var img = document.createElement("img");
+            img.src = item.url;
+            img.alt = item.title || "";
+            img.loading = "lazy";
+            fig.appendChild(img);
+            if (item.title) {
+              var cap = document.createElement("figcaption");
+              cap.textContent = item.title;
+              fig.appendChild(cap);
+            }
+            grid.appendChild(fig);
+            wireLightboxImg(img);
+          });
+          btn.dataset.offset = String(offset + (data.items ? data.items.length : 0));
+          if (data.hasMore) {
+            btn.disabled = false;
+            btn.textContent = "Load more photos";
+          } else {
+            btn.remove();
+          }
+        })
+        .catch(function () {
+          btn.disabled = false;
+          btn.textContent = "Load more photos";
+        });
+    });
+  })();
 
   // ---------- footer year ----------
   var yearEl = document.getElementById("year");

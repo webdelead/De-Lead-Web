@@ -40,16 +40,28 @@ export function getProjects() {
   }, []);
 }
 
-export function getGallery() {
-  return buildSafe(async () => {
-    const db = getReadDb();
-    const rows = await db
-      .select()
-      .from(galleryImages)
-      .where(and(eq(galleryImages.vertical, "walk2lead"), eq(galleryImages.isActive, true)))
-      .orderBy(asc(galleryImages.sortOrder));
-    return withUrl(rows, "assetId");
-  }, []);
+export const GALLERY_BATCH = 8;
+
+/** One page of the Gallery grid — used for the initial SSR render and by
+ *  /api/gallery for the "Load more" button, so only `limit` rows (plus URLs)
+ *  are ever fetched per request instead of pulling every photo up front. */
+export function getGalleryPage(offset: number, limit: number) {
+  return buildSafe(
+    async () => {
+      const db = getReadDb();
+      const rows = await db
+        .select()
+        .from(galleryImages)
+        .where(and(eq(galleryImages.vertical, "walk2lead"), eq(galleryImages.isActive, true)))
+        .orderBy(asc(galleryImages.sortOrder))
+        .limit(limit + 1)
+        .offset(offset);
+      const hasMore = rows.length > limit;
+      const items = await withUrl(hasMore ? rows.slice(0, limit) : rows, "assetId");
+      return { items, hasMore };
+    },
+    { items: [], hasMore: false },
+  );
 }
 
 export function getPress() {

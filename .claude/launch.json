@@ -6,6 +6,36 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@delead/dashboard", "dev"],
       "port": 3100
+    },
+    {
+      "name": "deleadint",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@delead/site-deleadint", "dev"],
+      "port": 4321
+    },
+    {
+      "name": "tinkerchamps",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@delead/site-tinkerchamps", "dev"],
+      "port": 3200
+    },
+    {
+      "name": "corporate",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@delead/site-corporate", "dev"],
+      "port": 4324
+    },
+    {
+      "name": "makerchamps",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@delead/site-makerchamps", "dev"],
+      "port": 4323
+    },
+    {
+      "name": "walk2lead",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@delead/site-walk2lead", "dev"],
+      "port": 4322
     }
   ]
 }

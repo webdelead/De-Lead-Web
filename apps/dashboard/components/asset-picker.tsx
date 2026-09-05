@@ -10,11 +10,15 @@ export function AssetPicker({
   value,
   initialUrl,
   onChange,
+  size = "sm",
 }: {
   vertical: string;
   value: string;
   initialUrl?: string;
   onChange: (id: string) => void;
+  /** "lg" = the image is the point of this record (testimonials, cuttings,
+   *  gallery…) — give it real space instead of a thumbnail-sized preview. */
+  size?: "sm" | "lg";
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState(initialUrl ?? "");
@@ -30,10 +34,68 @@ export function AssetPicker({
         onChange(res.id);
         setUrl(res.url);
         toast.success("Uploaded");
-      } catch {
-        toast.error("Upload failed");
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Upload failed");
       }
     });
+  }
+
+  const input = (
+    <input
+      ref={inputRef}
+      type="file"
+      accept="image/*"
+      hidden
+      onChange={(e) => {
+        const f = e.target.files?.[0];
+        if (f) pick(f);
+      }}
+    />
+  );
+
+  if (size === "lg") {
+    return (
+      <div className="space-y-2">
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          className="group relative flex aspect-[4/3] w-full max-w-xs items-center justify-center overflow-hidden rounded-lg border border-dashed bg-muted/40 transition-colors hover:border-primary/50"
+        >
+          {url ? (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={url} alt="" draggable={false} className="h-full w-full object-cover" />
+              <span className="absolute inset-0 flex items-center justify-center bg-black/0 text-sm font-medium text-transparent transition-colors group-hover:bg-black/45 group-hover:text-white">
+                {pending ? "Uploading…" : "Replace image"}
+              </span>
+            </>
+          ) : (
+            <span className="flex flex-col items-center gap-2 text-muted-foreground">
+              <ImagePlus className="h-7 w-7" />
+              <span className="text-xs font-medium">
+                {pending ? "Uploading…" : "Click to upload"}
+              </span>
+            </span>
+          )}
+        </button>
+        {url && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="text-destructive hover:text-destructive"
+            onClick={() => {
+              setUrl("");
+              onChange("");
+            }}
+          >
+            <X className="h-3.5 w-3.5" /> Remove image
+          </Button>
+        )}
+        {input}
+        <input type="hidden" value={value} readOnly />
+      </div>
+    );
   }
 
   return (
@@ -41,7 +103,7 @@ export function AssetPicker({
       {url ? (
         <div className="relative">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={url} alt="" className="h-16 w-16 rounded border object-cover" />
+          <img src={url} alt="" draggable={false} className="h-16 w-16 rounded border object-cover" />
           <button
             type="button"
             className="absolute -right-2 -top-2 rounded-full bg-background p-0.5 shadow"
@@ -58,16 +120,7 @@ export function AssetPicker({
           <ImagePlus className="h-5 w-5" />
         </div>
       )}
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        hidden
-        onChange={(e) => {
-          const f = e.target.files?.[0];
-          if (f) pick(f);
-        }}
-      />
+      {input}
       <Button
         type="button"
         variant="outline"

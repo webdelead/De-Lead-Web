@@ -360,6 +360,25 @@ section{position:relative;}
 .g-c{grid-column:span 2;}
 .g-d{grid-column:span 3;}
 .g-e{grid-column:span 3;}
+.gallery-grid img{cursor:zoom-in;}
+.gallery-more{display:flex;justify-content:center;width:100%;margin-top:40px;}
+.gallery-ig-badge{
+  display:inline-flex;align-items:center;gap:8px;margin-top:18px;
+  font-size:.82rem;font-weight:600;color:var(--magenta);
+  padding:9px 16px 9px 12px;border-radius:999px;border:1px solid rgba(117,6,73,.22);
+  transition:.2s;
+}
+.gallery-ig-badge svg{width:16px;height:16px;flex:none;}
+.gallery-ig-badge:hover{background:rgba(117,6,73,.06);border-color:rgba(117,6,73,.4);transform:translateY(-1px);}
+.gallery-more .btn[disabled]{opacity:.6;cursor:default;transform:none;}
+
+/* click-to-enlarge overlay (same pattern as Walk2Lead's .lightbox) */
+.lightbox{
+  position:fixed;inset:0;background:rgba(28,20,23,.94);z-index:200;
+  display:none;place-items:center;padding:30px;cursor:zoom-out;
+}
+.lightbox.open{display:grid;}
+.lightbox img{max-height:88vh;max-width:100%;border-radius:12px;}
 
 /* ============================================================
    CTA
@@ -407,6 +426,10 @@ footer{background:#150a10;color:#e9dbe2;padding:76px 0 28px;}
 .footer-brand img{height:34px;margin-bottom:14px;}
 .footer-brand p{color:#b79aa8;font-size:.9rem;max-width:34ch;margin-bottom:14px;}
 .footer-tag{font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:#a9738f;}
+.footer-social{display:flex;gap:10px;margin-top:18px;}
+.footer-social a{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;flex:none;border:1px solid rgba(255,255,255,.18);color:#d9c6d0;transition:.2s;}
+.footer-social a:hover{color:#fff;border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);transform:translateY(-2px);}
+.footer-social svg{width:16px;height:16px;}
 .footer-col h4{font-family:'Inter';font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:#a9738f;margin-bottom:14px;}
 .footer-col ul li{margin-bottom:10px;}
 .footer-col a{font-size:.9rem;color:#d9c6d0;}

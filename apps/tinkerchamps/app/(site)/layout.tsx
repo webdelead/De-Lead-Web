@@ -155,6 +155,7 @@ const jsonLd = {
 
 import { ModalProvider } from "../context/ModalContext";
 import BookingModalWrapper from "../components/BookingModalWrapper";
+import FloatingSeasonCard from "../components/FloatingSeasonCard";
 
 export default function RootLayout({
   children,
@@ -164,6 +165,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
+        suppressHydrationWarning
         className={`${coveredByYourGrace.variable} ${hostGrotesk.variable} font-host antialiased bg-primary-purple text-secondary-white`}
       >
         <script
@@ -190,6 +192,7 @@ export default function RootLayout({
           {children}
           <Footer />
           <BookingModalWrapper />
+          <FloatingSeasonCard />
           <Analytics />
         </ModalProvider>
       </body>

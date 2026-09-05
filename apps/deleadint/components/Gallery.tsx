@@ -1,17 +1,20 @@
-const figs: [string, string, string, string][] = [
-  ["g-wide", "/assets/gallery/tc-1.webp", "TinkerChamps camp activity", "TinkerChamps"],
-  ["g-tall", "/assets/gallery/w2l-1.webp", "Walk2Lead robotics session", "Walk2Lead"],
-  ["", "/assets/gallery/mc-1.webp", "MakerChamps bootcamp", "MakerChamps"],
-  ["", "/assets/gallery/corp-1.webp", "Corporate training session", "Corporate Training"],
-  ["", "/assets/gallery/tc-2.webp", "TinkerChamps camp activity", "TinkerChamps"],
-  ["g-tall", "/assets/gallery/dli-1.webp", "DLI Education classroom", "DLI Education"],
-  ["", "/assets/gallery/w2l-2.webp", "Walk2Lead school expo", "Walk2Lead"],
-  ["g-wide", "/assets/gallery/mc-3.webp", "MakerChamps prototyping", "MakerChamps"],
-  ["", "/assets/gallery/uae-1.webp", "TinkerChamps UAE session", "India & UAE"],
-  ["", "/assets/gallery/corp-2.webp", "Corporate training team", "Corporate Training"],
-];
+import { getGalleryPage, GALLERY_BATCH } from "@/lib/content";
 
-export function Gallery() {
+// accent positions from the approved static layout, repeating every 10 items
+// so the wide/tall rhythm holds however many photos the dashboard has
+const WIDE_IDX = new Set([0, 7]);
+const TALL_IDX = new Set([1, 5]);
+
+const instagramIcon = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.5" cy="6.5" r=".6" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+export async function Gallery() {
+  const { items, hasMore } = await getGalleryPage(0, GALLERY_BATCH);
   return (
     <section className="gallery" id="gallery">
       <div className="container">
@@ -22,15 +25,40 @@ export function Gallery() {
             Camps, robotics labs, boardrooms and school expos: a running record of what &quot;learning
             by doing&quot; actually looks like.
           </p>
+          <a
+            className="gallery-ig-badge"
+            href="https://www.instagram.com/deleadint/?hl=en"
+            target="_blank"
+            rel="noopener"
+          >
+            {instagramIcon}
+            More on Instagram
+          </a>
         </div>
-        <div className="gallery-grid reveal-stagger">
-          {figs.map(([cls, src, alt, cap], i) => (
-            <figure key={i} className={cls || undefined}>
-              <img src={src} alt={alt} loading="lazy" />
-              <figcaption>{cap}</figcaption>
-            </figure>
-          ))}
+        <div className="gallery-grid reveal-stagger" id="gallery-grid">
+          {items.map((g, i) => {
+            const slot = i % 10;
+            const cls = WIDE_IDX.has(slot) ? "g-wide" : TALL_IDX.has(slot) ? "g-tall" : undefined;
+            return (
+              <figure key={g.id} className={cls}>
+                <img src={g._url} alt={String(g.title || "")} loading="lazy" />
+                {g.title && <figcaption>{String(g.title)}</figcaption>}
+              </figure>
+            );
+          })}
         </div>
+        {hasMore && (
+          <div className="gallery-more">
+            <button
+              type="button"
+              className="btn btn-ghost"
+              id="gallery-load-more"
+              data-offset={GALLERY_BATCH}
+            >
+              Load more photos
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

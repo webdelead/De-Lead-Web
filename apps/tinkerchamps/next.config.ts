@@ -6,7 +6,7 @@ import { resolve } from "node:path";
 config({ path: resolve(process.cwd(), "../../.env") });
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@delead/db", "@delead/brand", "@delead/shared"],
+  transpilePackages: ["@delead/db", "@delead/brand", "@delead/shared", "@delead/ui"],
   serverExternalPackages: ["postgres"],
   images: {
     formats: ["image/avif", "image/webp"],

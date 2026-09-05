@@ -9,13 +9,24 @@ export type DB = ReturnType<typeof createDb>["db"];
 export function createDb(url: string, opts?: { max?: number }) {
   const sql = postgres(url, {
     prepare: false,
-    max: opts?.max ?? 1,
+    // was `max: 1` — a single shared connection cached on globalThis for the
+    // whole process lifetime. If that one connection ever got wedged (a slow
+    // query, a pooler-side hiccup — see the max_lifetime note below, which
+    // is exactly that happening before), every OTHER request across the
+    // entire app queued behind it and hung too, since there was nowhere
+    // else to run. A few connections means one bad query can't take the
+    // whole dashboard down with it.
+    max: opts?.max ?? 4,
     idle_timeout: 20,
     // recycle pooled connections so a long-running dev/server process never
     // reuses one the Supabase pooler has already closed (was causing
     // "canceling statement due to statement timeout" on the next query)
     max_lifetime: 60 * 10,
     connect_timeout: 15,
+    // belt-and-braces: kill any single query that hangs server-side after
+    // 20s instead of holding its connection (and anything queued behind it)
+    // forever.
+    connection: { statement_timeout: 20_000 },
   });
   const db = drizzle(sql, { schema, casing: "snake_case" });
   return { db, sql };
@@ -36,7 +47,7 @@ export function getDb(): DB {
   if (_g.__deleadDb) return _g.__deleadDb;
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set");
-  _g.__deleadDb = createDb(url, { max: 1 }).db;
+  _g.__deleadDb = createDb(url, { max: 4 }).db;
   return _g.__deleadDb;
 }
 
@@ -49,6 +60,6 @@ export function getReadDb(): DB {
   if (_g.__deleadRoDb) return _g.__deleadRoDb;
   const url = process.env.DATABASE_URL_RO || process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL_RO / DATABASE_URL is not set");
-  _g.__deleadRoDb = createDb(url, { max: 1 }).db;
+  _g.__deleadRoDb = createDb(url, { max: 4 }).db;
   return _g.__deleadRoDb;
 }

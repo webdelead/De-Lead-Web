@@ -6,6 +6,7 @@ import {
   tcEvents,
   galleryImages,
   whatsappReviews,
+  testimonials,
   assets,
   eq,
   and,
@@ -60,6 +61,25 @@ export function getGallery() {
       .orderBy(asc(galleryImages.sortOrder));
     const urls = await urlMap(rows.map((r) => r.assetId));
     return rows.map((g) => ({ _id: g.id, image: urls.get(g.assetId) ?? "", order: g.sortOrder }));
+  }, []);
+}
+
+export function getTestimonials() {
+  return buildSafe(async () => {
+    const db = getReadDb();
+    const rows = await db
+      .select()
+      .from(testimonials)
+      .where(and(eq(testimonials.vertical, "tinkerchamps"), eq(testimonials.isActive, true)))
+      .orderBy(asc(testimonials.sortOrder));
+    const avatars = await urlMap(rows.map((r) => r.avatarAssetId));
+    return rows.map((t) => ({
+      _id: t.id,
+      quote: t.quote,
+      authorName: t.authorName,
+      authorRole: t.authorRole,
+      avatar: t.avatarAssetId ? (avatars.get(t.avatarAssetId) ?? "") : "",
+    }));
   }, []);
 }
 

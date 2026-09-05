@@ -12,6 +12,10 @@ interface VCard {
   numeral: string;
   tornTriangle?: boolean;
   media: { src: string; alt: string };
+  /** a second photo peeking behind the front one — click it to bring it
+   *  forward (js/main.js). Omit for verticals with no second photo on hand
+   *  (Goal Finder — it's a product, not a photographed programme). */
+  mediaBack?: { src: string; alt: string };
   badge: { href: string; external?: boolean; label: string };
 }
 
@@ -37,9 +41,10 @@ const cards: VCard[] = [
     ],
     numeral: "01",
     media: {
-      src: "/assets/gallery/corp-suit.webp",
+      src: "/assets/stock/corp-suit.webp",
       alt: "A client leadership team after a De' Lead corporate session",
     },
+    mediaBack: { src: "/assets/stock/corp-2.webp", alt: "Corporate Training session in progress" },
     badge: { href: "#contact", label: "Know more" },
   },
   {
@@ -71,6 +76,7 @@ const cards: VCard[] = [
     ],
     numeral: "02",
     media: { src: "/assets/images/card-walk2lead.jpg", alt: "Walk2Lead CSR robotics programme" },
+    mediaBack: { src: "/assets/stock/w2l-1.webp", alt: "Walk2Lead students at a robotics session" },
     badge: { href: "https://w2l.deleadint.com", external: true, label: "Visit site" },
   },
   {
@@ -104,6 +110,7 @@ const cards: VCard[] = [
       src: "/assets/images/card-tinkerchamps.jpg",
       alt: "TinkerChamps residential camp activity",
     },
+    mediaBack: { src: "/assets/stock/tc-4.webp", alt: "TinkerChamps students at camp" },
     badge: { href: "https://tinkerchamps.deleadint.com", external: true, label: "Visit site" },
   },
   {
@@ -134,7 +141,8 @@ const cards: VCard[] = [
     ],
     numeral: "04",
     tornTriangle: true,
-    media: { src: "/assets/gallery/mc-1.webp", alt: "MakerChamps innovation bootcamp" },
+    media: { src: "/assets/stock/mc-1.webp", alt: "MakerChamps innovation bootcamp" },
+    mediaBack: { src: "/assets/stock/mc-hero.webp", alt: "MakerChamps students on the NIT Calicut campus" },
     badge: { href: "#contact", label: "Know more" },
   },
   {
@@ -163,7 +171,8 @@ const cards: VCard[] = [
       ["4", "Delivery modes"],
     ],
     numeral: "05",
-    media: { src: "/assets/gallery/dli-2.webp", alt: "DLI Education classroom session" },
+    media: { src: "/assets/stock/dli-2.webp", alt: "DLI Education classroom session" },
+    mediaBack: { src: "/assets/stock/dli-1.webp", alt: "DLI Education students at a session" },
     badge: { href: "#contact", label: "Know more" },
   },
   {
@@ -222,7 +231,8 @@ function VCardEl({ c }: { c: VCard }) {
       <div className="vc-right">
         {c.tornTriangle && <span className="torn-triangle" aria-hidden="true"></span>}
         <div className="vc-media">
-          <img src={c.media.src} alt={c.media.alt} />
+          {c.mediaBack && <img className="is-back" src={c.mediaBack.src} alt={c.mediaBack.alt} />}
+          <img className="is-front" src={c.media.src} alt={c.media.alt} />
         </div>
         <a
           href={c.badge.href}

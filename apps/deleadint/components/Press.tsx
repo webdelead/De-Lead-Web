@@ -9,6 +9,8 @@ const star = (
 export async function Press() {
   const rows = await getPress();
   const imgs = rows.map((r) => ({ src: r._url, alt: r.title ? String(r.title) : "Walk2Lead newspaper coverage" }));
+  // hold a roughly constant scroll speed as clippings are added/removed
+  const marqueeDur = `${Math.max(24, imgs.length * 5)}s`;
 
   return (
     <section className="press" id="press">
@@ -38,12 +40,12 @@ export async function Press() {
       </div>
 
       <div className="press-strip reveal">
-        <div className="press-track">
+        <div className="press-track" style={{ animationDuration: marqueeDur }}>
           {imgs.map((im, i) => (
             <img key={i} src={im.src} alt={im.alt} loading="lazy" />
           ))}
         </div>
-        <div className="press-track" aria-hidden="true">
+        <div className="press-track" aria-hidden="true" style={{ animationDuration: marqueeDur }}>
           {imgs.map((im, i) => (
             <img key={i} src={im.src} alt="" loading="lazy" />
           ))}

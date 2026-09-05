@@ -34,7 +34,7 @@ export function ContactForm() {
             </div>
             <div className="cf-field">
               <label htmlFor="cf-vertical">I&apos;m interested in</label>
-              <select id="cf-vertical" name="Interested in">
+              <select id="cf-vertical" name="Interested in" defaultValue="Something else">
                 <option>Corporate Training</option>
                 <option>TinkerChamps</option>
                 <option>MakerChamps</option>

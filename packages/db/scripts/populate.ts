@@ -212,6 +212,20 @@ const MC_TESTIMONIALS: [string, string, string][] = [
    "Parent of Rizwan Khan", "Translated from a Malayalam voice message"],
 ];
 
+// [quote, authorName, authorRole, avatarFile] — the 4 TinkerChamps quotes that
+// used to be hardcoded straight into TestimonialSection.tsx (with their avatar
+// crops already sitting in apps/tinkerchamps/public/assets/images/test{1..4}.png)
+const TC_TESTIMONIALS: [string, string, string, string][] = [
+  ["From shy observers to engaged participants, TinkerChamps has had a profound impact. Students are now confident, well-rounded individuals with a thirst for knowledge.",
+   "Dr. Bindhu Ann Thomas", "Director, Kochi Business School", "test1.png"],
+  ["Building a better tomorrow starts today! TinkerChamps cultivates critical thinking and social awareness, empowering students to tackle real-world challenges.",
+   "Mr. Arjun Govind", "Asst. Professor, Amity Global Business School", "test2.png"],
+  ["Gone are the days of shy students hiding in the back. TinkerChamps@School fostered collaboration and communication, making my classroom a vibrant hub of social learning and growth.",
+   "Roshna John", "Project Coordinator, PRISM Project", "test3.png"],
+  ["Fear weakens self-confidence, making children and parents doubt their abilities. At TinkerChamps, I've seen hesitant learners become confident, curious explorers. The program shapes them into problem-solvers and thinkers, preparing them not just for school, but for life.",
+   "Ramkamal Manoj", "Mentor, Catalyst for Student Start-ups", "test4.png"],
+];
+
 /* ============================================================
    CORPORATE TRAINING — track record, testimonials, gallery
    ============================================================ */
@@ -459,6 +473,23 @@ async function main() {
     });
   }
   console.log(`✔ press_clippings (deleadint): ${HUB_PRESS.length}`);
+
+  // ---- TinkerChamps testimonials ----
+  await db.delete(testimonials).where(eq(testimonials.vertical, "tinkerchamps"));
+  for (let i = 0; i < TC_TESTIMONIALS.length; i++) {
+    const [quote, authorName, authorRole, avatarFile] = TC_TESTIMONIALS[i]!;
+    const avatarAssetId = await up(
+      `tinkerchamps/public/assets/images/${avatarFile}`,
+      "tinkerchamps",
+      `people/${avatarFile}`,
+      "tinkerchamps",
+      authorName,
+    );
+    await db.insert(testimonials).values({
+      vertical: "tinkerchamps", quote, authorName, authorRole, avatarAssetId, sortOrder: i,
+    });
+  }
+  console.log(`✔ testimonials (tinkerchamps): ${TC_TESTIMONIALS.length}`);
 
   // ---- Blog ----
   await db.delete(blogPosts);

@@ -1,4 +1,4 @@
-import { getSession, visibleVerticals, isSuperAdmin } from "@/lib/authz";
+import { getSession, visibleVerticals, isSuperAdmin, canAccess } from "@/lib/authz";
 import { getDb, leads, and, or, ilike, inArray, desc, eq, sql } from "@delead/db";
 import { verticalByKey, VERTICAL_LIST } from "@delead/brand/verticals";
 import { LeadsView } from "@/components/leads-view";
@@ -63,6 +63,9 @@ export default async function LeadsPage({
       v={sp.v ?? ""}
       verticalOptions={verticalOptions}
       showVerticalFilter={verticalOptions.length > 1}
+      // mixed sites → a neutral header (the row's own label shows in the detail panel)
+      interestLabel="Enquiry"
+      editableVerticals={allowed.filter((k) => canAccess(session, k, "edit"))}
     />
   );
 }

@@ -136,9 +136,18 @@ its own Google Sheet and emails the team — a backup and a familiar view for st
 For **each** marketing site (and one for TinkerChamps bookings — already exists):
 
 1. New Google Sheet → Extensions → Apps Script.
-2. Paste [`docs/apps-script/Code.gs`](apps-script/Code.gs) (identical for every site).
-   It appends a row and emails **info@deleadint.com, arjun@deleadint.com** on every submission.
-   Change `NOTIFY_TO` in the file if the recipients differ per site.
+2. Paste that site's file from [`docs/apps-script/`](apps-script/) — one per site,
+   `Code.<slug>.gs` (`Code.deleadint.gs`, `Code.walk2lead.gs`, `Code.makerchamps.gs`,
+   `Code.corporate.gs`, `Code.dli-education.gs`, `Code.tinkerchamps.gs`). They are
+   identical except `SITE_LABEL` / `SITE_URL`, so every Sheet row + email is stamped
+   with the originating site (no cross-site confusion). `Code.gs` is the original
+   un-labelled template, kept for reference. Set a Script Property `NOTIFY`
+   (comma-separated) to change recipients without redeploying; otherwise
+   `DEFAULT_NOTIFY_TO` in the file is used.
+   Note: the payload is a fixed shape — `source, name, email, phone, interest,
+   message, pagePath` (bookings also send `parentName, studentName, classGrade,
+   place`). A site's extra questions must map into one of those (e.g. MakerChamps
+   "class" → `interest`) or they are not captured anywhere.
 3. Deploy → New deployment → **Web app** · Execute as **Me** · Who has access **Anyone**.
 4. Authorise (it asks for Sheet + Gmail send permission the first time).
 5. Copy the `/exec` URL → set it in `.env` **and** the dashboard's Vercel env as

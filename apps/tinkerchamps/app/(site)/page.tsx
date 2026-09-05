@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import HeroSection from "../components/HeroSection";
 import ScrollColorBackground from "../components/ScrollColorBackground";
 import VideoSection from "../components/Videosection";
-import { getEvents, getGallery, getReviews } from "../lib/tc-db";
+import { getEvents, getGallery, getReviews, getTestimonials } from "../lib/tc-db";
 
 // ISR: cache the rendered page for an hour; the dashboard's "Publish to site"
 // button hits /api/revalidate for an instant refresh. No per-visitor DB hit.
@@ -11,6 +11,9 @@ export const revalidate = 3600;
 // Dynamically import below-the-fold Client Components to reduce initial JS payload
 const StatsSection = dynamic(() => import("../components/StatsSection"));
 const AboutSection = dynamic(() => import("../components/AboutSection"));
+const DirectorsNoteSection = dynamic(
+  () => import("../components/DirectorsNoteSection"),
+);
 const MarqueeSection = dynamic(() => import("../components/MarqueeSection"));
 const EventsSection = dynamic(() => import("../components/EventsSection"));
 const TestimonialsSection = dynamic(
@@ -27,10 +30,11 @@ const GallerySection = dynamic(() => import("../components/GallerySection"));
 const FAQSection = dynamic(() => import("../components/FAQSection"));
 
 export default async function Home() {
-  const [events, gallery, reviews] = await Promise.all([
+  const [events, gallery, reviews, testimonials] = await Promise.all([
     getEvents(false),
     getGallery(),
     getReviews(),
+    getTestimonials(),
   ]);
 
   return (
@@ -40,9 +44,10 @@ export default async function Home() {
         <VideoSection />
         <StatsSection />
         <AboutSection />
+        <DirectorsNoteSection />
         <MarqueeSection />
         <EventsSection events={events} />
-        <TestimonialsSection />
+        <TestimonialsSection testimonials={testimonials} />
         <WhatsappReviewsSection
           reviews={reviews.map((r) => ({ id: r._id, url: r.screenshot, title: r.title }))}
         />

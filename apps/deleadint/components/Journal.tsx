@@ -2,10 +2,10 @@ import { getPosts } from "@/lib/content";
 
 const FALLBACK: Record<string, string> = {
   "DLI Foundation": "/assets/images/card-walk2lead.jpg",
-  TinkerChamps: "/assets/gallery/tc-4.webp",
-  MakerChamps: "/assets/gallery/mc-1.webp",
-  "DLI Education": "/assets/gallery/dli-2.webp",
-  "Corporate Training": "/assets/gallery/corp-2.webp",
+  TinkerChamps: "/assets/stock/tc-4.webp",
+  MakerChamps: "/assets/stock/mc-1.webp",
+  "DLI Education": "/assets/stock/dli-2.webp",
+  "Corporate Training": "/assets/stock/corp-2.webp",
 };
 
 export async function Journal() {
@@ -23,6 +23,11 @@ export async function Journal() {
               lessons from the field.
             </p>
           </div>
+          {posts.length > 0 && (
+            <a href="/journal" className="blog-head-link">
+              All field notes &rarr;
+            </a>
+          )}
         </div>
 
         <div className="blog-row-wrap reveal">
@@ -38,7 +43,7 @@ export async function Journal() {
             {posts.map((p) => (
               <a key={p.id} href={`/journal/${p.slug}`} className="blog-card2">
                 <div className="bc-media">
-                  <img src={p._url || FALLBACK[p.tag] || "/assets/gallery/tc-4.webp"} alt={p.title} loading="lazy" />
+                  <img src={p._url || FALLBACK[p.tag] || "/assets/stock/tc-4.webp"} alt={p.title} loading="lazy" />
                 </div>
                 <span className="bc-tag">{p.tag}</span>
                 <h4>{p.title}</h4>

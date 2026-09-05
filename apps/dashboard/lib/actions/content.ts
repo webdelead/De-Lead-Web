@@ -6,6 +6,7 @@ import { writeAudit, markDirty, clearDirty } from "@/lib/audit";
 import { resourceFor, type ResourceDef } from "@/lib/resources";
 import { resourceAllowedInVertical } from "@/lib/resource-access";
 import { put, ensureBucket } from "@/lib/storage";
+import sharp from "sharp";
 import { VERTICALS, type VerticalSlug } from "@delead/brand/verticals";
 import { snakeToCamel as toCamel, assetPublicUrl } from "@delead/shared";
 
@@ -217,7 +218,10 @@ export async function publishVertical(slug: VerticalSlug) {
   return { ok: true, triggered };
 }
 
-const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8 MB
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024; // 5 MB — matches next.config.ts's serverActions.bodySizeLimit
+// resize+compress target for anything that isn't an animated GIF (below)
+const MAX_DIMENSION = 2400; // px, longest side — plenty for any use on these sites
+const WEBP_QUALITY = 82;
 // raster images only — SVG is intentionally excluded (script-carrying vector)
 const ALLOWED_IMAGE_MIME: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -248,13 +252,47 @@ export async function uploadAsset(form: FormData) {
   const key = VERTICALS[verticalSlug]?.key ?? "deleadint";
   if (!canAccess(session, key, "edit")) throw new Error("forbidden");
 
-  if (file.size > MAX_UPLOAD_BYTES) throw new Error("file too large (max 8 MB)");
-  const buf = Buffer.from(await file.arrayBuffer());
-  if (buf.byteLength > MAX_UPLOAD_BYTES) throw new Error("file too large (max 8 MB)");
+  if (file.size > MAX_UPLOAD_BYTES) throw new Error("file too large (max 5 MB)");
+  const raw = Buffer.from(await file.arrayBuffer());
+  if (raw.byteLength > MAX_UPLOAD_BYTES) throw new Error("file too large (max 5 MB)");
 
-  const sniffed = sniffMime(buf);
-  const mime = sniffed && sniffed in ALLOWED_IMAGE_MIME ? sniffed : null;
-  if (!mime) throw new Error("unsupported file type — upload a JPG, PNG, WebP, AVIF or GIF");
+  const sniffed = sniffMime(raw);
+  const sourceMime = sniffed && sniffed in ALLOWED_IMAGE_MIME ? sniffed : null;
+  if (!sourceMime) throw new Error("unsupported file type — upload a JPG, PNG, WebP, AVIF or GIF");
+
+  // compress + convert to WebP server-side — keeps storage small and every
+  // stored asset in one predictable format, regardless of what the source
+  // photo came in as (phone camera JPEGs especially run several MB raw).
+  // Animated GIFs are the one thing left alone: re-encoding would flatten
+  // them to a single frame.
+  let buf: Buffer = raw;
+  let mime = sourceMime;
+  const isAnimatedGif =
+    sourceMime === "image/gif" &&
+    (await sharp(raw, { animated: true })
+      .metadata()
+      .then((m) => (m.pages ?? 1) > 1)
+      .catch(() => true)); // if we can't read it, don't risk flattening a real animation
+  if (!isAnimatedGif) {
+    try {
+      buf = await sharp(raw, { failOn: "none" })
+        .rotate() // honour EXIF orientation before resizing so photos don't end up sideways
+        .resize({
+          width: MAX_DIMENSION,
+          height: MAX_DIMENSION,
+          fit: "inside",
+          withoutEnlargement: true,
+        })
+        .webp({ quality: WEBP_QUALITY })
+        .toBuffer();
+      mime = "image/webp";
+    } catch {
+      // sharp couldn't process it (corrupt/unusual file) — fall back to the
+      // original upload rather than failing the whole request.
+      buf = raw;
+      mime = sourceMime;
+    }
+  }
 
   const bucket = ["tinkerchamps", "walk2lead"].includes(key) ? key : "shared";
   await ensureBucket(bucket);

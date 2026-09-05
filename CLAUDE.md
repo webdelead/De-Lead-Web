@@ -17,7 +17,7 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
 | `apps/tinkerchamps` | Next 16 app, **same ISR model as the 5 marketing sites** (2026-09): `(site)/page.tsx` is an async server component that fetches events/gallery/reviews from Postgres (`app/lib/tc-db.ts`) and passes them as props; `revalidate = 3600` + `app/api/revalidate`. ScrollColorBackground + Lenis + WebGL gallery + framer-motion all kept (client components, unaffected). The old Sanity shim + `/api/tc/*` routes were deleted. Journey section is static cards; booking modal is a single 5-field labelled form → `/api/booking` → `tc_bookings` (still dynamic — it's a write). |
 | `apps/dashboard` | Next 15 admin (`admin.deleadint.com`). **Supabase Auth** email+password (login has show/hide + forgot/reset; `lib/supabase/*` + `lib/authz.ts`); `users` table is a profile row keyed by the Supabase auth uid. RBAC (`super_admin` + per-vertical `view`/`edit` grants), generic resource CRUD (`lib/resources.ts` registry), leads inbox, users (invite-by-email), audit. Sidebar vertical sections are collapsible. |
 | `packages/db` | Drizzle schema + client + migrations + seed. **The one source of DB truth.** |
-| ~~`packages/ui`~~ | Deleted 2026-09 (Phase 3) — was legacy Astro components, unused after the Next move. |
+| `packages/ui` | `@delead/ui` — shared **client** React components. Recreated 2026-09 (the earlier Astro `packages/ui` was deleted Phase 3; this is unrelated). Currently exports `<ScrollStack>` (`./scroll-stack`): a scroll-driven card deck — every child pins at the same sticky `top`, fanned by a `translateY(--i·step)` transform (not a per-card `top`, so the whole deck un-sticks on one frame and exits together), scale-in as each card reaches the pin. Self-contained (inline styles + one rAF scroll handler, no external CSS), honours `prefers-reduced-motion`, collapses to a plain list below `collapseBelow` (default 1080). Props: `pinTop` `step` `stepCap` `gapVh` `tailVh` `tilt` `collapseBelow`. Extracted from the deleadint "Voices" section (which itself no longer uses it — see below). Consumers must add `@delead/ui` to `transpilePackages`. |
 | `packages/shared` | `@delead/shared` — cross-app server helpers: `assetPublicUrl` (`/storage`), `snakeToCamel` (`/strings`), `verifyTurnstile` (`/turnstile`), `makeRevalidateRoute` (root, server-only). |
 | `packages/brand` | Tailwind v4 theme tokens, per-vertical palette + font map, the `verticals.ts` registry. |
 | `packages/config` | Shared tsconfig / prettier. |
@@ -55,6 +55,16 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
   the site's own `main.js` (CSS + one IntersectionObserver). No new Lenis/GSAP on these five
   (TinkerChamps keeps its existing Lenis / WebGL / framer-motion — those are
   client components and orthogonal to ISR.)
+  - **Exception — deleadint "Voices" section (2026-09, client-directed):** the testimonials
+    block was redesigned away from the static folder. It's now a **coverflow carousel**
+    (`components/VoicesCarousel.tsx`, a `"use client"` component) — 3 cards in view, centre
+    large + lit, flanks small + dim, 5s autoplay (paused on hover / focus / hidden tab /
+    reduced-motion), infinite loop, dots (no arrows), ←/→ keys, single-card block below
+    1080px. `Voices.tsx` is now just a server wrapper (heading + `getVoices()` → the client
+    carousel). The old `.voices-stack` / `.voice-stackcard` CSS + the `main.js` scroll-stack
+    block were removed; card slide uses a CSS `transition` on an inline computed `transform`
+    string. Do **not** diff this section against `../De Lead International/` — it diverged on
+    purpose. The removed vertical scroll-stack lives on as `@delead/ui`'s `<ScrollStack>`.
 - **Subdomains**: `w2l` `mc` `tc` `corporate` `edu` `admin` on `deleadint.com`
   (`walk2lead`/`makerchamps`/`tinkerchamps` 301 → short forms).
 - **Vercel deploy state (2026-09)**: all 7 apps are live as separate Vercel projects

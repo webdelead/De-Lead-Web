@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { VERTICALS, type VerticalSlug } from "@delead/brand/verticals";
 import { requireAccess } from "@/lib/authz";
-import { getDb, siteSettings, and, eq } from "@delead/db";
+import { getDb, siteSettings, assets, and, eq, inArray } from "@delead/db";
+import { assetPublicUrl } from "@delead/shared/storage";
 import { SiteSettingsForm, type SettingSpec } from "@/components/site-settings-form";
 import { Alert } from "@/components/ui/alert";
+import { PublishBar } from "@/components/publish-bar";
 
 const SPECS: Record<string, SettingSpec[]> = {
   tinkerchamps: [
@@ -27,6 +29,7 @@ const SPECS: Record<string, SettingSpec[]> = {
         { name: "label", label: "Season label", type: "text", placeholder: "Season 3" },
         { name: "dates", label: "Dates", type: "text", placeholder: "Aug 28–29" },
         { name: "campus", label: "Campus line", type: "text", placeholder: "NIT Calicut Campus" },
+        { name: "logoAssetId", label: "Season logo", type: "image" },
       ],
     },
   ],
@@ -51,16 +54,35 @@ export default async function VerticalSettings({
   const values: Record<string, Record<string, unknown>> = {};
   for (const row of existing) values[row.key] = row.value;
 
+  // resolve every "image" field's stored asset id -> public URL, so the
+  // picker can show a preview instead of a blank box.
+  const imageFieldIds = new Set<string>();
+  for (const spec of specs) {
+    for (const f of spec.fields) {
+      if (f.type !== "image") continue;
+      const id = values[spec.key]?.[f.name];
+      if (typeof id === "string" && id) imageFieldIds.add(id);
+    }
+  }
+  const assetUrlById: Record<string, string> = {};
+  if (imageFieldIds.size) {
+    for (const a of await db.select().from(assets).where(inArray(assets.id, [...imageFieldIds]))) {
+      assetUrlById[a.id] = assetPublicUrl(a);
+    }
+  }
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
-        <p className="text-sm text-muted-foreground">{v.name}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+          <p className="text-sm text-muted-foreground">{v.name}</p>
+        </div>
+        <PublishBar vertical={v.slug} canEdit={canEdit} />
       </div>
       <Alert variant="info">
-        Saving stores the change immediately, but the live site won&apos;t reflect it until you
-        <span className="font-medium text-foreground"> Publish</span> from one of {v.name}&apos;s
-        content pages.
+        Saving stores the change immediately, but the live site won&apos;t reflect it until you{" "}
+        <span className="font-medium text-foreground">Publish to site</span>.
       </Alert>
       {!canEdit && (
         <Alert variant="warning">
@@ -68,15 +90,24 @@ export default async function VerticalSettings({
           edit grant.
         </Alert>
       )}
-      {specs.map((spec) => (
-        <SiteSettingsForm
-          key={spec.key}
-          vertical={v.slug}
-          spec={spec}
-          value={values[spec.key] ?? {}}
-          canEdit={canEdit}
-        />
-      ))}
+      {specs.map((spec) => {
+        const imageUrls: Record<string, string> = {};
+        for (const f of spec.fields) {
+          if (f.type !== "image") continue;
+          const id = values[spec.key]?.[f.name];
+          if (typeof id === "string" && assetUrlById[id]) imageUrls[f.name] = assetUrlById[id];
+        }
+        return (
+          <SiteSettingsForm
+            key={spec.key}
+            vertical={v.slug}
+            spec={spec}
+            value={values[spec.key] ?? {}}
+            imageUrls={imageUrls}
+            canEdit={canEdit}
+          />
+        );
+      })}
     </div>
   );
 }

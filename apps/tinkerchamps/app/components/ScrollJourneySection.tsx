@@ -11,11 +11,14 @@ const steps = [
     statDetail:
       "of children overcome hesitation and show improved confidence after camp",
     citation: "American Camp Association (ACA), Youth Outcomes Study",
+    // Sunrise breaking over a horizon — thawing out of hesitation — instead
+    // of a padlock, which read as "locked" rather than "unfreezing".
     icon: (
       <svg viewBox="0 0 64 64" fill="none" width="64" height="64">
-        <rect x="16" y="28" width="32" height="24" rx="4" fill="#F5C842" />
-        <path d="M24 28v-6a8 8 0 1116 0" stroke="#F5C842" strokeWidth="4" strokeLinecap="round" />
-        <path d="M40 20v8" stroke="#000" strokeWidth="3" strokeLinecap="round" />
+        <path d="M10 42h44" stroke="#F5C842" strokeWidth="4" strokeLinecap="round" />
+        <path d="M18 42a14 14 0 0128 0" fill="#F5C842" />
+        <path d="M32 14v8" stroke="#F5C842" strokeWidth="3" strokeLinecap="round" />
+        <path d="M18 22l5.5 5.5M46 22l-5.5 5.5" stroke="#F5C842" strokeWidth="3" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -94,20 +97,20 @@ function StepCard({ step, i }: { step: (typeof steps)[number]; i: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.5, delay: i * 0.06, ease: "easeOut" }}
-      className="flex flex-col items-center gap-5 rounded-2xl border border-purple-600/40 px-6 py-8 text-center"
+      className="flex flex-col items-center gap-3 rounded-2xl border border-purple-600/40 px-5 py-6 text-center"
       style={{ background: "rgba(109, 40, 217, 0.25)", backdropFilter: "blur(10px)" }}
     >
       {/* glowing circle + icon */}
       <div
         className="relative flex items-center justify-center rounded-full"
         style={{
-          width: 128,
-          height: 128,
+          width: 84,
+          height: 84,
           background: "linear-gradient(135deg, #4C1D95 0%, #6D28D9 100%)",
-          boxShadow: "0 0 40px rgba(245,200,66,0.2), 0 0 90px rgba(109,40,217,0.35)",
+          boxShadow: "0 0 24px rgba(245,200,66,0.18), 0 0 60px rgba(109,40,217,0.3)",
         }}
       >
-        <svg className="absolute inset-0" viewBox="0 0 128 128" style={{ width: 128, height: 128 }}>
+        <svg className="absolute inset-0" viewBox="0 0 128 128" style={{ width: 84, height: 84 }}>
           <circle
             cx="64"
             cy="64"
@@ -119,34 +122,34 @@ function StepCard({ step, i }: { step: (typeof steps)[number]; i: number }) {
             opacity="0.4"
           />
         </svg>
-        <div style={{ transform: "scale(1.4)" }}>{step.icon}</div>
+        <div style={{ transform: "scale(0.9)" }}>{step.icon}</div>
       </div>
 
       {/* label pill */}
       <div
-        className="rounded-full border px-6 py-2 font-covered text-xl font-bold tracking-wide shadow-lg"
+        className="rounded-full border px-4 py-1 font-covered text-base font-bold tracking-wide shadow-lg"
         style={{ background: "#2D1B69", borderColor: "#6D28D9", color: "#F5C842" }}
       >
         {step.label}
       </div>
 
       <span
-        className="block font-covered text-6xl font-bold leading-none"
+        className="block font-covered text-4xl font-bold leading-none"
         style={{ color: "#F5C842" }}
       >
         {step.stat}
       </span>
-      <p className="text-sm leading-relaxed text-purple-100">{step.statDetail}</p>
-      <p className="mt-1 text-xs italic text-purple-400">{step.citation}</p>
+      <p className="text-xs leading-snug text-purple-100">{step.statDetail}</p>
+      <p className="mt-0.5 text-[11px] italic text-purple-400">{step.citation}</p>
     </motion.div>
   );
 }
 
 export default function NumbersSection() {
   return (
-    <section className="relative z-10 w-full px-6 py-20 sm:px-12">
+    <section className="relative z-10 w-full px-6 py-16 sm:px-12">
       <div className="mx-auto max-w-7xl">
-        <div className="mb-12 max-w-xl">
+        <div className="mb-10 max-w-xl">
           <h2 className="text-secondary text-4xl font-semibold leading-tight tracking-tight md:text-5xl">
             The Numbers
           </h2>
@@ -159,7 +162,7 @@ export default function NumbersSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {steps.map((step, i) => (
             <StepCard key={step.id} step={step} i={i} />
           ))}

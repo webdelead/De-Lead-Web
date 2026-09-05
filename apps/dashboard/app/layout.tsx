@@ -15,7 +15,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable}>
-      <body>
+      {/* browser extensions (Grammarly etc.) add attributes to <body> before
+          React hydrates — ignore that specific mismatch */}
+      <body suppressHydrationWarning>
         {children}
         <Toaster />
       </body>

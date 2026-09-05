@@ -41,7 +41,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <link rel="stylesheet" href="/assets/css/styles.css" />
       </head>
-      <body>
+      {/* browser extensions (ColorZilla, Grammarly, etc.) add attributes to
+          <body> before React hydrates — ignore that specific mismatch */}
+      <body suppressHydrationWarning>
         {children}
         <Script src="/assets/js/main.js?v=4" strategy="afterInteractive" />
         <Script src="/js/lead-capture.js" strategy="afterInteractive" data-endpoint={LEAD_ENDPOINT} />

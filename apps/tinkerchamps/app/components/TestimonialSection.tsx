@@ -11,46 +11,19 @@ import {
 } from "react-icons/fa";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 
-interface Testimonial {
+export interface Testimonial {
+  _id: string;
   quote: string;
-  text: string;
-  parent: string;
-  role: string;
+  authorName: string;
+  authorRole: string;
   avatar: string;
 }
 
-const testimonials: Testimonial[] = [
-  {
-    quote: "“My son came back as a confident and  version of himself.”",
-    text: "“From shy observers to engaged participants, TinkerChamps has had a profound impact. Students are now confident, well-rounded individuals with a thirst for knowledge.”",
-    parent: "Dr. Bindhu Ann Thomas",
-    role: "Director, Kochi Business School",
-    avatar: "/assets/images/test1.png",
-  },
-  {
-    quote: "“TinkerChamps helped my daughter discover her inner leader.”",
-    text: "“Building a better tomorrow starts today! TinkerChamps cultivates critical thinking and social awareness, empowering students to tackle real-world challenges.”",
-    parent: "Mr.Arjun Govind",
-    role: "Asst. Professor, Amity Global Business School",
-    avatar: "/assets/images/test2.png",
-  },
-  {
-    quote: "“My son came back as a completely different version of himself.”",
-    text: "“Gone are the days of shy students hiding in the back. TinkerChamps@School fostered collaboration and communication, making my classroom a vibrant hub of social learning and growth.”",
-    parent: "Roshna John",
-    role: "Project Coordinator, PRISM Project",
-    avatar: "/assets/images/test3.png",
-  },
-  {
-    quote: "“TinkerChamps helped my daughter discover her inner leader.”",
-    text: "“Fear weakens self-confidence, making children and parents doubt their abilities. At TinkerChamps, I’ve seen hesitant learners become confident, curious explorers. The program shapes them into problem-solvers and thinkers, preparing them not just for school, but for life.”",
-    parent: "Ramkamal Manoj",
-    role: "Mentor, Catalyst for Student Start-ups",
-    avatar: "/assets/images/test4.png",
-  },
-];
-
-export default function TestimonialSection() {
+export default function TestimonialSection({
+  testimonials = [],
+}: {
+  testimonials?: Testimonial[];
+}) {
   const [active, setActive] = useState(0);
   const [muted, setMuted] = useState(true);
   const [isPaused, setIsPaused] = useState(false);
@@ -59,24 +32,26 @@ export default function TestimonialSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { amount: 0.4 });
 
+  const count = testimonials.length;
+
   const next = () => {
-    setActive((prev) => (prev + 1) % testimonials.length);
+    if (count) setActive((prev) => (prev + 1) % count);
   };
 
   const prev = () => {
-    setActive((prev) => (prev === 0 ? testimonials.length - 1 : prev - 1));
+    if (count) setActive((prev) => (prev === 0 ? count - 1 : prev - 1));
   };
 
   /* AUTO SLIDE (PAUSE ON HOVER & OFFSCREEN) */
   useEffect(() => {
-    if (isPaused || !isInView) return;
+    if (isPaused || !isInView || !count) return;
 
     const interval = setInterval(() => {
-      setActive((prev) => (prev + 1) % testimonials.length);
+      setActive((prev) => (prev + 1) % count);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isPaused, isInView]);
+  }, [isPaused, isInView, count]);
 
   /* VIDEO PLAY / PAUSE WHEN VISIBLE */
   useEffect(() => {
@@ -99,6 +74,9 @@ export default function TestimonialSection() {
     video.muted = !muted;
     setMuted(!muted);
   };
+
+  if (!count) return null;
+  const t = testimonials[active]!;
 
   return (
     <section id="testimonials" className="py-16 md:py-24 px-6">
@@ -188,32 +166,30 @@ export default function TestimonialSection() {
                 >
                   <p className="text-3xl text-[#FBC333] mb-2">“</p>
 
-                  <p className="text-2xl font-semibold text-white mb-4 max-w-xl">
-                    {testimonials[active].quote}
-                  </p>
-
-                  <p className="text-white leading-relaxed max-w-xl mb-8">
-                    {testimonials[active].text}
+                  <p className="text-2xl font-semibold text-white leading-snug max-w-xl mb-8">
+                    {t.quote}
                   </p>
 
                   <p className="text-3xl text-[#FBC333] mb-2">”</p>
 
                   <div className="flex items-center gap-4">
-                    <Image
-                      src={testimonials[active].avatar}
-                      alt={testimonials[active].parent}
-                      width={48}
-                      height={48}
-                      className="rounded-full"
-                    />
+                    {t.avatar ? (
+                      <Image
+                        src={t.avatar}
+                        alt={t.authorName}
+                        width={48}
+                        height={48}
+                        className="h-12 w-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-lg font-semibold text-white">
+                        {t.authorName.trim().charAt(0) || "?"}
+                      </span>
+                    )}
 
                     <div className="text-left">
-                      <p className="font-semibold text-white">
-                        {testimonials[active].parent}
-                      </p>
-                      <p className="text-sm text-gray-200">
-                        {testimonials[active].role}
-                      </p>
+                      <p className="font-semibold text-white">{t.authorName}</p>
+                      {t.authorRole && <p className="text-sm text-gray-200">{t.authorRole}</p>}
                     </div>
                   </div>
                 </motion.div>

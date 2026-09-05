@@ -13,6 +13,7 @@ import { S12_gallery } from "@/components/S12_gallery";
 import { S13_cta } from "@/components/S13_cta";
 import { S14_contact } from "@/components/S14_contact";
 import { S15_wrap } from "@/components/S15_wrap";
+import { S16_lightbox } from "@/components/S16_lightbox";
 
 // ISR: hourly ceiling; dashboard Publish hits /api/revalidate for instant refresh.
 export const revalidate = 3600;
@@ -35,6 +36,7 @@ export default function Home() {
       <S13_cta />
       <S14_contact />
       <S15_wrap />
+      <S16_lightbox />
     </>
   );
 }

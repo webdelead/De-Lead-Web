@@ -97,8 +97,34 @@ initInfiniteSlider('quote-track','quote-prev','quote-next','.quote',4800);
 initInfiniteSlider('proj-track','proj-prev','proj-next','.pcard',4200);
 // lightbox
 const lb=document.getElementById('lightbox'),lbi=document.getElementById('lightbox-img');
-document.querySelectorAll('.gallery-grid img').forEach(im=>im.addEventListener('click',()=>{lbi.src=im.src;lb.classList.add('open')}));
+function wireLightboxImg(im){im.addEventListener('click',()=>{lbi.src=im.src;lbi.alt=im.alt||'';lb.classList.add('open')})}
+document.querySelectorAll('.gallery-grid img').forEach(wireLightboxImg);
 lb.addEventListener('click',()=>lb.classList.remove('open'));
+// gallery "Load more" — mirrors the wide-position rhythm in S15_gallery.tsx
+(function(){
+  const btn=document.getElementById('gallery-load-more'),grid=document.getElementById('gallery-grid');
+  if(!btn||!grid)return;
+  const WIDE=[0,7];
+  btn.addEventListener('click',()=>{
+    const offset=Number(btn.dataset.offset||'0');
+    btn.disabled=true;btn.textContent='Loading…';
+    fetch('/api/gallery?offset='+offset).then(r=>r.json()).then(data=>{
+      (data.items||[]).forEach((item,i)=>{
+        const slot=(offset+i)%8;
+        const cell=document.createElement('div');
+        if(WIDE.indexOf(slot)!==-1)cell.className='wide';
+        const img=document.createElement('img');
+        img.src=item.url;img.alt=item.alt||'';img.loading='lazy';
+        cell.appendChild(img);
+        grid.appendChild(cell);
+        wireLightboxImg(img);
+      });
+      btn.dataset.offset=String(offset+(data.items?data.items.length:0));
+      if(data.hasMore){btn.disabled=false;btn.textContent='Load more photos';}
+      else{btn.remove();}
+    }).catch(()=>{btn.disabled=false;btn.textContent='Load more photos';});
+  });
+})();
 // Press strip — drag to scroll + click to open in lightbox
 (function(){
   const wrap=document.querySelector('.press-scroll-wrap');

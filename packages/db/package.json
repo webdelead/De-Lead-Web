@@ -32,7 +32,8 @@
     "aws4fetch": "^1.0.20",
     "drizzle-orm": "catalog:",
     "marked": "^18.0.11",
-    "postgres": "^3.4.5"
+    "postgres": "^3.4.5",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@delead/config": "workspace:*",

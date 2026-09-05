@@ -112,6 +112,68 @@
     });
   }
 
+  // ---------- gallery lightbox (same pattern as Walk2Lead) ----------
+  var lb = document.getElementById("lightbox");
+  var lbi = document.getElementById("lightbox-img");
+  function wireLightboxImg(im) {
+    im.addEventListener("click", function () {
+      lbi.src = im.src;
+      lbi.alt = im.alt || "";
+      lb.classList.add("open");
+    });
+  }
+  if (lb && lbi) {
+    document.querySelectorAll(".gallery-grid img").forEach(wireLightboxImg);
+    lb.addEventListener("click", function () {
+      lb.classList.remove("open");
+    });
+  }
+
+  // ---------- gallery "Load more" ----------
+  // mirrors the 5-slot mosaic (g-a..g-e) from components/S12_gallery.tsx —
+  // keep the two in sync if that layout ever changes.
+  (function () {
+    var btn = document.getElementById("gallery-load-more");
+    var grid = document.getElementById("gallery-grid");
+    if (!btn || !grid) return;
+    var SLOTS = ["g-a", "g-b", "g-c", "g-d", "g-e"];
+
+    btn.addEventListener("click", function () {
+      var offset = Number(btn.dataset.offset || "0");
+      btn.disabled = true;
+      btn.textContent = "Loading…";
+      fetch("/api/gallery?offset=" + offset)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          (data.items || []).forEach(function (item, i) {
+            var fig = document.createElement("figure");
+            fig.className = SLOTS[(offset + i) % 5];
+            var img = document.createElement("img");
+            img.src = item.url;
+            img.alt = item.alt || "";
+            img.loading = "lazy";
+            fig.appendChild(img);
+            var cap = document.createElement("figcaption");
+            cap.textContent = item.title || "";
+            fig.appendChild(cap);
+            grid.appendChild(fig);
+            wireLightboxImg(img);
+          });
+          btn.dataset.offset = String(offset + (data.items ? data.items.length : 0));
+          if (data.hasMore) {
+            btn.disabled = false;
+            btn.textContent = "Load more photos";
+          } else {
+            btn.remove();
+          }
+        })
+        .catch(function () {
+          btn.disabled = false;
+          btn.textContent = "Load more photos";
+        });
+    });
+  })();
+
   // ---------- footer year ----------
   var yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = new Date().getFullYear();

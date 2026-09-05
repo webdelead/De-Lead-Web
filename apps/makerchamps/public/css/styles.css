@@ -244,6 +244,31 @@ h2.section-head {
   opacity: 0.8;
 }
 
+.gallery-ig-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--mc-navy);
+  padding: 9px 16px 9px 12px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(2, 30, 93, 0.2);
+  transition: 0.2s;
+}
+.gallery-ig-badge svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+.gallery-ig-badge:hover {
+  background: rgba(2, 30, 93, 0.06);
+  border-color: var(--mc-navy);
+  transform: translateY(-1px);
+}
+
 /* About collage — two overlapping torn photos, a glimpse rather than a gallery row */
 .about .section-head {
   margin-bottom: 0;
@@ -362,7 +387,7 @@ h2.section-head {
   z-index: 100;
   background: transparent;
   border-bottom: 1px solid transparent;
-  transition: background 0.25s ease, border-color 0.25s ease;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.3s ease;
 }
 
 /* Solid state — once the hero has scrolled past */
@@ -370,6 +395,12 @@ h2.section-head {
   background: rgba(247, 247, 247, 0.88);
   backdrop-filter: blur(10px);
   border-bottom-color: rgba(2, 30, 93, 0.08);
+}
+
+/* Same hide-on-scroll-down / show-on-scroll-up behavior as the other sites
+   (see js/main.js) — matches deleadint/walk2lead/corporate/dli-education. */
+.nav.nav-hidden {
+  transform: translateY(-100%);
 }
 
 .nav .container {
@@ -539,6 +570,13 @@ h2.section-head {
 }
 
 .hero-actions {
+  /* The invite card hangs below .hero-photo-wrap's own box (its `bottom:
+     -22px` in the "Invitation strip" rules below) and can visually
+     overshoot into this next block on mobile — position + z-index above
+     .hero-photo-wrap's (2) so the buttons always render on top where they
+     overlap, instead of being covered by the image. */
+  position: relative;
+  z-index: 3;
   margin-top: 26px;
   display: flex;
   flex-direction: column;
@@ -597,18 +635,42 @@ h2.section-head {
   z-index: 2;
 }
 
-.hero-photo-inner {
-  position: relative;
-  z-index: 2;
+/* .hero-photo-inner / .hero-photo-back are the two stacked hero photos —
+   click the peeking back one to bring it forward (js/main.js toggles
+   is-front/is-back between them). Position/rotation/dim come from those
+   two state classes, not from -inner/-back directly, so either photo can
+   play either role. */
+.hero-photo-inner,
+.hero-photo-back {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  transform: rotate(-1.5deg);
+  cursor: pointer;
+  transition:
+    transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1),
+    filter 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.hero-photo-inner img {
+.hero-photo-inner img,
+.hero-photo-back img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.hero-photo-inner.is-front,
+.hero-photo-back.is-front {
+  z-index: 2;
+  transform: rotate(-1.5deg);
+  filter: none;
+}
+
+.hero-photo-inner.is-back,
+.hero-photo-back.is-back {
+  z-index: 1;
+  transform: rotate(-9deg) translate(-30%, 6%);
+  filter: brightness(0.75) drop-shadow(0 16px 26px rgba(2, 30, 93, 0.35));
 }
 
 /* Ripple that expands from the cursor on hover, clipped to the torn photo shape */
@@ -632,34 +694,55 @@ h2.section-head {
   }
 }
 
-/* Second photo, stacked behind the front one — only a sliver peeks out */
-.hero-photo-back {
-  position: absolute;
-  z-index: 1;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-9deg) translate(-30%, 6%);
-  filter: brightness(0.75) drop-shadow(0 16px 26px rgba(2, 30, 93, 0.35));
-}
-
-.hero-photo-back img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
 .hero-photo-wrap .invite-card {
   bottom: -22px;
   right: -24px;
   width: min(146px, 42vw);
   transform: rotate(4deg);
+  /* Swing from the top edge, like a tag hanging off a pin, not around its
+     own centre — pivoting at the centre is what read as a "spin" rather
+     than a bell/pendulum wobble. */
+  transform-origin: top center;
+  animation: inviteBellRing 4.5s ease-in-out infinite;
+}
+
+/* Bell-ring wiggle to draw the eye: a handful of evenly-spaced swings that
+   decay in amplitude — 20° → 12° → 9° → 6° → 3°, alternating sides, each
+   step the same size in time so it reads as one continuous decaying
+   pendulum instead of a jerky spin — then it settles and holds still for
+   the back half of the cycle before ringing again. Rotation only, around
+   the card's resting 4deg tilt — never touches scale, so it never changes
+   size. Hover's own transform (:hover, !important below) still wins over
+   this while the card is being pointed at. */
+@keyframes inviteBellRing {
+  0%, 4%, 58%, 100% { transform: rotate(4deg); }
+  8% { transform: rotate(20deg); }
+  13% { transform: rotate(-12deg); }
+  18% { transform: rotate(15deg); }
+  23% { transform: rotate(-9deg); }
+  28% { transform: rotate(11deg); }
+  33% { transform: rotate(-6deg); }
+  38% { transform: rotate(7deg); }
+  43% { transform: rotate(1deg); }
+  48% { transform: rotate(5deg); }
+  53% { transform: rotate(3deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-photo-wrap .invite-card {
+    animation: none;
+  }
 }
 
 .hero-photo-wrap .torn-triangle {
   top: -14px;
   right: 0;
   transform: rotate(20deg);
+  /* z-index:auto (the base rule's default) paints at level 0 — below the
+     stacked photos (z-index 1/2) and the invite card (4) it sits among, so
+     the corner accent was getting covered instead of sitting on top of the
+     image like it's meant to. */
+  z-index: 5;
 }
 
 /* ---------- Invitation strip ---------- */
@@ -1093,11 +1176,32 @@ h2.section-head {
 }
 
 .marquee-track img {
-  height: 200px;
-  width: 160px;
+  height: 220px;
+  width: 176px;
   flex-shrink: 0;
   object-fit: cover;
   border-radius: var(--radius-md);
+  cursor: zoom-in;
+}
+
+/* click-to-enlarge overlay (same pattern as Walk2Lead's .lightbox) */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.94);
+  z-index: 200;
+  display: none;
+  place-items: center;
+  padding: 30px;
+  cursor: zoom-out;
+}
+.lightbox.open {
+  display: grid;
+}
+.lightbox img {
+  max-height: 88vh;
+  max-width: 100%;
+  border-radius: 12px;
 }
 
 /* ---------- Testimonials ---------- */
@@ -1158,6 +1262,97 @@ h2.section-head {
   color: rgba(247, 247, 247, 0.55);
   font-size: 0.76rem;
   margin-top: 2px;
+}
+
+/* ---------- WhatsApp reviews ---------- */
+/* Auto-playing marquee (not scroll-linked, unlike .marquee-track above) —
+   the track's content is duplicated once in the JSX so translateX(-50%)
+   loops seamlessly; pauses on hover so a card can actually be read. */
+
+.wa-reviews {
+  background: var(--mc-navy);
+  color: var(--mc-cream);
+  overflow: hidden;
+}
+
+.wa-marquee-wrap {
+  margin-top: 32px;
+  overflow: hidden;
+}
+
+.wa-marquee-track {
+  display: flex;
+  gap: 18px;
+  width: max-content;
+  will-change: transform;
+  animation: waMarquee 34s linear infinite;
+}
+
+.wa-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes waMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.wa-card {
+  position: relative;
+  flex-shrink: 0;
+  width: 220px;
+  aspect-ratio: 9 / 16;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--mc-navy-deep);
+  border: 1px solid rgba(247, 247, 247, 0.12);
+  box-shadow: var(--shadow-card);
+}
+
+.wa-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wa-marquee-track {
+    animation: none;
+  }
+}
+
+/* ---------- Video feature ---------- */
+
+.video-feature {
+  background: var(--mc-white);
+}
+
+.video-feature-frame {
+  position: relative;
+  width: 100%;
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  background: var(--mc-navy-deep);
+}
+
+.video-feature-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 /* ---------- CTA / Enquiry ---------- */
@@ -1296,6 +1491,35 @@ h2.section-head {
   max-width: 40ch;
 }
 
+.footer-social {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+.footer-social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: inherit;
+  opacity: 0.85;
+  transition: 0.2s;
+}
+.footer-social a:hover {
+  opacity: 1;
+  border-color: var(--mc-lime);
+  color: var(--mc-lime);
+  transform: translateY(-2px);
+}
+.footer-social svg {
+  width: 16px;
+  height: 16px;
+}
+
 .footer-cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1393,6 +1617,11 @@ h2.section-head {
     margin: 0 0 0 auto;
   }
 
+  .marquee-track img {
+    height: 260px;
+    width: 208px;
+  }
+
   .hero-mega {
     max-width: 82%;
   }
@@ -1426,7 +1655,8 @@ h2.section-head {
     margin-top: 0;
   }
 
-  .hero-photo-back {
+  .hero-photo-inner.is-back,
+  .hero-photo-back.is-back {
     transform: rotate(-7deg) translate(-16%, 5%);
   }
 
@@ -1522,6 +1752,11 @@ h2.section-head {
 
   .modules-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .marquee-track img {
+    height: 300px;
+    width: 240px;
   }
 
   .footer-top {

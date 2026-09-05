@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { formatDateTime } from "@delead/shared/dates";
 
 export default async function AuditPage({
   searchParams,
@@ -45,7 +46,7 @@ export default async function AuditPage({
             {rows.map((r) => (
               <TableRow key={r.id}>
                 <TableCell className="whitespace-nowrap text-muted-foreground">
-                  {new Date(r.createdAt).toLocaleString()}
+                  {formatDateTime(r.createdAt)}
                 </TableCell>
                 <TableCell>{r.userEmail ?? "—"}</TableCell>
                 <TableCell>

@@ -1,4 +1,10 @@
-export function S02_top() {
+import { getNextSeason } from "@/lib/content";
+
+const FALLBACK_LOGO = "/assets/brand/season-3-logo.webp";
+
+export async function S02_top() {
+  const nextSeason = await getNextSeason();
+
   return (
     <>
       <header className="hero" id="top">
@@ -13,24 +19,34 @@ export function S02_top() {
             </h1>
       
             <div className="hero-collage">
-              <div className="hero-photo-wrap">
-                <div className="hero-photo-back torn">
+              <div className="hero-photo-wrap" id="hero-photo-stack">
+                <div className="hero-photo-back torn is-back">
                   <img src="/assets/photos/orientation-auditorium.webp" alt="Students at MakerChamps orientation inside an NIT Calicut auditorium" loading="eager" />
                 </div>
-                <div className="hero-photo-inner torn">
+                <div className="hero-photo-inner torn is-front">
                   <img src="/assets/photos/nit-calicut-gate.webp" alt="NIT Calicut campus gate with the National Institute of Technology Calicut signboard" loading="eager" style={{ objectPosition: "right center" }} />
                 </div>
                 <span className="torn-triangle"></span>
-                {/* Invite card: only rendered when a next batch is scheduled. Remove this block entirely between seasons. */}
-                <a href="#enquire" className="invite-card">
-                  <img className="invite-logo" src="/assets/brand/season-3-logo.webp" alt="MakerChamps Season 3" />
-                  <span className="invite-label">You're Invited</span>
-                  <span className="invite-date">Aug 28–29</span>
-                  <span className="invite-loc">NIT Calicut Campus</span>
-                </a>
+                {/* Invite card: dashboard-editable (Settings → Next season) —
+                    only rendered while that season's "active" toggle is on,
+                    so it disappears on its own between seasons. Date, campus
+                    line and the season logo all come from there; "You're
+                    Invited" stays fixed copy. */}
+                {nextSeason && (
+                  <a href="#enquire" className="invite-card">
+                    <img
+                      className="invite-logo"
+                      src={nextSeason.logoUrl || FALLBACK_LOGO}
+                      alt={nextSeason.label ? `MakerChamps ${nextSeason.label}` : "MakerChamps"}
+                    />
+                    <span className="invite-label">You&apos;re Invited</span>
+                    <span className="invite-date">{nextSeason.dates}</span>
+                    <span className="invite-loc">{nextSeason.campus}</span>
+                  </a>
+                )}
               </div>
             </div>
-      
+
             <div className="hero-actions">
               <a href="#enquire" className="btn btn-primary">Reserve a Seat</a>
               <a href="#modules" className="btn btn-ghost-light">See What They'll Do</a>

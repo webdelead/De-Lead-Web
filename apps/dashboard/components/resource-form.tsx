@@ -84,7 +84,10 @@ export function ResourceForm({
     <form onSubmit={submit} className="grid gap-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {def.fields.map((f) => (
-          <div key={f.name} className={f.span === 2 ? "sm:col-span-2" : ""}>
+          <div
+            key={f.name}
+            className={f.span === 2 || (f.type === "image" && def.imageForward) ? "sm:col-span-2" : ""}
+          >
             <Label htmlFor={f.name} className="mb-1.5 block">
               {f.label}
               {f.required && <span className="text-destructive"> *</span>}
@@ -147,6 +150,7 @@ export function ResourceForm({
                 value={values[f.name] ?? ""}
                 initialUrl={row ? assetMap[String(row[camel(f.name)] ?? "")]?.url : undefined}
                 onChange={(id) => set(f.name, id)}
+                size={def.imageForward ? "lg" : "sm"}
               />
             )}
             {f.type === "stats" && (

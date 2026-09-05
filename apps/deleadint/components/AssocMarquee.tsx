@@ -8,32 +8,39 @@ const logos = [
 ] as const;
 const badges = ["DP World", "Kayzan Group", "RAG Business Hub", "Al Ahalia Group"];
 
+// keep a roughly constant scroll speed regardless of how many items are listed
+const DURATION = `${Math.max(24, (logos.length + badges.length) * 3.4)}s`;
+
+function MarqueeSet({ hidden = false }: { hidden?: boolean }) {
+  return (
+    <div
+      className="marquee-track"
+      aria-hidden={hidden || undefined}
+      style={{ animationDuration: DURATION }}
+    >
+      {logos.map(([src, alt]) => (
+        <img key={src} src={src} alt={hidden ? "" : alt} loading="lazy" />
+      ))}
+      {badges.map((b) => (
+        <span key={b} className="marquee-badge">
+          {b}
+        </span>
+      ))}
+    </div>
+  );
+}
+
 export function AssocMarquee() {
   return (
     <section className="assoc">
       <div className="container">
         <p className="assoc-label">Schools, foundations and companies we&apos;ve worked with</p>
       </div>
+      {/* two identical tracks, each scrolls left by exactly its own width
+          (-100%) so the loop has no gap-sized jump */}
       <div className="marquee">
-        <div className="marquee-track">
-          {logos.map(([src, alt]) => (
-            <img key={src} src={src} alt={alt} loading="lazy" />
-          ))}
-          {badges.map((b) => (
-            <span key={b} className="marquee-badge">
-              {b}
-            </span>
-          ))}
-          {/* duplicate for seamless loop */}
-          {logos.map(([src]) => (
-            <img key={`d-${src}`} src={src} alt="" aria-hidden="true" loading="lazy" />
-          ))}
-          {badges.map((b) => (
-            <span key={`d-${b}`} className="marquee-badge" aria-hidden="true">
-              {b}
-            </span>
-          ))}
-        </div>
+        <MarqueeSet />
+        <MarqueeSet hidden />
       </div>
     </section>
   );

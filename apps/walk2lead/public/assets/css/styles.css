@@ -358,6 +358,16 @@ nav.nav-fixed .nav-cta:hover{background:var(--red-deep) !important}
 .gallery-grid .wide{grid-column:span 2}
 .gallery-grid .wide img{aspect-ratio:2.08/1}
 @media(max-width:700px){.gallery-grid{grid-template-columns:repeat(2,1fr)}}
+.gallery-more{display:flex;justify-content:center;width:100%;margin-top:40px}
+.gallery-ig-badge{
+  display:inline-flex;align-items:center;gap:8px;margin:14px 0 8px;
+  font-size:.85rem;font-weight:600;color:var(--red);
+  padding:9px 16px 9px 12px;border-radius:999px;border:1.5px solid rgba(200,28,28,.25);
+  transition:.2s
+}
+.gallery-ig-badge svg{width:16px;height:16px;flex:none}
+.gallery-ig-badge:hover{background:rgba(200,28,28,.06);border-color:var(--red);transform:translateY(-1px)}
+.gallery-more .btn[disabled]{opacity:.6;cursor:default;transform:none}
 .lightbox{position:fixed;inset:0;background:rgba(20,10,16,.94);z-index:200;display:none;place-items:center;padding:30px;cursor:zoom-out}
 .lightbox.open{display:grid}
 .lightbox img{max-height:88vh;max-width:100%;border-radius:12px}
@@ -436,5 +446,9 @@ form .btn{width:100%;justify-content:center;margin-top:6px}
 footer{background:#17131a;color:rgba(255,255,255,.65);padding:52px 0;font-size:.85rem}
 footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
 footer img{height:22px;opacity:.9}
+.footer-social{display:flex;gap:10px}
+.footer-social a{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;flex:none;border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.75);transition:.2s}
+.footer-social a:hover{color:#fff;border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.06)}
+.footer-social svg{width:16px;height:16px}
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
 .reveal.in{opacity:1;transform:none}

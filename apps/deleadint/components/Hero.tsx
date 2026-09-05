@@ -14,12 +14,12 @@ export function Hero() {
     <section className="hero" id="top">
       <div className="hero-polaroids">
         <figure className="polaroid p1">
-          <img src="/assets/gallery/mc-2.webp" alt="" />
+          <img src="/assets/stock/mc-hero.webp" alt="" />
           <figcaption>MakerChamps</figcaption>
           <a className="polaroid-link" href="#makerchamps" aria-label="Explore MakerChamps"></a>
         </figure>
         <figure className="polaroid p2">
-          <img src="/assets/gallery/w2l-2.webp" alt="" />
+          <img src="/assets/stock/w2l-hero.webp" alt="" />
           <figcaption>Walk2Lead</figcaption>
           <a
             className="polaroid-link"
@@ -30,12 +30,12 @@ export function Hero() {
           ></a>
         </figure>
         <figure className="polaroid p3">
-          <img src="/assets/gallery/corp-2.webp" alt="" />
+          <img src="/assets/stock/corp-2.webp" alt="" />
           <figcaption>Corporate Training</figcaption>
           <a className="polaroid-link" href="#corporate" aria-label="Explore Corporate Training"></a>
         </figure>
         <figure className="polaroid p4">
-          <img src="/assets/gallery/tc-1.webp" alt="" />
+          <img src="/assets/stock/tc-1.webp" alt="" />
           <figcaption>TinkerChamps</figcaption>
           <a
             className="polaroid-link"

@@ -165,9 +165,10 @@ section{position:relative;}
 .nav-drop-panel{
   position:absolute;top:100%;left:50%;
   transform:translateX(-50%) translateY(-8px);
-  width:460px;background:#fff;border-radius:20px;box-shadow:var(--shadow);
-  padding:22px 16px 16px;
-  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  width:900px;max-width:calc(100vw - 40px);
+  background:#fff;border-radius:22px;box-shadow:var(--shadow);
+  padding:14px;
+  display:grid;grid-template-columns:minmax(0,1fr) 288px;gap:6px;
   opacity:0;visibility:hidden;pointer-events:none;
   transition:opacity .22s var(--ease),transform .22s var(--ease),visibility .22s;
   z-index:110;
@@ -175,27 +176,93 @@ section{position:relative;}
 .nav-dropdown.open .nav-drop-panel{
   opacity:1;visibility:visible;pointer-events:auto;transform:translateX(-50%) translateY(0);
 }
+/* left region: the six verticals, 2-up */
+.ndp-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px;align-content:start;}
+.nav-drop-head{
+  grid-column:1 / -1;margin:0 0 4px;padding:6px 12px 10px;
+  font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-soft);border-bottom:1px solid var(--cream2);
+}
 /* scoped under .nav-drop-panel so this beats the generic ".nav-links a" rule
    (near-white uppercase pill text meant for the dark navbar) on specificity —
    a bare ".nav-drop-item" class alone was losing to that element+class rule
    and rendering near-invisible white-on-white labels. */
 .nav-drop-panel .nav-drop-item{
-  display:flex;align-items:center;gap:14px;padding:14px;border-radius:14px;
-  color:var(--ink);background:none;transition:background .2s;
-  text-transform:none;letter-spacing:normal;font-size:1rem;
+  display:flex;align-items:center;gap:13px;padding:11px 12px;border-radius:14px;
+  color:var(--ink);background:none;transition:background .18s var(--ease);
+  text-transform:none;letter-spacing:normal;
 }
 .nav-drop-panel .nav-drop-item:hover{background:var(--cream2);color:var(--ink);}
 .ndi-logo{
-  width:52px;height:52px;border-radius:12px;background:var(--cream2);flex:none;
-  display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px;
+  width:40px;height:40px;border-radius:11px;background:var(--cream2);flex:none;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;padding:7px;
+  transition:background .18s var(--ease);
 }
+.nav-drop-panel .nav-drop-item:hover .ndi-logo{background:#fff;}
 .ndi-logo img{width:100%;height:100%;object-fit:contain;}
 .ndi-logo.ndi-text{
   font-family:'Instrument Sans',sans-serif;font-weight:800;font-size:.92rem;
   color:var(--magenta);background:var(--cream2);padding:0;
 }
-.nav-drop-panel .nav-drop-item span:last-child{
-  font-size:.92rem;font-weight:600;line-height:1.3;color:var(--ink);
+.ndi-body{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.ndi-name{
+  display:flex;align-items:center;gap:5px;
+  font-size:.9rem;font-weight:600;line-height:1.25;color:var(--ink);white-space:nowrap;
+}
+.ndi-ext{width:10px;height:10px;flex:none;opacity:.45;}
+.ndi-desc{
+  font-size:.75rem;font-weight:500;line-height:1.3;color:var(--ink-soft);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+/* right region: hover / focus preview. previews stack; :has() swaps them,
+   no JS. the default one shows until a row is hovered or keyboard-focused. */
+.ndp-preview{
+  position:relative;border-left:1px solid var(--cream2);
+  padding:6px 6px 8px 18px;min-height:296px;
+}
+.eco-preview{
+  position:absolute;inset:6px 6px 8px 18px;display:flex;flex-direction:column;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .26s var(--ease),visibility .26s;
+}
+.eco-preview.is-default{opacity:1;visibility:visible;}
+.epv-media{
+  display:block;width:100%;aspect-ratio:4 / 3;margin-bottom:14px;
+  border-radius:13px;overflow:hidden;background:var(--cream2);
+}
+.epv-media img{width:100%;height:100%;object-fit:cover;display:block;}
+.epv-media--logo{display:flex;align-items:center;justify-content:center;padding:16px;}
+.epv-media--logo img{width:auto;height:82%;max-width:62%;object-fit:contain;}
+.epv-name{
+  font-family:'Lora',serif;font-weight:700;font-size:1.15rem;line-height:1.18;
+  color:var(--ink);margin-bottom:6px;
+}
+.epv-desc{font-size:.82rem;line-height:1.5;color:var(--ink-soft);}
+.epv-link{
+  margin-top:auto;padding-top:14px;
+  font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--magenta);
+}
+.nav-drop-panel:has(.nav-drop-item:is(:hover,:focus-visible)) .eco-preview.is-default{opacity:0;visibility:hidden;}
+.nav-drop-panel:has(.nav-drop-item[data-v="corporate"]:is(:hover,:focus-visible)) .eco-preview[data-v="corporate"],
+.nav-drop-panel:has(.nav-drop-item[data-v="tinkerchamps"]:is(:hover,:focus-visible)) .eco-preview[data-v="tinkerchamps"],
+.nav-drop-panel:has(.nav-drop-item[data-v="makerchamps"]:is(:hover,:focus-visible)) .eco-preview[data-v="makerchamps"],
+.nav-drop-panel:has(.nav-drop-item[data-v="dli-education"]:is(:hover,:focus-visible)) .eco-preview[data-v="dli-education"],
+.nav-drop-panel:has(.nav-drop-item[data-v="goalfinder"]:is(:hover,:focus-visible)) .eco-preview[data-v="goalfinder"],
+.nav-drop-panel:has(.nav-drop-item[data-v="walk2lead"]:is(:hover,:focus-visible)) .eco-preview[data-v="walk2lead"]{
+  opacity:1;visibility:visible;
+}
+/* 861–1080px: keep the popover but drop the preview pane — list only.
+   left-anchor to the trigger (centering a 620px panel on the trigger would
+   push it off the left edge at this width). */
+@media (max-width:1080px){
+  .nav-drop-panel{
+    width:min(600px,calc(100vw - 40px));grid-template-columns:1fr;
+    left:0;transform:translateY(-8px);
+  }
+  .nav-dropdown.open .nav-drop-panel{transform:translateY(0);}
+  .ndp-preview{display:none;}
 }
 
 .nav-cta{display:flex;align-items:center;gap:14px;}
@@ -430,16 +497,17 @@ section{position:relative;}
    ============================================================ */
 .assoc{padding:48px 0;border-bottom:1px solid var(--line);background:var(--cream);overflow:hidden;}
 .assoc-label{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:22px;text-align:center;}
-.marquee{position:relative;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);}
-.marquee-track{display:flex;align-items:center;gap:56px;width:max-content;animation:marquee 32s linear infinite;}
-.marquee:hover .marquee-track{animation-play-state:paused;}
+.marquee{position:relative;display:flex;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);}
+.marquee-track{display:flex;align-items:center;gap:56px;padding-right:56px;flex:none;animation:marquee 32s linear infinite;}
+.marquee:hover .marquee-track,.marquee:focus-within .marquee-track{animation-play-state:paused;}
 .marquee-track img{height:44px;width:auto;filter:grayscale(1) contrast(.9) opacity(.72);transition:filter .25s;flex:none;}
 .marquee-track img:hover{filter:none;}
 .marquee-badge{
   font-family:'Instrument Sans',sans-serif;font-weight:600;font-size:1rem;color:var(--ink-soft);
   opacity:.75;flex:none;white-space:nowrap;
 }
-@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+/* -100% = exactly one track's width (trailing gap baked in via padding-right) */
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-100%);}}
 
 /* ============================================================
    ABOUT — full-width white section + mission/vision pair
@@ -505,14 +573,28 @@ section{position:relative;}
    Reference: to-top.ch "Ihre Anliegen" section.
    ============================================================ */
 .v-stack{position:relative;}
+/* sticky + the crossfade below run at every width now (used to be desktop-
+   only, min-width:901px) — no CSS transition on opacity/transform here on
+   purpose: js/main.js's fadeCards() already writes a new value every
+   animation frame tied straight to scroll position, so a CSS transition
+   would just lag one step behind the true scroll position and read as
+   stutter/rubber-banding instead of smoothness. */
 .v-card{
-  position:relative;color:var(--v-fg,#fff);background:var(--v-bg,#1c1417);
-  padding:80px 0 60px;overflow:hidden;
+  position:sticky;top:0;min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;
+  color:var(--v-fg,#fff);background:var(--v-bg,#1c1417);
+  padding:60px 0;overflow:hidden;
   box-shadow:0 -20px 50px -20px rgba(0,0,0,.4);
-  transition:opacity .15s linear;
-}
-@media (min-width:901px){
-  .v-card{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:60px 0;}
+  will-change:opacity,transform;
+  /* a card that's still fading in sits at a HIGHER z-index than the one the
+     visitor is actually reading (cards stack in document order), and while
+     it's not yet fully opaque it was still catching clicks meant for the
+     card underneath — e.g. the peeking photo on "corporate" got blocked by
+     "dli-foundation" starting to fade in over it, for as long as that
+     fade-in lasted. Same fix as .vc-right below: turn pointer-events off on
+     the card itself, opt back in on the specific bits that need clicks
+     (.vc-badge, .vc-media already do). */
+  pointer-events:none;
 }
 .v-card:nth-of-type(1){z-index:1;}
 .v-card:nth-of-type(2){z-index:2;}
@@ -599,27 +681,49 @@ section{position:relative;}
   .vc-right{right:max(28px,calc((100vw - var(--maxw)) / 2 + 28px));}
 }
 @media (min-width:1600px){ .vc-right{width:min(40%,540px);} }
-.vc-media{position:relative;width:100%;aspect-ratio:1/1;}
+/* pointer-events re-enabled here — .vc-right (the ancestor) turns them off
+   for the desktop absolute-positioned column, same reason .vc-badge does
+   below; without this the click-to-swap on .is-back never reached the img. */
+.vc-media{position:relative;width:100%;aspect-ratio:1/1;pointer-events:auto;}
 /* img taken out of flow so its intrinsic ratio can't override .vc-media's
    aspect-ratio (a portrait source was stretching the box otherwise). */
 .vc-media img{
   position:absolute;inset:0;
   width:100%;height:100%;object-fit:cover;
   border:10px solid #fff;box-shadow:-40px 0 80px -30px rgba(0,0,0,.5),0 0 0 1px rgba(0,0,0,.06);
+  transition:transform .5s cubic-bezier(.22,.61,.36,1), filter .5s cubic-bezier(.22,.61,.36,1), box-shadow .5s cubic-bezier(.22,.61,.36,1);
 }
-/* a little tilt per card instead of one flat rectangle repeated six times */
-#corporate .vc-media img{transform:rotate(1.5deg);}
-#tinkerchamps .vc-media img{transform:rotate(-2deg);}
-#makerchamps .vc-media img{transform:rotate(-1.5deg);}
-#dli-education .vc-media img{transform:rotate(2deg);}
+/* verticals with a second photo on hand get a peeking stack, same idea as
+   the MakerChamps hero collage — click the dimmed back photo to bring it
+   forward (js/main.js toggles is-front/is-back). Goal Finder has no second
+   photo (it's a product, not a photographed programme) so its single <img>
+   just carries .is-front and nothing else applies. */
+.vc-media img.is-front{z-index:2;}
+.vc-media img.is-back{z-index:1;cursor:pointer;filter:brightness(.82);box-shadow:-26px 0 54px -26px rgba(0,0,0,.45),0 0 0 1px rgba(0,0,0,.06);}
+/* a little tilt per card instead of one flat rectangle repeated six times;
+   the back photo tilts further the same direction plus a small peek offset */
+#corporate .vc-media img.is-front{transform:rotate(1.5deg);}
+#corporate .vc-media img.is-back{transform:rotate(10deg) translate(12%,9%) scale(.92);}
+#tinkerchamps .vc-media img.is-front{transform:rotate(-2deg);}
+#tinkerchamps .vc-media img.is-back{transform:rotate(-11deg) translate(-12%,9%) scale(.92);}
+#makerchamps .vc-media img.is-front{transform:rotate(-1.5deg);}
+#makerchamps .vc-media img.is-back{transform:rotate(-9.5deg) translate(-12%,9%) scale(.92);}
+#dli-education .vc-media img.is-front{transform:rotate(2deg);}
+#dli-education .vc-media img.is-back{transform:rotate(11deg) translate(12%,9%) scale(.92);}
 #goal-finder .vc-media img{transform:rotate(-1.5deg);}
 /* the Walk2Lead group photo is wide/landscape — a wider crop, centred on
    the group rather than the ceiling above them. */
 #dli-foundation .vc-media{aspect-ratio:5/4;}
-#dli-foundation .vc-media img{object-position:center 38%;transform:rotate(1deg);}
+#dli-foundation .vc-media img{object-position:center 38%;}
+#dli-foundation .vc-media img.is-front{transform:rotate(1deg);}
+#dli-foundation .vc-media img.is-back{transform:rotate(9deg) translate(10%,9%) scale(.92);}
+@media (prefers-reduced-motion:reduce){
+  .vc-media img{transition:none;}
+}
 
 /* ---- MakerChamps : paper-cut torn photo + orange accent + faint brand
-   pattern, matching the MakerChamps site's scrapbook idiom ---- */
+   pattern, matching the MakerChamps site's scrapbook idiom — both stacked
+   photos get the torn treatment, reading as a stack of two scrapbook cutouts. */
 #makerchamps .vc-media img{
   clip-path:polygon(
     0% 1.5%, 12% 0%, 26% 1.2%, 40% 0%, 54% 1%, 68% 0%, 82% 1.3%, 100% 0%,
@@ -628,8 +732,9 @@ section{position:relative;}
     1% 84%, 0% 70%, 1.3% 56%, 0% 42%, 1% 28%, 0% 14%
   );
   border:0;box-shadow:none;
-  filter:drop-shadow(0 18px 30px rgba(1,15,48,.5));
 }
+#makerchamps .vc-media img.is-front{filter:drop-shadow(0 18px 30px rgba(1,15,48,.5));}
+#makerchamps .vc-media img.is-back{filter:brightness(.82) drop-shadow(0 14px 24px rgba(1,15,48,.4));}
 .torn-triangle{
   position:absolute;width:52px;height:52px;background:#fe5501;
   clip-path:polygon(0 0,100% 20%,20% 100%);opacity:.95;z-index:3;
@@ -684,38 +789,64 @@ section{position:relative;}
    whole strip animates left by exactly one track's width so the loop is seamless */
 .press-strip{display:flex;overflow:hidden;padding-bottom:10px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);}
 .press-track{display:flex;gap:18px;flex:none;padding-right:18px;animation:press-marquee 32s linear infinite;}
-.press-strip:hover .press-track{animation-play-state:paused;}
+.press-strip:hover .press-track,.press-strip:focus-within .press-track{animation-play-state:paused;}
 .press-strip img{
   height:260px;width:auto;border-radius:var(--radius-sm);flex:none;box-shadow:var(--shadow-sm);
   border:1px solid var(--line);
 }
 @keyframes press-marquee{from{transform:translateX(0);}to{transform:translateX(-100%);}}
 
+/* reduced motion: stop both marquees, drop the duplicate track, let the row be
+   scrolled by hand instead */
+@media (prefers-reduced-motion:reduce){
+  .marquee-track,.press-track{animation:none;}
+  .marquee-track[aria-hidden="true"],.press-track[aria-hidden="true"]{display:none;}
+  .marquee,.press-strip{overflow-x:auto;}
+}
+
 /* ============================================================
    VOICES / TESTIMONIALS
    ============================================================ */
-.voices{padding:110px 0;background:var(--ink);color:#fff;overflow:hidden;}
-.voices-layout{display:grid;grid-template-columns:.85fr 1.15fr;gap:60px;align-items:start;}
-.voices-pin{position:sticky;top:140px;align-self:start;}
-.voices-pin .eyebrow{color:#f0c9dc;margin-bottom:14px;}
-.voices-pin .eyebrow::before{background:#f0c9dc;}
-.voices-pin h2{color:#fff;font-size:clamp(2.2rem,3.6vw,3rem);margin-bottom:16px;max-width:12ch;}
-.voices-pin p{color:#cbb9c3;font-size:1.02rem;max-width:32ch;}
+.voices{padding:110px 0;background:var(--ink);color:#fff;overflow:clip;}
+.voices-head{max-width:640px;margin:0 auto 54px;text-align:center;}
+.voices-head .eyebrow{color:#f0c9dc;margin-bottom:14px;}
+.voices-head .eyebrow::before{background:#f0c9dc;}
+.voices-head h2{color:#fff;font-size:clamp(2.2rem,3.6vw,3rem);margin-bottom:16px;}
+.voices-head p{color:#cbb9c3;font-size:1.02rem;}
 
-/* stacked testimonial cards — each its own flat colour, pinned at the same
-   top offset so the next one covers the last as you scroll (to-top.ch style),
-   alternating clockwise/anticlockwise tilt so the stack fans like a deck of cards */
-.voices-stack{position:relative;}
-.voice-stackcard{
-  position:sticky;top:140px;background:var(--vsc-bg,#fff);color:var(--vsc-fg,var(--ink));
-  border-radius:24px;padding:44px;min-height:220px;margin-bottom:28px;
-  box-shadow:0 30px 60px -20px rgba(0,0,0,.45);
-  transform:rotate(var(--tilt,0deg));transform-origin:50% 100%;
+/* coverflow carousel — 3 cards in view: centre large + lit, flanks small + dim.
+   card metrics are driven by --d (signed distance from the active card) and
+   --abs (its magnitude), both set inline by VoicesCarousel. Fixed height, so
+   adding testimonials doesn't grow the page. */
+.voices-carousel{position:relative;}
+.vcar-stage{position:relative;height:clamp(300px,34vw,376px);}
+.vcar-card{
+  position:absolute;inset:0;margin:auto;               /* centred in the stage */
+  width:min(520px,84vw);height:100%;
+  box-sizing:border-box;display:flex;flex-direction:column;
+  background:var(--vsc-bg,#fff);color:var(--vsc-fg,var(--ink));
+  border-radius:24px;padding:40px;
+  box-shadow:0 34px 66px -24px rgba(0,0,0,.55);
+  /* transform (single translateX + scale) + opacity are set inline by
+     VoicesCarousel from each card's signed distance from the active one */
+  will-change:transform,opacity;
+  transition:transform .55s cubic-bezier(.22,.61,.36,1),opacity .5s ease;
 }
-.voice-stackcard:nth-child(1){z-index:1;--tilt:-2.5deg;}
-.voice-stackcard:nth-child(2){z-index:2;--tilt:2.2deg;}
-.voice-stackcard:nth-child(3){z-index:3;--tilt:-2.2deg;}
-.voice-stackcard:nth-child(4){z-index:4;--tilt:2.5deg;}
+.vcar-card[aria-hidden="true"]{cursor:pointer;}
+.vcar-card .vsc-quote{
+  font-size:clamp(1.02rem,1.45vw,1.28rem);margin:8px 0 auto;
+  display:-webkit-box;-webkit-line-clamp:5;line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;
+}
+.vcar-dots{display:flex;gap:9px;justify-content:center;margin-top:36px;}
+.vcar-dot{
+  width:8px;height:8px;padding:0;border:0;border-radius:50%;cursor:pointer;
+  background:color-mix(in srgb,#fff 24%,transparent);
+  transition:width .25s ease,background .25s ease;
+}
+.vcar-dot.is-active{width:26px;border-radius:4px;background:#f0c9dc;}
+@media (prefers-reduced-motion:reduce){
+  .vcar-card{transition:none;}
+}
 .vsc-num{
   display:block;text-align:right;font-family:'Instrument Sans',sans-serif;font-weight:700;
   font-size:.82rem;opacity:.5;margin-bottom:6px;
@@ -733,11 +864,19 @@ section{position:relative;}
    GALLERY
    ============================================================ */
 .gallery{padding:110px 0;}
+.gallery-ig-badge{
+  display:inline-flex;align-items:center;gap:8px;margin-top:20px;
+  font-size:.82rem;font-weight:600;color:var(--magenta);
+  padding:9px 16px 9px 12px;border-radius:999px;border:1px solid rgba(117,6,73,.22);
+  transition:background .2s,border-color .2s,transform .2s;
+}
+.gallery-ig-badge svg{width:16px;height:16px;flex:none;}
+.gallery-ig-badge:hover{background:rgba(117,6,73,.06);border-color:rgba(117,6,73,.4);transform:translateY(-1px);}
 .gallery-grid{
   display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:150px;gap:14px;
 }
 .gallery-grid figure{margin:0;border-radius:var(--radius-sm);overflow:hidden;position:relative;}
-.gallery-grid img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease);}
+.gallery-grid img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease);cursor:zoom-in;}
 .gallery-grid figure:hover img{transform:scale(1.06);}
 .gallery-grid figcaption{
   position:absolute;left:0;right:0;bottom:0;padding:14px 16px;
@@ -748,6 +887,16 @@ section{position:relative;}
 .gallery-grid figure:hover figcaption{opacity:1;}
 .gallery-grid figure.g-tall{grid-row:span 2;}
 .gallery-grid figure.g-wide{grid-column:span 2;}
+.gallery-more{display:flex;justify-content:center;width:100%;margin-top:40px;}
+.gallery-more .btn[disabled]{opacity:.6;cursor:default;transform:none;}
+
+/* click-to-enlarge overlay (same pattern as Walk2Lead's .lightbox) */
+.lightbox{
+  position:fixed;inset:0;background:rgba(28,20,23,.94);z-index:200;
+  display:none;place-items:center;padding:30px;cursor:zoom-out;
+}
+.lightbox.open{display:grid;}
+.lightbox img{max-height:88vh;max-width:100%;border-radius:12px;}
 
 /* ============================================================
    BLOG / JOURNAL
@@ -757,6 +906,8 @@ section{position:relative;}
 .blog-head .eyebrow{margin-bottom:14px;}
 .blog-head h2{font-size:clamp(2.3rem,4vw,3.4rem);margin-bottom:14px;}
 .blog-head p{color:var(--ink-soft);font-size:1.02rem;max-width:56ch;}
+.blog-head-link{flex:none;font-weight:600;font-size:.92rem;color:var(--magenta);white-space:nowrap;padding-bottom:6px;}
+.blog-head-link:hover{text-decoration:underline;}
 
 /* numbered index + dot pagination, MobilityLab-style, beside a horizontally
    scrolling row of article cards */
@@ -779,9 +930,14 @@ section{position:relative;}
 }
 .blog-row.dragging{cursor:grabbing;scroll-snap-type:none;}
 .blog-row.dragging .blog-card2{pointer-events:none;}
-.blog-card2{flex:0 0 320px;scroll-snap-align:start;display:flex;flex-direction:column;}
+.blog-card2{flex:0 0 320px;scroll-snap-align:start;display:flex;flex-direction:column;color:inherit;border-radius:8px;}
 .bc-media{border-radius:16px;overflow:hidden;aspect-ratio:4/3;margin-bottom:18px;background:var(--line);}
-.bc-media img{width:100%;height:100%;object-fit:cover;display:block;}
+.bc-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease);}
+.blog-card2:hover .bc-media img{transform:scale(1.045);}
+.blog-card2 h4{transition:color .2s;}
+.blog-card2:hover h4{color:var(--magenta);}
+.blog-row:not(.dragging) .blog-card2{cursor:pointer;}
+.blog-card2:focus-visible{outline:2px solid var(--magenta);outline-offset:6px;}
 .blog-card2 .bc-tag{
   font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--magenta);
   display:block;margin-bottom:8px;
@@ -791,6 +947,139 @@ section{position:relative;}
 .blog-card2 .bc-meta{font-size:.78rem;color:var(--ink-soft);opacity:.7;display:block;margin-bottom:10px;}
 .blog-card2 p{color:var(--ink-soft);font-size:.9rem;line-height:1.55;}
 .blog-card .blog-meta{font-size:.76rem;color:var(--ink-soft);opacity:.7;}
+
+/* ============================================================
+   JOURNAL PAGES  —  /journal  and  /journal/[slug]
+   ============================================================ */
+
+/* --- shared: low dark hero band (nav sits transparent over it) --- */
+.jr-hero,.jr-post-hero{
+  position:relative;color:#fff;overflow:hidden;
+  background:linear-gradient(155deg,var(--magenta) 0%,var(--magenta-deep) 45%,#2e0112 100%);
+}
+.jr-hero{padding:160px 0 60px;}
+/* subtle photo texture under the magenta */
+.jr-hero::before{
+  content:"";position:absolute;inset:0;z-index:0;
+  background:url("/assets/stock/w2l-1.webp") center/cover no-repeat;
+  opacity:.16;mix-blend-mode:soft-light;
+}
+.jr-hero > .container{position:relative;z-index:1;}
+.jr-hero .eyebrow{margin-bottom:0;}
+.jr-hero h1{
+  font-family:'Instrument Sans',system-ui,sans-serif;font-weight:600;color:#fff;
+  font-size:clamp(2.4rem,5vw,3.6rem);line-height:1.1;letter-spacing:-.015em;margin:16px 0 0;
+}
+.jr-hero p{margin-top:16px;color:rgba(255,255,255,.82);font-size:1.05rem;max-width:54ch;}
+
+/* --- /journal index grid: full container width --- */
+/* padding-top/bottom only — keep .container's own 0 28px side gutters */
+.jr-index{padding-top:64px;padding-bottom:110px;}
+.jr-empty{color:var(--ink-soft);font-size:1rem;}
+.jr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:52px 40px;}
+.jr-card{display:flex;flex-direction:column;color:inherit;border-radius:8px;}
+.jr-card-media{
+  aspect-ratio:16/10;border-radius:16px;overflow:hidden;background:var(--cream2);margin-bottom:18px;
+}
+.jr-card-media img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s var(--ease);}
+.jr-card:hover .jr-card-media img{transform:scale(1.045);}
+.jr-card-tag{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--magenta);margin-bottom:8px;}
+.jr-card-tag::before{content:"// ";}
+.jr-card-title{
+  font-family:'Lora',serif;font-weight:700;font-size:1.32rem;line-height:1.25;color:var(--ink);transition:color .2s;
+}
+.jr-card:hover .jr-card-title{color:var(--magenta);}
+.jr-card-meta{font-size:.78rem;color:var(--ink-soft);opacity:.7;margin:8px 0 10px;}
+.jr-card-excerpt{color:var(--ink-soft);font-size:.92rem;line-height:1.6;}
+.jr-card:focus-visible{outline:2px solid var(--magenta);outline-offset:6px;}
+
+/* --- /journal/[slug]: cover-image hero (low height, text anchored bottom) --- */
+.jr-post-hero{
+  position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;  /* content spans full container width, pinned to the bottom */
+  padding:150px 0 46px;min-height:clamp(300px,42vh,440px);background:var(--magenta-deep);
+}
+.jr-post-hero::before{
+  content:"";position:absolute;inset:0;z-index:0;background-image:var(--cover);
+  background-size:cover;background-position:center;
+}
+.jr-post-hero::after{
+  content:"";position:absolute;inset:0;z-index:1;
+  /* magenta brand wash tints the photo; bottom gradient to near-solid deep
+     magenta guarantees the text block reads over anything */
+  background:
+    linear-gradient(180deg,rgba(45,1,20,0) 20%,rgba(45,1,20,.82) 100%),
+    linear-gradient(155deg,rgba(117,6,73,.62) 0%,rgba(74,3,48,.7) 55%,rgba(46,1,18,.74) 100%);
+}
+/* width:100% forces the flex item to fill the cross axis (then .container's own
+   max-width + auto margins cap & centre it), so the text lines up with the
+   article/card column below instead of shrinking to its own content width */
+.jr-post-hero-inner{position:relative;z-index:2;width:100%;text-shadow:0 1px 2px rgba(23,0,10,.55),0 3px 18px rgba(23,0,10,.45);}
+.jr-back{display:inline-block;font-weight:600;font-size:.9rem;color:#fff;opacity:.9;margin-bottom:18px;}
+.jr-back:hover{opacity:1;}
+.jr-post-tag{display:block;font-size:.74rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#f6d7e5;margin-bottom:10px;}
+.jr-post-hero h1{
+  font-family:'Instrument Sans',system-ui,sans-serif;font-weight:600;color:#fff;
+  font-size:clamp(2rem,4.4vw,3.2rem);line-height:1.14;letter-spacing:-.015em;max-width:24ch;
+}
+.jr-post-meta{margin-top:12px;color:rgba(255,255,255,.9);font-size:.92rem;}
+
+/* --- /journal/[slug]: article + "more field notes" rail (Facebook-style) --- */
+.jr-post-layout{
+  display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:64px;
+  padding-top:60px;padding-bottom:96px;align-items:start;  /* keep .container side gutters */
+}
+.jr-post-body{min-width:0;max-width:70ch;}
+.jr-post-body > *{margin:0 0 1.15rem;}
+.jr-post-body p{line-height:1.8;color:var(--ink-soft);font-size:1.06rem;}
+.jr-post-body h2{
+  font-family:'Instrument Sans',system-ui,sans-serif;font-weight:600;color:var(--ink);
+  font-size:1.7rem;line-height:1.25;margin:2.4rem 0 .6rem;
+}
+.jr-post-body h3{font-family:'Instrument Sans',system-ui,sans-serif;font-weight:600;color:var(--ink);font-size:1.28rem;margin:2rem 0 .5rem;}
+.jr-post-body strong{color:var(--ink);}
+.jr-post-body a{color:var(--magenta);text-decoration:underline;text-underline-offset:2px;}
+.jr-post-body ul,.jr-post-body ol{padding-left:1.4em;}
+.jr-post-body li{line-height:1.8;color:var(--ink-soft);margin:.4rem 0;}
+.jr-post-body blockquote{
+  border-left:3px solid var(--magenta);padding-left:18px;margin-left:0;
+  font-family:'Lora',serif;font-style:italic;font-size:1.15rem;color:var(--ink);
+}
+.jr-post-body img{width:100%;border-radius:16px;margin:1.8rem 0;}
+
+.jr-post-aside{position:sticky;top:96px;}
+.jr-aside-inner{border:1px solid var(--line);border-radius:18px;padding:22px 20px;background:var(--paper);}
+.jr-aside-title{font-family:'Instrument Sans',system-ui,sans-serif;font-weight:600;font-size:1rem;color:var(--ink);margin-bottom:14px;}
+.jr-aside-empty{font-size:.86rem;color:var(--ink-soft);}
+.jr-aside-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;}
+.jr-aside-list li + li{border-top:1px solid var(--line);}
+.jr-aside-item{display:flex;gap:12px;padding:13px 0;color:inherit;}
+.jr-aside-thumb{flex:none;width:64px;height:64px;border-radius:10px;overflow:hidden;background:var(--cream2);}
+.jr-aside-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.jr-aside-body{display:flex;flex-direction:column;min-width:0;}
+.jr-aside-tag{font-size:.62rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--magenta);margin-bottom:3px;}
+.jr-aside-name{font-family:'Lora',serif;font-weight:700;font-size:.92rem;line-height:1.3;color:var(--ink);transition:color .2s;}
+.jr-aside-item:hover .jr-aside-name{color:var(--magenta);}
+.jr-aside-date{font-size:.72rem;color:var(--ink-soft);opacity:.7;margin-top:4px;}
+.jr-aside-all{display:inline-block;margin-top:16px;font-weight:600;font-size:.84rem;color:var(--magenta);}
+.jr-aside-all:hover{text-decoration:underline;}
+
+@media (max-width:960px){
+  .jr-post-layout{grid-template-columns:1fr;gap:44px;}
+  .jr-post-aside{position:static;}
+  .jr-aside-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:0 24px;}
+  .jr-aside-list li + li{border-top:0;}
+}
+@media (max-width:640px){
+  .jr-hero{padding:120px 0 46px;}
+  .jr-post-hero{padding:112px 0 30px;min-height:280px;}
+  .jr-index{padding-top:48px;padding-bottom:80px;}
+  .jr-grid{grid-template-columns:1fr;gap:40px;}
+  .jr-post-layout{padding-top:44px;padding-bottom:72px;}
+  .jr-post-body p,.jr-post-body li{font-size:1rem;}
+  .jr-aside-list{grid-template-columns:1fr;}
+  .jr-aside-list li + li{border-top:1px solid var(--line);}
+}
 
 /* ============================================================
    CTA BAND
@@ -871,6 +1160,15 @@ footer{background:#150a10;color:#e9dbe2;padding:80px 0 30px;}
 .footer-brand img{height:40px;margin-bottom:16px;}
 .footer-brand p{color:#b79aa8;font-size:.92rem;max-width:32ch;margin-bottom:18px;}
 .footer-tag{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#a9738f;}
+.footer-social{display:flex;gap:10px;margin-top:20px;}
+.footer-social a{
+  display:flex;align-items:center;justify-content:center;
+  width:36px;height:36px;border-radius:50%;flex:none;
+  border:1px solid rgba(255,255,255,.18);color:#d9c6d0;
+  transition:color .2s,border-color .2s,background .2s,transform .2s;
+}
+.footer-social a:hover{color:#fff;border-color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);transform:translateY(-2px);}
+.footer-social svg{width:17px;height:17px;}
 .footer-col h4{font-family:'Inter';font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#a9738f;margin-bottom:18px;}
 .footer-col ul li{margin-bottom:12px;display:flex;align-items:center;gap:8px;}
 .footer-col a{font-size:.92rem;color:#d9c6d0;transition:color .2s;}
@@ -887,9 +1185,16 @@ footer{background:#150a10;color:#e9dbe2;padding:80px 0 30px;}
    RESPONSIVE
    ============================================================ */
 @media (max-width:1080px){
-  .voices-layout{grid-template-columns:1fr;gap:30px;}
-  .voices-pin{position:static;}
-  .voice-stackcard{position:static;box-shadow:0 20px 40px -20px rgba(0,0,0,.35);transform:none;margin-bottom:20px;}
+  .voices-head{margin-bottom:34px;}
+  .vcar-stage{height:auto;display:block;}
+  .vcar-card{
+    position:relative;inset:auto;margin:0;width:100%;height:auto;
+    transform:none!important;opacity:1!important;transition:none;
+    box-shadow:0 20px 40px -20px rgba(0,0,0,.4);
+  }
+  .vcar-card[aria-hidden="true"]{display:none;}
+  .vcar-card .vsc-quote{-webkit-line-clamp:none;line-clamp:none;}
+  .vcar-dots{margin-top:22px;}
   .gallery-grid{grid-template-columns:repeat(3,1fr);grid-auto-rows:130px;}
   .footer-grid{grid-template-columns:1fr 1fr;gap:40px 30px;}
 }
@@ -920,10 +1225,13 @@ footer{background:#150a10;color:#e9dbe2;padding:80px 0 30px;}
     opacity:1;visibility:visible;pointer-events:auto;
     max-height:0;overflow:hidden;transition:max-height .35s var(--ease);
   }
-  .nav-dropdown.open .nav-drop-panel{max-height:400px;}
+  .nav-dropdown.open .nav-drop-panel{max-height:620px;}
+  .ndp-list{display:block;}
+  .nav-drop-head{display:none;}
   .nav-drop-panel .nav-drop-item{padding:8px 6px;color:var(--ink);}
-  .nav-drop-panel .nav-drop-item span:last-child{font-size:.92rem;color:var(--ink-soft);font-weight:500;}
-  .ndi-logo{width:28px;height:28px;border-radius:7px;}
+  .ndi-name{font-size:.95rem;color:var(--ink-soft);font-weight:600;}
+  .ndi-desc{font-size:.74rem;white-space:normal;overflow:visible;}
+  .ndi-logo{width:30px;height:30px;border-radius:8px;padding:5px;}
   .nav-toggle{display:flex;z-index:101;}
   .nav-cta .btn-primary{display:none;}
   /* just clears the ~82px fixed nav + a little air (was 120px, too loose) */
@@ -933,9 +1241,9 @@ footer{background:#150a10;color:#e9dbe2;padding:80px 0 30px;}
   .v-stats span{font-size:.7rem;max-width:11ch;}
   .footer-grid{grid-template-columns:1fr;gap:34px;}
 
-  /* card stack: drop the sticky/overlap choreography, ghost numeral, trail
-     line and floating photo — just clean stacked colour blocks with the
-     photo (and its stat row) shown inline instead of bled off the edge. */
+  /* card stack: keeps the same sticky/crossfade scroll as desktop now, just
+     drops the floating photo — it's shown inline instead of bled off the
+     edge, since there's no room to float it beside the text this narrow. */
   .v-card{border-radius:0;padding:56px 0;box-shadow:none;}
   .v-card-inner{max-width:100%;}
   .vc-brand-sub{font-size:1.05rem;}
@@ -951,6 +1259,9 @@ footer{background:#150a10;color:#e9dbe2;padding:80px 0 30px;}
     border-radius:18px;overflow:hidden;
   }
   .vc-media img{border-radius:18px;border:0;transform:none;clip-path:none;}
+  /* the floating peek doesn't have room in this flattened mobile layout —
+     just show the front photo, same as a single-photo card */
+  .vc-media img.is-back{display:none;}
   #makerchamps .vc-media{border-radius:0;overflow:visible;}
   #makerchamps .torn-triangle{left:14px;top:-18px;width:44px;height:44px;}
   #makerchamps .vc-media img{

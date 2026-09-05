@@ -1,12 +1,33 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { notFound } from "next/navigation";
 import { getReadDb, blogPosts, eq } from "@delead/db";
-import { getPost } from "@/lib/content";
+import { getPost, getAllPosts } from "@/lib/content";
 import { renderBlogBody } from "@/lib/blog-render";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 
 export const revalidate = 3600;
+
+// used for cover / thumbnails when a post has no image set in the dashboard
+const IMG_FALLBACK: Record<string, string> = {
+  "DLI Foundation": "/assets/images/card-walk2lead.jpg",
+  TinkerChamps: "/assets/stock/tc-4.webp",
+  MakerChamps: "/assets/stock/mc-1.webp",
+  "DLI Education": "/assets/stock/dli-2.webp",
+  "Corporate Training": "/assets/stock/corp-2.webp",
+};
+const imgFor = (p: { _url?: string | null; tag: string }) =>
+  p._url || IMG_FALLBACK[p.tag] || "/assets/stock/tc-4.webp";
+
+const fmtDate = (d: unknown) =>
+  d
+    ? new Date(d as string).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "";
 
 export async function generateStaticParams() {
   try {
@@ -34,7 +55,12 @@ export async function generateMetadata({
     title: `${post.title} | De' Lead Journal`,
     description: post.excerpt,
     alternates: { canonical: `/journal/${post.slug}` },
-    openGraph: { title: post.title, description: post.excerpt, type: "article" },
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: "article",
+      images: post._url ? [post._url] : undefined,
+    },
   };
 }
 
@@ -44,49 +70,69 @@ export default async function JournalPost({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = await getPost(slug);
+  const [post, all] = await Promise.all([getPost(slug), getAllPosts()]);
   if (!post) notFound();
 
   const html = renderBlogBody(post);
-  const date = post.publishedAt
-    ? new Date(post.publishedAt).toLocaleDateString("en-IN", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
-    : "";
+  const date = fmtDate(post.publishedAt);
+  const cover = imgFor(post);
+  const recent = all.filter((p) => p.slug !== slug).slice(0, 5);
 
   return (
     <>
-      <Nav />
-      <article className="journal-article container">
-        <a href="/#blog" className="journal-back">
-          &larr; The Journal
-        </a>
-        <span className="bc-tag">{post.tag}</span>
-        <h1>{post.title}</h1>
-        <p className="journal-meta">
-          {post.authorName}
-          {date && ` · ${date}`}
-        </p>
-        {post._url && <img className="journal-cover" src={post._url} alt="" />}
-        <div className="journal-body" dangerouslySetInnerHTML={{ __html: html }} />
-      </article>
-      <Footer />
+      <Nav home={false} />
 
-      <style>{`
-        .journal-article{max-width:720px;margin:0 auto;padding:140px 28px 100px;}
-        .journal-back{display:inline-block;margin-bottom:24px;font-weight:600;font-size:.9rem;color:var(--magenta);}
-        .journal-article .bc-tag{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--magenta);display:block;margin-bottom:8px;}
-        .journal-article h1{font-family:'Instrument Sans',system-ui,sans-serif;font-weight:600;font-size:clamp(2rem,4vw,3rem);line-height:1.12;letter-spacing:-.01em;}
-        .journal-meta{margin-top:12px;color:var(--ink-soft);font-size:.9rem;}
-        .journal-cover{width:100%;border-radius:22px;margin:32px 0;}
-        .journal-body{margin-top:24px;}
-        .journal-body p{margin:1rem 0;line-height:1.75;color:var(--ink-soft);}
-        .journal-body h2{font-family:'Instrument Sans',system-ui,sans-serif;font-size:1.6rem;margin:2rem 0 .5rem;color:var(--ink);}
-        .journal-body strong{color:var(--ink);}
-        .journal-body a{color:var(--magenta);text-decoration:underline;}
-      `}</style>
+      <header
+        className="jr-post-hero"
+        style={{ "--cover": `url("${cover}")` } as CSSProperties}
+      >
+        <div className="container jr-post-hero-inner">
+          <a href="/journal" className="jr-back">
+            &larr; The Journal
+          </a>
+          <span className="jr-post-tag">{post.tag}</span>
+          <h1>{post.title}</h1>
+          <p className="jr-post-meta">
+            {post.authorName}
+            {date && ` · ${date}`}
+          </p>
+        </div>
+      </header>
+
+      <div className="container jr-post-layout">
+        <main className="jr-post-body" dangerouslySetInnerHTML={{ __html: html }} />
+
+        <aside className="jr-post-aside">
+          <div className="jr-aside-inner">
+            <h2 className="jr-aside-title">More field notes</h2>
+            {recent.length === 0 ? (
+              <p className="jr-aside-empty">Nothing else yet.</p>
+            ) : (
+              <ul className="jr-aside-list">
+                {recent.map((p) => (
+                  <li key={p.id}>
+                    <a href={`/journal/${p.slug}`} className="jr-aside-item">
+                      <span className="jr-aside-thumb">
+                        <img src={imgFor(p)} alt="" loading="lazy" />
+                      </span>
+                      <span className="jr-aside-body">
+                        <span className="jr-aside-tag">{p.tag}</span>
+                        <span className="jr-aside-name">{p.title}</span>
+                        <span className="jr-aside-date">{fmtDate(p.publishedAt)}</span>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <a href="/journal" className="jr-aside-all">
+              All field notes &rarr;
+            </a>
+          </div>
+        </aside>
+      </div>
+
+      <Footer />
     </>
   );
 }

@@ -46,6 +46,9 @@ export interface ResourceDef {
   fields: FieldDef[];
   /** extra list filter over a column with a fixed option set */
   filterField?: { name: string; label: string; options: string[] };
+  /** the image *is* the content (testimonials, press cuttings, gallery…) —
+   *  list defaults to grid view, and the edit form gives the picture more room */
+  imageForward?: boolean;
 }
 
 const ICONS = ["calendar", "book", "star", "bird"];
@@ -59,6 +62,7 @@ export const RESOURCES: Record<string, ResourceDef> = {
     verticalScoped: true,
     verticals: ["deleadint", "walk2lead", "makerchamps", "corporate", "dli_education", "tinkerchamps"],
     orderable: true,
+    imageForward: true,
     search: ["quote", "author_name"],
     columns: [
       { key: "quote", label: "Quote" },
@@ -84,6 +88,7 @@ export const RESOURCES: Record<string, ResourceDef> = {
     verticalScoped: true,
     verticals: ["deleadint", "walk2lead", "makerchamps", "corporate", "tinkerchamps"],
     orderable: true,
+    imageForward: true,
     search: ["title"],
     columns: [
       { key: "asset_id", label: "Image", kind: "image" },
@@ -103,8 +108,9 @@ export const RESOURCES: Record<string, ResourceDef> = {
     singular: "Review",
     table: s.whatsappReviews,
     verticalScoped: true,
-    verticals: ["tinkerchamps"],
+    verticals: ["tinkerchamps", "makerchamps"],
     orderable: true,
+    imageForward: true,
     search: ["title"],
     columns: [
       { key: "asset_id", label: "Screenshot", kind: "image" },
@@ -126,6 +132,7 @@ export const RESOURCES: Record<string, ResourceDef> = {
     verticalScoped: true,
     verticals: ["deleadint", "walk2lead"],
     orderable: true,
+    imageForward: true,
     search: ["title", "publication"],
     columns: [
       { key: "asset_id", label: "Scan", kind: "image" },
@@ -239,6 +246,7 @@ export const RESOURCES: Record<string, ResourceDef> = {
     fixedVertical: "walk2lead",
     verticals: ["walk2lead"],
     orderable: true,
+    imageForward: true,
     search: ["title", "category"],
     columns: [
       { key: "asset_id", label: "Photo", kind: "image" },

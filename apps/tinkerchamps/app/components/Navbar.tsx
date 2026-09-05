@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FiMenu, FiX } from "react-icons/fi";
 import { IoChevronForwardOutline } from "react-icons/io5";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
@@ -28,10 +28,30 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("hero");
+  // Hide on scroll-down / show on scroll-up — same pattern as every other
+  // site (deleadint/walk2lead/makerchamps/corporate/dli-education
+  // public/js/main.js).
+  const [navHidden, setNavHidden] = useState(false);
+  const lastScrollYRef = useRef(0);
+  const isOpenRef = useRef(isOpen);
   const { scrollY } = useScroll();
+
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+    if (isOpen) setNavHidden(false);
+  }, [isOpen]);
 
   useMotionValueEvent(scrollY, "change", (currentScrollY) => {
     setIsScrolled(currentScrollY > 10);
+
+    if (isOpenRef.current) {
+      setNavHidden(false);
+    } else if (currentScrollY > lastScrollYRef.current && currentScrollY > 80) {
+      setNavHidden(true);
+    } else if (currentScrollY < lastScrollYRef.current) {
+      setNavHidden(false);
+    }
+    lastScrollYRef.current = currentScrollY;
 
     const sectionIds = NAV_ITEMS.map((item) => item.href.replace("#", ""));
     let current = sectionIds[0] || "hero";
@@ -58,7 +78,11 @@ export default function Navbar() {
   return (
     <>
       {/* Outer fixed bar */}
-      <header className="fixed inset-x-0 top-1 z-50 md:px-6 px-2">
+      <motion.header
+        className="fixed inset-x-0 top-1 z-50 md:px-6 px-2"
+        animate={{ y: navHidden ? "-120%" : "0%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      >
         <motion.div
           initial={{
             y: -20,
@@ -218,7 +242,7 @@ export default function Navbar() {
             )}
           </AnimatePresence>
         </motion.div>
-      </header>
+      </motion.header>
 
       {/* Mobile Backdrop */}
       <AnimatePresence>

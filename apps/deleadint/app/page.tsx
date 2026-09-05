@@ -8,6 +8,7 @@ import { VStack } from "@/components/VStack";
 import { Press } from "@/components/Press";
 import { Voices } from "@/components/Voices";
 import { Gallery } from "@/components/Gallery";
+import { Lightbox } from "@/components/Lightbox";
 import { Journal } from "@/components/Journal";
 import { CtaBand } from "@/components/CtaBand";
 import { ContactForm } from "@/components/ContactForm";
@@ -34,6 +35,7 @@ export default function Home() {
       <CtaBand />
       <ContactForm />
       <Footer />
+      <Lightbox />
     </>
   );
 }

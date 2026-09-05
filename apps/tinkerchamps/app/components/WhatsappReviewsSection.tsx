@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { FaWhatsapp, FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 export interface ReviewImage {
   id: string;
@@ -78,13 +78,8 @@ export default function WhatsappReviewsSection({
               className="flex-shrink-0 w-[240px] sm:w-[280px] md:w-[300px]"
             >
               <div
-                className="group/card relative rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md border border-white/10 p-3 shadow-xl flex flex-col items-center justify-center aspect-[9/16]"
+                className="relative rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md border border-white/10 p-3 shadow-xl flex flex-col items-center justify-center aspect-[9/16]"
               >
-                {/* WhatsApp Indicator Icon */}
-                <div className="absolute top-4 right-4 z-10 bg-emerald-500 text-white p-2 rounded-full shadow-md group-hover/card:scale-110 transition-transform duration-300">
-                  <FaWhatsapp size={16} />
-                </div>
-
                 {/* Review Image */}
                 <div className="relative w-full h-full rounded-xl overflow-hidden bg-black/20">
                   <Image
