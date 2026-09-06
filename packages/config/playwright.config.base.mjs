@@ -25,6 +25,8 @@ export function makeVisualConfig({ port, command } = {}) {
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 1 : 0,
     workers: process.env.CI ? 1 : undefined,
+    // the settle routine (scroll-through + image + count-up waits) is slow
+    timeout: 90_000,
     reporter: process.env.CI ? [["github"], ["list"]] : [["list"]],
     snapshotPathTemplate: "{testDir}/__screenshots__/{projectName}/{arg}{ext}",
 

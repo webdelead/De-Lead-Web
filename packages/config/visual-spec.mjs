@@ -7,49 +7,96 @@ import { test, expect } from "@playwright/test";
  *   import { registerVisualTests } from "@delead/config/visual-spec.mjs";
  *   registerVisualTests();
  *
- * Playwright runs this once per viewport project (mobile / tablet / desktop).
+ * Playwright runs it once per viewport project (mobile / tablet / desktop) and
+ * takes one screenshot per top-level section that has an `id` — keyed by that
+ * id (`home--impact.png`), so the baseline survives the migration re-wrapping
+ * markup. Sections without an id (nav bar, bare marquee, lightbox host) are
+ * skipped; the ids come from the in-page nav anchors and are preserved.
+ * Assertions are soft, so one run reports every section.
  *
- *   1. `home` — one full-page screenshot. A global vertical shift fails it,
- *      which is intended: the Tailwind rewrite must not move anything.
- *   2. `sections` — one screenshot per top-level block (`body > *`), soft-
- *      asserted so every block is reported in a single run. Add `data-vr="…"`
- *      to a wrapper during migration if its index/box needs pinning.
+ * Determinism — a flaky baseline makes the gate worthless:
+ *   - reduced-motion (config) + a runtime "kill all animation/transition" sheet
+ *   - every pending timer/interval cleared after first paint, freezing the hero
+ *     slideshow / autoplay carousels on frame 0
+ *   - wait for every <img> to finish (lazy images changing section height was
+ *     the main source of drift) and for the rAF [data-count] roll to settle
  */
+const KILL_MOTION = `
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    caret-color: transparent !important;
+    scroll-behavior: auto !important;
+  }
+`;
+
+async function settle(page) {
+  await page.addStyleTag({ content: KILL_MOTION });
+
+  // force every image eager so heights are settled before any capture, then
+  // walk the page so the reveal IntersectionObservers fire
+  await page.evaluate(async () => {
+    for (const img of document.querySelectorAll("img")) img.loading = "eager";
+    await (document.fonts && document.fonts.ready);
+    const step = Math.round(window.innerHeight * 0.8);
+    for (let y = 0; y < document.body.scrollHeight; y += step) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 60));
+    }
+    window.scrollTo(0, 0);
+  });
+
+  // freeze timer-driven loops (slideshow, autoplay carousels) on their frame
+  await page.evaluate(() => {
+    const maxId = Number(setTimeout(() => {}, 0));
+    for (let i = 0; i <= maxId; i++) {
+      clearTimeout(i);
+      clearInterval(i);
+    }
+  });
+
+  // every image decoded — lazy images arriving late shift section heights.
+  // Capped so a permanently-pending <img src=""> (DB fallback) can't hang it.
+  await page.evaluate(() => {
+    const pending = Array.from(document.images)
+      .filter((img) => !img.complete && img.getAttribute("src"))
+      .map(
+        (img) =>
+          new Promise((res) => {
+            img.onload = img.onerror = res;
+          }),
+      );
+    return Promise.race([
+      Promise.all(pending),
+      new Promise((r) => setTimeout(r, 10_000)),
+    ]);
+  });
+
+  // let the 1400ms count-ups reach their fixed final value
+  await page.waitForTimeout(1800);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.waitForTimeout(150);
+}
+
 export function registerVisualTests({ path = "/", name = "home" } = {}) {
   test.describe(`${name} visual`, () => {
     test.beforeEach(async ({ page }) => {
       await page.goto(path, { waitUntil: "networkidle" });
-      // fonts settled (next/font swap) before any capture
-      await page.evaluate(() => document.fonts && document.fonts.ready);
-      // walk the page so IntersectionObserver reveals fire, then return to top;
-      // `animations: "disabled"` freezes them at their end state for the shot
-      await page.evaluate(async () => {
-        const step = Math.round(window.innerHeight * 0.8);
-        for (let y = 0; y < document.body.scrollHeight; y += step) {
-          window.scrollTo(0, y);
-          await new Promise((r) => setTimeout(r, 60));
-        }
-        window.scrollTo(0, 0);
-        await new Promise((r) => setTimeout(r, 150));
-      });
-    });
-
-    test(name, async ({ page }) => {
-      await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true });
+      await settle(page);
     });
 
     test(`${name} sections`, async ({ page }) => {
-      const blocks = page.locator("body > *:not(script):not(style):not(next-route-announcer)");
-      const count = await blocks.count();
-      expect(count, "no top-level blocks found").toBeGreaterThan(0);
+      const sections = page.locator("body > [id]");
+      const count = await sections.count();
+      expect(count, "no id'd top-level sections found").toBeGreaterThan(0);
+
       for (let i = 0; i < count; i++) {
-        const block = blocks.nth(i);
-        if (!(await block.isVisible())) continue;
-        const box = await block.boundingBox();
+        const el = sections.nth(i);
+        if (!(await el.isVisible())) continue;
+        const box = await el.boundingBox();
         if (!box || box.height < 4) continue;
-        await expect
-          .soft(block)
-          .toHaveScreenshot(`${name}-block-${String(i).padStart(2, "0")}.png`);
+        const id = (await el.getAttribute("id"))?.trim() || `i${i}`;
+        await expect.soft(el).toHaveScreenshot(`${name}--${id}.png`);
       }
     });
   });
