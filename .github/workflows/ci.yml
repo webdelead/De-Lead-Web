@@ -24,8 +24,12 @@ jobs:
         run: pnpm typecheck
 
       - name: Lint
+        # Blocking. All 7 apps carry @delead/config's flat config. Warnings are
+        # allowed (no --max-warnings); the pre-existing backlog is downgraded to
+        # `warn` in the base config (react-hooks/*) and the 5 marketing configs
+        # (no-unescaped-entities, no-html-link-for-pages — the html2jsx split).
+        # Each redesign/<site> branch removes its leniency block.
         run: pnpm lint
-        continue-on-error: true # TODO: blocking once every app has a flat-config lint script and TinkerChamps' 12 errors are cleared
 
       - name: Audit (high+)
         # Blocking. To silence an advisory with no upgrade path, add its CVE/GHSA

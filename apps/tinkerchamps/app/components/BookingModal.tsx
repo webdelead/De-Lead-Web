@@ -30,7 +30,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     if (!isOpen) return;
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
-    // @ts-ignore
+    // @ts-expect-error — lenis package ships an incorrect Window.lenis type
     if (window.lenis) window.lenis.stop();
     window.history.pushState({ modalOpen: true }, "");
     const onPop = () => onClose();
@@ -38,7 +38,7 @@ export default function BookingModal({ isOpen, onClose }: BookingModalProps) {
     return () => {
       document.body.style.overflow = "unset";
       document.documentElement.style.overflow = "unset";
-      // @ts-ignore
+      // @ts-expect-error — lenis package ships an incorrect Window.lenis type
       if (window.lenis) window.lenis.start();
       window.removeEventListener("popstate", onPop);
       if (window.history.state?.modalOpen) window.history.back();

@@ -3,7 +3,13 @@
 import { motion } from "framer-motion";
 import { IoCheckmarkCircle } from "react-icons/io5";
 
-export default function SuccessStep({ selectedProgram, onDone }: any) {
+export default function SuccessStep({
+  selectedProgram,
+  onDone,
+}: {
+  selectedProgram: string;
+  onDone: () => void;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -23,7 +29,7 @@ export default function SuccessStep({ selectedProgram, onDone }: any) {
         </h2>
         <div className="space-y-2">
           <p className="text-white/80 text-lg font-medium">
-            We've received your enrollment for
+            We&apos;ve received your enrollment for
             <span className="block text-secondary-yellow font-bold mt-1">
               {selectedProgram}
             </span>

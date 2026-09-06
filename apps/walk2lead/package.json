@@ -7,7 +7,8 @@
     "dev": "next dev --port 4322",
     "build": "next build",
     "start": "next start --port 4322",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint"
   },
   "dependencies": {
     "@delead/brand": "workspace:*",
@@ -24,6 +25,8 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "dotenv": "catalog:",
+    "eslint": "^9",
+    "eslint-config-next": "catalog:",
     "typescript": "catalog:"
   }
 }

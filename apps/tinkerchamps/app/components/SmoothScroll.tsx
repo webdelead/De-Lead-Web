@@ -16,8 +16,10 @@ export default function SmoothScroll() {
       touchMultiplier: 2,
     });
 
-    // Expose lenis to window for external access if needed
-    // @ts-ignore
+    // Expose lenis to window for the booking modal to pause/resume it.
+    // lenis's own `declare global Window.lenis` type is a partial options bag,
+    // not the instance — assigning the real instance is the intended use.
+    // @ts-expect-error — lenis package ships an incorrect Window.lenis type
     window.lenis = lenis;
 
     function raf(time: number) {
@@ -70,7 +72,7 @@ export default function SmoothScroll() {
 
     return () => {
       document.removeEventListener("click", handleAnchorClick, { capture: true });
-      // @ts-ignore
+      // @ts-expect-error — lenis package ships an incorrect Window.lenis type
       delete window.lenis;
       lenis.destroy();
     };

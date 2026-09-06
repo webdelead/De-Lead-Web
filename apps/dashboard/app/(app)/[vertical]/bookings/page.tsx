@@ -49,6 +49,8 @@ export default async function BookingsPage({
           <h1 className="text-2xl font-semibold tracking-tight">Bookings</h1>
           <p className="text-sm text-muted-foreground">TinkerChamps — read-only</p>
         </div>
+        {/* route handler that streams a CSV download — not a page, so <Link> is wrong here */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a href="/api/export/bookings">
           <button className="rounded-md border px-3 py-1.5 text-sm">Export CSV</button>
         </a>

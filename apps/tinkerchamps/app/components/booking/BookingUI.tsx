@@ -8,7 +8,13 @@ import {
 } from "react-icons/io5";
 
 /* --- Progress Bar --- */
-export function ProgressBar({ step, isSubmitted, totalSteps }: any) {
+export function ProgressBar({
+  step,
+  isSubmitted,
+}: {
+  step: number;
+  isSubmitted: boolean;
+}) {
   return (
     <div className="absolute bottom-0 left-0 w-full h-[6px] bg-black/20 overflow-hidden">
       <motion.div
@@ -66,7 +72,14 @@ export function ProgramOption({
   selected = false,
   isOther = false,
   onClick,
-}: any) {
+}: {
+  title: string;
+  location?: string;
+  date?: string;
+  selected?: boolean;
+  isOther?: boolean;
+  onClick?: () => void;
+}) {
   return (
     <div
       onClick={onClick}
@@ -117,7 +130,14 @@ export function InputField({
   onChange,
   error,
   type = "text",
-}: any) {
+}: {
+  label: string;
+  placeholder?: string;
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+  type?: string;
+}) {
   return (
     <div className="flex flex-col gap-2.5 group">
       <label
@@ -144,7 +164,14 @@ export function SelectField({
   value,
   onChange,
   error,
-}: any) {
+}: {
+  label: string;
+  placeholder?: string;
+  options?: string[];
+  value: string;
+  onChange: (value: string) => void;
+  error?: string;
+}) {
   return (
     <div className="flex flex-col gap-2.5 group">
       <label
