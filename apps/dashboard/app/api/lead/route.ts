@@ -1,8 +1,8 @@
 import { NextResponse, after } from "next/server";
-import { createHash } from "node:crypto";
 import { z } from "zod";
 import { getDb, leads, outbox, sql, flushOutbox } from "@delead/db";
 import { verifyTurnstile } from "@delead/shared/turnstile";
+import { clientIp, ipHashOf } from "@delead/shared/request-ip";
 import { DB_VERTICAL_KEYS } from "@delead/brand/verticals";
 
 const ORIGINS = [
@@ -24,7 +24,13 @@ const APPS_SCRIPT: Record<string, string | undefined> = {
 };
 
 const schema = z.object({
-  source: z.string().refine((v) => DB_VERTICAL_KEYS.includes(v) || v.includes("-")),
+  // Accept either the hyphenated site slug ("dli-education") or the underscored
+  // db enum key ("dli_education"); normalise to the key and reject anything that
+  // isn't a known vertical, so we never hand a bad value to the Postgres enum.
+  source: z
+    .string()
+    .transform((v) => v.trim().replace(/-/g, "_"))
+    .refine((v) => DB_VERTICAL_KEYS.includes(v), "unknown source"),
   name: z.string().min(1).max(200),
   email: z.string().email().max(200).optional().or(z.literal("")),
   phone: z.string().max(40).optional().or(z.literal("")),
@@ -33,25 +39,6 @@ const schema = z.object({
   pagePath: z.string().max(300).optional(),
   turnstileToken: z.string().max(4000).optional(),
 });
-
-/**
- * Trustworthy client IP. On Vercel `x-vercel-forwarded-for` / `x-real-ip` are
- * set by the platform edge and overwrite anything the client sends. The
- * client-controlled `x-forwarded-for` is only a last resort, and we take the
- * LAST hop (closest to our infra), never the spoofable left-most value.
- */
-function clientIp(req: Request): string {
-  const vercel = req.headers.get("x-vercel-forwarded-for");
-  if (vercel) return vercel.split(",")[0]!.trim();
-  const real = req.headers.get("x-real-ip");
-  if (real) return real.trim();
-  const xff = req.headers.get("x-forwarded-for");
-  if (xff) {
-    const parts = xff.split(",").map((s) => s.trim()).filter(Boolean);
-    return parts[parts.length - 1] ?? "";
-  }
-  return "";
-}
 
 function cors(origin: string | null) {
   const allow = origin && ORIGINS.includes(origin) ? origin : ORIGINS[0] ?? "*";
@@ -80,10 +67,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "invalid" }, { status: 422, headers });
   }
   const d = parsed.data;
-  const sourceKey = d.source.replace(/-/g, "_");
+  const sourceKey = d.source; // already normalised to the db enum key by the schema
 
   const ip = clientIp(req);
-  const ipHash = ip ? createHash("sha256").update(ip).digest("hex").slice(0, 32) : null;
+  const ipHash = ipHashOf(ip);
 
   if (!(await verifyTurnstile(d.turnstileToken, ip))) {
     return NextResponse.json({ ok: false, error: "challenge failed" }, { status: 403, headers });

@@ -1,6 +1,7 @@
 import { NextResponse, after } from "next/server";
-import { getDb, tcBookings, outbox, flushOutbox } from "@delead/db";
+import { getDb, tcBookings, outbox, flushOutbox, sql } from "@delead/db";
 import { verifyTurnstile } from "@delead/shared/turnstile";
+import { clientIp, ipHashOf } from "@delead/shared/request-ip";
 
 // Public write endpoint for the TinkerChamps booking form. Same model as
 // /api/lead: the site POSTs here (cross-origin), the dashboard owns the DB write
@@ -53,18 +54,40 @@ export async function POST(req: Request) {
       );
     }
 
-    if (!(await verifyTurnstile(field(payload.turnstileToken, 4000)))) {
+    const ip = clientIp(req);
+    const ipHash = ipHashOf(ip);
+
+    if (!(await verifyTurnstile(field(payload.turnstileToken, 4000), ip))) {
       return NextResponse.json({ success: false, error: "Challenge failed." }, { status: 403, headers });
     }
 
     const db = getDb();
+
+    // Rate-limit by trusted IP: max 5 bookings / 10 min. Over the limit → drop
+    // silently (return success; the TC modal never reads the response anyway).
+    // ip_hash is persisted in `meta` so this needs no schema column.
+    if (ipHash) {
+      const [{ recent }] = await db
+        .select({
+          recent: sql<number>`count(*) filter (where ${tcBookings.createdAt} > now() - interval '10 minutes')::int`,
+        })
+        .from(tcBookings)
+        .where(
+          sql`${tcBookings.meta}->>'ip_hash' = ${ipHash} and ${tcBookings.createdAt} > now() - interval '10 minutes'`,
+        );
+      if (recent >= 5) {
+        return NextResponse.json({ success: true }, { status: 200, headers });
+      }
+    }
+
+    const values = { ...clean, meta: ipHash ? { ip_hash: ipHash } : {} };
     const appsScriptUrl = process.env.APPS_SCRIPT_URL_TINKERCHAMPS;
     const mirrorPayload = { ...clean, receivedAt: new Date().toISOString() };
 
     let bookingId: string | undefined;
     try {
       bookingId = await db.transaction(async (tx) => {
-        const [r] = await tx.insert(tcBookings).values(clean).returning({ id: tcBookings.id });
+        const [r] = await tx.insert(tcBookings).values(values).returning({ id: tcBookings.id });
         if (appsScriptUrl) {
           await tx
             .insert(outbox)
@@ -74,7 +97,7 @@ export async function POST(req: Request) {
       });
     } catch (e) {
       console.error("booking transaction failed, falling back to plain insert:", e);
-      const [r] = await db.insert(tcBookings).values(clean).returning({ id: tcBookings.id });
+      const [r] = await db.insert(tcBookings).values(values).returning({ id: tcBookings.id });
       bookingId = r?.id;
       if (appsScriptUrl) {
         after(() =>

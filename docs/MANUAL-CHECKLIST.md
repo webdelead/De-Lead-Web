@@ -72,10 +72,12 @@ Currently **does nothing** — the server code is inert until you add keys.
 - **Sessions** → shorten the JWT / session expiry (e.g. 8h) for an admin tool.
 - MFA: skipped by your decision.
 
-### `CRON_SECRET` (optional)
-The Vercel keep-alive cron route is soft-guarded, so this is optional. If you want it
-locked: generate a value (`openssl rand -base64 33`), set `CRON_SECRET` in the dashboard's
-Vercel env — Vercel Cron sends it automatically.
+### `CRON_SECRET` (required)
+The Vercel keep-alive cron route (`/api/cron/ping`) now fails closed: it returns 503 when
+`CRON_SECRET` is unset and 401 without a matching `Authorization: Bearer` header. Generate a
+value (`openssl rand -base64 33`) and set `CRON_SECRET` in the dashboard's Vercel env —
+Vercel Cron sends it automatically. If it is not set, the Vercel pinger goes dark (the
+GitHub Actions + Supabase pingers still run).
 
 ### RO / APP database roles (portable, defence-in-depth)
 Splits DB access so a bug on a marketing site can't read `leads`/`users` or write anything.

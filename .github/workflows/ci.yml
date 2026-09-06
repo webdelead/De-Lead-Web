@@ -22,10 +22,12 @@ jobs:
 
       - name: Lint
         run: pnpm lint
-        continue-on-error: true # only 3 apps have a lint script yet — full flat-config setup is Phase 3b
+        continue-on-error: true # TODO: blocking once every app has a flat-config lint script and TinkerChamps' 12 errors are cleared
 
       - name: Audit (high+)
-        run: pnpm audit --audit-level=high || true
+        # Blocking. To silence an advisory with no upgrade path, add its CVE/GHSA
+        # to pnpm.auditConfig.ignoreCves / ignoreGhsas in the root package.json.
+        run: pnpm audit --audit-level=high
 
       - name: Build all
         # The sites use buildSafe() so a missing DB is fine (pages become ISR).

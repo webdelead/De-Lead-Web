@@ -8,6 +8,8 @@
     "./strings": "./src/strings.ts",
     "./storage": "./src/storage.ts",
     "./turnstile": "./src/turnstile.ts",
+    "./headers": "./src/headers.ts",
+    "./request-ip": "./src/request-ip.ts",
     "./dates": "./src/dates.ts",
     "./build-safe": "./src/build-safe.ts",
     "./tiptap": "./src/tiptap.ts"

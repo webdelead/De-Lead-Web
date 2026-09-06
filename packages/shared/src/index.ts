@@ -5,6 +5,8 @@ export { snakeToCamel } from "./strings";
 export { assetPublicUrl } from "./storage";
 export { verifyTurnstile } from "./turnstile";
 export { buildSafe } from "./build-safe";
+export { securityHeaders } from "./headers";
+export { clientIp, ipHashOf } from "./request-ip";
 
 /**
  * The `/api/revalidate` POST handler shared by every marketing site + TC.

@@ -18,7 +18,7 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
 | `apps/dashboard` | Next 15 admin (`admin.deleadint.com`). **Supabase Auth** email+password (login has show/hide + forgot/reset; `lib/supabase/*` + `lib/authz.ts`); `users` table is a profile row keyed by the Supabase auth uid. RBAC (`super_admin` + per-vertical `view`/`edit` grants), generic resource CRUD (`lib/resources.ts` registry), leads inbox, users (invite-by-email), audit. Sidebar vertical sections are collapsible. |
 | `packages/db` | Drizzle schema + client + migrations + seed. **The one source of DB truth.** |
 | `packages/ui` | `@delead/ui` — shared **client** React components. Recreated 2026-09 (the earlier Astro `packages/ui` was deleted Phase 3; this is unrelated). Currently exports `<ScrollStack>` (`./scroll-stack`): a scroll-driven card deck — every child pins at the same sticky `top`, fanned by a `translateY(--i·step)` transform (not a per-card `top`, so the whole deck un-sticks on one frame and exits together), scale-in as each card reaches the pin. Self-contained (inline styles + one rAF scroll handler, no external CSS), honours `prefers-reduced-motion`, collapses to a plain list below `collapseBelow` (default 1080). Props: `pinTop` `step` `stepCap` `gapVh` `tailVh` `tilt` `collapseBelow`. Extracted from the deleadint "Voices" section (which itself no longer uses it — see below). Consumers must add `@delead/ui` to `transpilePackages`. |
-| `packages/shared` | `@delead/shared` — cross-app server helpers: `assetPublicUrl` (`/storage`), `snakeToCamel` (`/strings`), `verifyTurnstile` (`/turnstile`), `makeRevalidateRoute` (root, server-only). |
+| `packages/shared` | `@delead/shared` — cross-app server helpers: `assetPublicUrl` (`/storage`), `snakeToCamel` (`/strings`), `verifyTurnstile` (`/turnstile`), `clientIp`/`ipHashOf` (`/request-ip`), `securityHeaders` (`/headers` — baseline security response headers wired into every public site's `next.config` `headers()`; **no CSP** yet, that needs a report-only rollout; the dashboard keeps its own stricter block with CSP), `makeRevalidateRoute` (root, server-only). |
 | `packages/brand` | Tailwind v4 theme tokens, per-vertical palette + font map, the `verticals.ts` registry. |
 | `packages/config` | Shared tsconfig / prettier. |
 
@@ -42,6 +42,13 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
   `apps/dashboard/lib/storage.ts`); on Supabase Storage for now.
 - **Lead / booking webhooks** (Google Sheet mirror) go through the `outbox` table — written in
   the same tx as the lead/booking, drained opportunistically + by `.github/workflows/outbox.yml`.
+- **Public write endpoints** (`/api/lead`, `/api/booking`): per-trusted-IP rate limits
+  (`leads.ip_hash`; bookings key off `meta.ip_hash`, no column) → over-limit requests are
+  silently accepted, not stored. Turnstile is **fail-closed but off** — `verifyTurnstile`
+  only blocks when `TURNSTILE_SECRET_KEY` is set **and** `TURNSTILE_ENFORCE=true`; do not
+  flip enforce until a Turnstile widget is live on every lead form + the TC booking modal
+  (none render one today, so enforce = 100% rejection). `/api/cron/ping` now fails closed:
+  503 with no `CRON_SECRET`, 401 without the bearer.
 - **DB changes**: edit `packages/db/src/schema.ts`, then `pnpm --filter @delead/db generate`
   (migration) **and** `pnpm --filter @delead/db schema` (refresh `packages/db/schema.sql`), then
   `pnpm --filter @delead/db migrate`. Commit all three. See `packages/db/CLAUDE.md`.
