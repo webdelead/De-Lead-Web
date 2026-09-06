@@ -1,4 +1,8 @@
-/* Drop-in lead capture. Loaded AFTER each site's own main.js.
+/* CANONICAL SOURCE. Edit here, then run `pnpm sync:lead-capture` to update the
+ * per-app copies in apps/<site>/public/js/lead-capture.js (CI checks they match).
+ * Do NOT edit the copies directly.
+ *
+ * Drop-in lead capture. Loaded AFTER each site's own main.js.
  * Finds <form data-lead-source="..."> and, in the capture phase, intercepts
  * submit BEFORE the site's own handler (so a mailto: action or inline-success
  * handler never fires), POSTs JSON to the lead endpoint.
