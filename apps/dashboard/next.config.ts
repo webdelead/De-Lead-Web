@@ -8,7 +8,6 @@ config({ path: resolve(process.cwd(), "../../.env") });
 const nextConfig: NextConfig = {
   transpilePackages: ["@delead/db", "@delead/brand", "@delead/shared"],
   serverExternalPackages: ["postgres", "sharp"],
-  eslint: { ignoreDuringBuilds: true },
   experimental: {
     // Server Actions default to a 1 MB request body — asset uploads (image
     // picker → uploadAsset) go through a server action, not a route handler,

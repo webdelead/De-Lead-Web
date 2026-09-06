@@ -31,7 +31,7 @@
     "@delead/config": "workspace:*",
     "@types/node": "catalog:",
     "@types/sanitize-html": "^2.13.0",
-    "next": "^15.1.3",
+    "next": "catalog:",
     "typescript": "catalog:"
   }
 }
