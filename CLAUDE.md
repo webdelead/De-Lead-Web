@@ -27,6 +27,16 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
 - **Secrets** live only in `.env` (gitignored). Never hardcode. `.env.example` documents the keys.
 - **Node 24** everywhere (`.nvmrc`, `engines`, CI). Shared toolchain versions live in the
   **pnpm catalog** in `pnpm-workspace.yaml` — reference as `"catalog:"`, don't pin per-app.
+  All apps are on **Next 16.3.4 / React 19.2.8** (catalog, exact). `next build` no longer
+  runs ESLint and `next lint` is gone — lint is each app's own `eslint` script (only TC has
+  one so far; flat-config rollout to the rest is pending).
+- **`buildSafe()`** (`@delead/shared/build-safe`) wraps every marketing-site DB read. In a
+  **production build a failed read now throws and fails the build** (all reads are must-have —
+  don't bake empty content into ISR). `BUILD_ALLOW_DB_FALLBACK=1` opts out for database-less
+  CI builds only; never set it on a deploy.
+- **`public/js/lead-capture.js`** is generated — canonical source is
+  `packages/shared/browser/lead-capture.js`. Edit there, run `pnpm sync:lead-capture`, commit
+  all 5 copies. CI (`node scripts/sync-lead-capture.mjs --check`) fails if they drift.
 - **Before committing**: `pnpm typecheck` (must pass — CI gates on it) and, when touching
   `lib/authz` `lib/rbac` `lib/csv` `lib/resource-access` `lib/utils` or an API route,
   `pnpm --filter @delead/dashboard test` (Node's built-in runner; add a case).

@@ -17,6 +17,9 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
+      - name: lead-capture.js copies in sync
+        run: node scripts/sync-lead-capture.mjs --check
+
       - name: Typecheck
         run: pnpm typecheck
 
@@ -30,11 +33,14 @@ jobs:
         run: pnpm audit --audit-level=high
 
       - name: Build all
-        # The sites use buildSafe() so a missing DB is fine (pages become ISR).
+        # CI may build without a database. BUILD_ALLOW_DB_FALLBACK=1 lets
+        # buildSafe() fall back to empty content here; real deploys never set it,
+        # so a DB outage fails their build instead of caching empty ISR pages.
         # The dashboard's Supabase client only needs *some* URL/key at build to
         # not throw during prerender — placeholders unless real secrets are set.
         run: pnpm build
         env:
+          BUILD_ALLOW_DB_FALLBACK: "1"
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://placeholder.supabase.co' }}
