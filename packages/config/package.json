@@ -6,10 +6,13 @@
     "tsconfig.base.json",
     "tsconfig.next.json",
     "prettier.config.js",
-    "eslint.config.base.mjs"
+    "eslint.config.base.mjs",
+    "playwright.config.base.mjs",
+    "visual-spec.mjs"
   ],
   "main": "prettier.config.js",
   "dependencies": {
+    "@playwright/test": "catalog:",
     "eslint": "^9",
     "eslint-config-next": "catalog:"
   }

@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start --port 4321",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:visual": "playwright test"
   },
   "dependencies": {
     "@delead/brand": "workspace:*",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@delead/config": "workspace:*",
+    "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

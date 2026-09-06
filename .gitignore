@@ -20,5 +20,12 @@ out/
 coverage/
 *.tsbuildinfo
 
+# playwright — keep e2e/__screenshots__/ (the committed baselines), drop the rest
+test-results/
+playwright-report/
+blob-report/
+.last-run.json
+/playwright/.cache/
+
 # vercel cli
 .vercel
