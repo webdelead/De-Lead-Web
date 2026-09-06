@@ -5,7 +5,13 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./scroll-stack": "./src/scroll-stack.tsx"
+    "./scroll-stack": "./src/scroll-stack.tsx",
+    "./reveal": "./src/reveal.tsx",
+    "./counter": "./src/counter.tsx",
+    "./use-scroll-nav": "./src/use-scroll-nav.ts",
+    "./use-disclosure": "./src/use-disclosure.ts",
+    "./marquee": "./src/marquee.tsx",
+    "./lightbox": "./src/lightbox.tsx"
   },
   "files": ["src"],
   "scripts": {
