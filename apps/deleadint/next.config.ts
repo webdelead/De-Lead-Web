@@ -8,7 +8,6 @@ config({ path: resolve(process.cwd(), "../../.env") });
 const nextConfig: NextConfig = {
   transpilePackages: ["@delead/db", "@delead/brand", "@delead/shared", "@delead/ui"],
   serverExternalPackages: ["postgres"],
-  output: "standalone", // portable to a VPS; Vercel ignores it
   images: {
     remotePatterns: [{ protocol: "https", hostname: "*.supabase.co" }],
   },

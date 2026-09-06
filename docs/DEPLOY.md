@@ -45,8 +45,10 @@ anything else.
 
 ## 2. Marketing sites (5) — Vercel or VPS
 
-All five (`deleadint · walk2lead · makerchamps · corporate · dli-education`) are Next 15
-apps with `output: "standalone"` and on-demand ISR. **No build hooks, no Cloudflare Pages.**
+All five (`deleadint · walk2lead · makerchamps · corporate · dli-education`) are Next 16
+apps with on-demand ISR. **No build hooks, no Cloudflare Pages.** `output: "standalone"` was
+removed 2026-09 — Next 16 + standalone breaks Vercel's post-build tracing. Option B below
+needs it re-added and retested first.
 
 ### Option A — Vercel (one project per site)
 1. Add New Project → import `webdelead/De-Lead-Web` → **Root Directory** `apps/<name>`.
@@ -69,6 +71,8 @@ apps with `output: "standalone"` and on-demand ISR. **No build hooks, no Cloudfl
    (SPF/DKIM/DMARC) and `autoconfig`/`autodiscover` record untouched — **Zoho mail is unaffected**.
 
 ### Option B — single VPS ($6–12/mo), for when ticketing/CRM/payments land
+- First re-add `output: "standalone"` to each `next.config.ts` and confirm `next build`
+  succeeds on the current Next (it was removed for the Vercel path — see above).
 - `pnpm install && pnpm -r --filter "./apps/*" build` → each app emits `.next/standalone`.
 - Run each with `pm2`/systemd: `node apps/<name>/.next/standalone/apps/<name>/server.js`
   on its own port (4321–4325, 3100, 3200).

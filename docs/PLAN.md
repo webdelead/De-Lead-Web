@@ -40,7 +40,7 @@ Package manager **pnpm 9** + **Turborepo 2**. Node ≥ 20.11.
 
 | Concern | Choice | Notes |
 |---|---|---|
-| Marketing sites | **Next 15** (App Router, RSC) — converted from Astro 2026-09 | `output: "standalone"`. Each is a **1:1 pixel port** of the client-approved static design: original `css/styles.css` + `js/main.js` copied verbatim into `public/`, markup componentised into `components/S01_*`…`SNN_*` (split by `scripts/html2jsx.mjs`). |
+| Marketing sites | **Next 16** (App Router, RSC) — converted from Astro 2026-09 | Each is a **1:1 pixel port** of the client-approved static design: original `css/styles.css` + `js/main.js` copied verbatim into `public/`, markup componentised into `components/S01_*`…`SNN_*` (split by `scripts/html2jsx.mjs`). |
 | Site content | dynamic sections (press / testimonials / gallery / projects / blog) are **async server components** reading Postgres via `lib/content.ts`; everything else is static JSX. `export const revalidate = 3600` + on-demand ISR (`app/api/revalidate`). | edits in the dashboard show up without a rebuild |
 | Marketing animation | each site's **own original `main.js`** (CSS + one IntersectionObserver), carried over unchanged. | **No new** Lenis / GSAP on the five marketing sites. TinkerChamps keeps its existing Lenis + ScrollColorBackground. `prefers-reduced-motion` respected by the original JS. |
 | Dashboard + TinkerChamps | **Next 16** (App Router) + React 19 | matches current TinkerChamps |
@@ -50,7 +50,7 @@ Package manager **pnpm 9** + **Turborepo 2**. Node ≥ 20.11.
 | RBAC | app-level: `role` + per-vertical grants (see §5) | enforced in server actions + middleware, not Postgres RLS |
 | Image storage | **Supabase Storage** now (buckets `tinkerchamps`, `walk2lead`, `shared`), public-read, service-role write. Reached only through `lib/storage.ts` (`put` / `delete` / `publicUrl`) so switching to **Cloudflare R2** later is a config + one-time file-copy job, no app changes. | gallery/press/reviews are small; 1 GB free is plenty for now. `STORAGE_PROVIDER` env flips it. |
 | Cron | **GitHub Actions** scheduled workflow | `SELECT 1` + a row in `ping_log`, 4×/week |
-| Hub deploys | Vercel or a single VPS (Caddy + PM2) — every app is `output: standalone` so both work identically | see §8 |
+| Hub deploys | Vercel (VPS/PM2 path is stale: `output: "standalone"` was removed for Next 16 compat) | see §8 |
 | Content → site refresh | dashboard "Publish" → `POST <SITE_URL_*>/api/revalidate` (`x-revalidate-secret: REVALIDATE_SECRET`) → `revalidatePath("/","layout")` | **no rebuild** — on-demand ISR; sidesteps the Cloudflare 500-build/mo cap |
 
 ### Libraries deliberately NOT used
@@ -247,10 +247,9 @@ use the **session pooler** (`:5432`) — both IPv4, required because free-tier d
 is IPv6-only and GitHub/Vercel runners are IPv4.
 
 
-All seven apps are Next with `output: "standalone"` — deploy on **Vercel** (one project per
-app, Root Directory `apps/<app>`) **or** a single **VPS** (`caddy` reverse-proxy by host →
-`pm2`/systemd running each `node .next/standalone/.../server.js` on its own port). Same build
-either way: `pnpm install && pnpm --filter <app> build`.
+All seven apps deploy on **Vercel** (one project per app, Root Directory `apps/<app>`),
+build `pnpm install && pnpm --filter <app> build`. (`output: "standalone"` and the
+VPS/PM2 alternative were dropped 2026-09 — Next 16 + standalone breaks Vercel tracing.)
 
 Per app, set env: `DATABASE_URL` (pooler), `NEXT_PUBLIC_LEAD_ENDPOINT`, `SUPABASE_URL`,
 `REVALIDATE_SECRET` (same value everywhere), and its own `SITE_URL_<KEY>`. The dashboard also

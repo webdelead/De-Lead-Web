@@ -6,7 +6,6 @@ config({ path: resolve(process.cwd(), "../../.env") });
 const nextConfig: NextConfig = {
   transpilePackages: ["@delead/db", "@delead/brand", "@delead/shared"],
   serverExternalPackages: ["postgres"],
-  output: "standalone",
   images: { remotePatterns: [{ protocol: "https", hostname: "*.supabase.co" }] },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders() }];

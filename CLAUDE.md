@@ -102,6 +102,9 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
   Never touch `MX` or mail `TXT`/`CNAME` (SPF/DKIM/DMARC) records.
 - Dev ports: dashboard 3100, tinkerchamps 3200, deleadint 4321, walk2lead 4322, makerchamps 4323,
   corporate 4324, dli-education 4325. `pnpm dev` runs all; or `pnpm --filter <name> dev`.
-  (`next dev` — `next start` does **not** work with `output: standalone`; use
-  `node .next/standalone/…/server.js` or a dev server for local checks.)
+  Local prod check: `pnpm --filter <name> build && pnpm --filter <name> start`.
+- **No app sets `output: "standalone"`** — it was dropped 2026-09 because Next 16 + `output:
+  "standalone"` breaks Vercel's post-build tracing (`ENOENT next-server.js.nft.json`). If a
+  VPS/PM2 deploy is ever revived (`docs/DEPLOY.md` Option B) it needs re-adding **and**
+  retesting on the current Next.
 - Seeded admin: `webdelead@gmail.com` (change the password on first real login).
