@@ -104,8 +104,10 @@ export const VERTICALS: Record<VerticalSlug, Vertical> = {
     shortName: "DLI Edu",
     host: "https://edu.deleadint.com",
     aliasHosts: [],
-    accent: "#29bac1",
-    accentInk: "#06232b",
+    // "Whizkid" coral — matches the shipped dli-education site (was #29bac1 teal,
+    // a stale "CourseGenZ" value that appears nowhere in the frozen stylesheet).
+    accent: "#f4501e",
+    accentInk: "#ffffff",
     content: ["leads", "courses", "student_outcomes", "testimonials", "site_stats"],
   },
   tinkerchamps: {
