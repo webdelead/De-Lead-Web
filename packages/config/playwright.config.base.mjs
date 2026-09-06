@@ -45,14 +45,25 @@ export function makeVisualConfig({ port, command } = {}) {
       timezoneId: "Asia/Kolkata",
     },
 
+    // All three are chromium (headless shell) — the gate wants one deterministic
+    // engine, not cross-browser coverage; only the viewport + touch flags differ.
     projects: [
       {
         name: "mobile",
-        use: { ...devices["Pixel 7"], viewport: { width: 390, height: 844 } },
+        use: {
+          ...devices["Desktop Chrome"],
+          viewport: { width: 390, height: 844 },
+          isMobile: true,
+          hasTouch: true,
+        },
       },
       {
         name: "tablet",
-        use: { ...devices["iPad (gen 7)"], viewport: { width: 834, height: 1112 } },
+        use: {
+          ...devices["Desktop Chrome"],
+          viewport: { width: 834, height: 1112 },
+          hasTouch: true,
+        },
       },
       {
         name: "desktop",
