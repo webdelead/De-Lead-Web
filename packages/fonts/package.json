@@ -1,0 +1,24 @@
+{
+  "name": "@delead/fonts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./*": "./src/*.ts"
+  },
+  "files": ["src", "files"],
+  "scripts": {
+    "pull": "node scripts/pull-fonts.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "next": "*"
+  },
+  "devDependencies": {
+    "@delead/config": "workspace:*",
+    "@types/node": "catalog:",
+    "next": "catalog:",
+    "typescript": "catalog:"
+  }
+}
