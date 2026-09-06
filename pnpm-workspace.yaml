@@ -17,3 +17,4 @@ catalog:
   react-dom: 19.2.8
   tailwindcss: ^4.0.0
   typescript: ^5.7.2
+  "@playwright/test": ^1.49.1

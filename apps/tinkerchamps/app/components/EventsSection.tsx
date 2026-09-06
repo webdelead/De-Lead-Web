@@ -197,7 +197,7 @@ export default function EventSection({ events = [] }: { events?: TcEvent[] }) {
               </div>
 
               <div className="flex-1 flex flex-col gap-4">
-                {event.stats?.map((stat: any, statIdx: number) => {
+                {event.stats?.map((stat, statIdx: number) => {
                   let iconEl = <FaCalendarAlt />;
                   if (stat.icon === "book") iconEl = <FaBookOpen />;
                   if (stat.icon === "star") iconEl = <FaStar />;

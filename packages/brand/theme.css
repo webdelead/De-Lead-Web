@@ -1,16 +1,44 @@
 /* ============================================================
    @delead/brand — shared Tailwind v4 theme
+   ------------------------------------------------------------
    Usage in an app's global stylesheet:
      @import "tailwindcss";
      @import "@delead/brand/theme.css";
-   Then per-vertical accent utilities come from the [data-vertical] blocks
-   below, or set --accent / --accent-ink on a wrapper.
+
+   Every value here is reconciled against the five frozen
+   marketing stylesheets (the CSS→Tailwind migration baseline):
+     apps/deleadint/public/css/styles.css
+     apps/walk2lead/public/assets/css/styles.css
+     apps/makerchamps/public/css/styles.css
+     apps/corporate/public/css/styles.css
+     apps/dli-education/public/css/styles.css
+
+   Structure:
+     1. @theme  — house palette + every vertical's named palette,
+                  radius / shadow / font / easing scales. Tailwind
+                  emits `var()`-backed utilities from these.
+     2. [data-vertical] blocks — a page sets
+                  <html data-vertical="walk2lead"> and the
+                  indirection tokens (--accent, --font-display,
+                  --container-site, --radius-card, --shadow-card)
+                  re-point to that brand, so shared @delead/ui
+                  components theme themselves.
    ============================================================ */
 
 @theme {
-  /* ---- house palette ---- */
+  /* ========================================================
+     HOUSE PALETTE
+     Shared by the hub (deleadint) and corporate — the two
+     sites that carry De' Lead's own magenta identity.
+     walk2lead / makerchamps / dli-education override `ink`,
+     `cream`, `line` locally with their own near-neutrals
+     (see each vertical's scale below); they are close enough
+     that shared components read correctly either way.
+     ======================================================== */
   --color-ink: #1c1417;
+  --color-ink-2: #25191f; /* corporate: darker panel ink */
   --color-ink-soft: #4d4348;
+  --color-ink-faint: #8a7d83; /* corporate: footnotes / notes */
   --color-cream: #faf7f4;
   --color-cream-2: #f2e9e2;
   --color-line: #e6dcd3;
@@ -20,76 +48,235 @@
   --color-magenta-deep: #4a0330;
   --color-magenta-soft: #9c2e73;
 
-  /* ---- per-vertical accents (also see [data-vertical] below) ---- */
-  --color-w2l: #c81c1c;
-  --color-w2l-ink: #ffffff;
+  /* ========================================================
+     WALK2LEAD  (data-vertical="walk2lead")
+     from apps/walk2lead/public/assets/css/styles.css :root
+     — its old `--red*` names, kept as `w2l-*`.
+     ======================================================== */
+  --color-w2l: #c81c1c; /* old --red — the brand action colour */
+  --color-w2l-deep: #9e1414; /* old --red-deep */
+  --color-w2l-bright: #ff0000; /* old --red-bright — accents/marks */
+  --color-w2l-wash: #6f2622; /* old --red-wash */
+  --color-w2l-ink: #221e21;
+  --color-w2l-ink-soft: #4c454a;
+  --color-w2l-cream-2: #f3ece6;
+  --color-w2l-magenta-deep: #560335; /* w2l's deeper magenta than the house one */
 
-  --color-tc-purple: #5021b0;
-  --color-tc-yellow: #fdc638;
-
+  /* ========================================================
+     MAKERCHAMPS  (data-vertical="makerchamps")
+     from apps/makerchamps/public/css/styles.css :root
+     ======================================================== */
   --color-mc-navy: #021e5d;
-  --color-mc-orange: #fe5501;
-  --color-mc-lime: #c3e86a;
+  --color-mc-navy-deep: #010f30;
+  --color-mc-orange: #fe5501; /* brand action colour */
+  --color-mc-lime: #bed80a;
+  --color-mc-purple: #51238f;
+  --color-mc-cream: #f7f7f7;
+  --color-mc-cream-warm: #fdf3e7;
+  --color-mc-ink: #0a0a0a;
 
-  --color-dli-navy: #142653;
-  --color-dli-teal: #29bac1;
+  /* ========================================================
+     DLI EDUCATION  (data-vertical="dli-education")
+     from apps/dli-education/public/css/styles.css :root
+     "Whizkid" — warm cream ground, coral action, pastel cards.
+     NOTE: the shipped site is coral/Poppins, NOT the navy/teal
+     "CourseGenZ" direction some older notes describe. The
+     frozen stylesheet is the source of truth for the port.
+     ======================================================== */
+  --color-dli-bg: #f4efe3;
+  --color-dli-butter: #f3f0d2;
+  --color-dli-ink: #1d1d24;
+  --color-dli-ink-soft: #6a6a75;
+  --color-dli-line: #e7e1d2;
+  --color-dli-coral: #f4501e; /* brand action colour */
+  --color-dli-coral-ink: #c73c12;
+  --color-dli-lime: #dcf34a;
+  --color-dli-lime-soft: #eef8bb;
+  --color-dli-lav: #cec1f2;
+  --color-dli-lav-soft: #e6dffa;
+  --color-dli-peach: #f6cda6;
+  --color-dli-peach-soft: #fbe6d2;
+  --color-dli-rose: #f6bfae;
+  --color-dli-rose-soft: #fbdcd3;
+  --color-dli-teal: #a7e7e0;
+  --color-dli-teal-soft: #dbf4f1;
 
-  --color-gf-blue: #0145d5;
+  /* ========================================================
+     SUB-BRAND ACCENTS used only on the hub's ecosystem cards
+     (deleadint VStack + nav dropdown). These are the hub's
+     own chip palette for each vertical and deliberately differ
+     from the live sub-sites' exact values.
+     from apps/deleadint/public/css/styles.css :root
+     ======================================================== */
+  --color-tc-purple: #5021b0; /* TinkerChamps — also its live site primary */
+  --color-tc-yellow: #fdc638;
+  --color-hub-mc-navy: #0d1b3e; /* hub's MakerChamps chip (live site: #021e5d) */
+  --color-hub-mc-orange: #ff5a1f; /* hub's MakerChamps chip (live site: #fe5501) */
+  --color-hub-dli-blue: #2451c4; /* hub's DLI chip (live site: coral) */
+  --color-hub-dli-teal: #0f9488; /* hub's DLI chip (live site: #a7e7e0) */
+  --color-gf-indigo: #4338ca; /* Goal Finder — link-only vertical */
 
-  /* ---- radius ---- */
-  --radius-xs: 8px;
+  /* ========================================================
+     RADIUS — house scale (union of the five sheets).
+     Per-vertical card rounding is set via --radius-card /
+     --radius-card-lg in the [data-vertical] blocks below.
+       deleadint    12 / 22
+       walk2lead    10 12 14 16 18 20 / 999
+       makerchamps  12 / 18 / 28
+       corporate    14 / 26 / 36
+       dli-education 16 / 22 / 30
+     ======================================================== */
+  --radius-xs: 10px;
   --radius-sm: 12px;
   --radius-md: 16px;
   --radius-lg: 22px;
-  --radius-xl: 30px;
+  --radius-xl: 28px;
+  --radius-2xl: 36px;
+  --radius-pill: 999px;
 
-  /* ---- shadow ---- */
+  /* ========================================================
+     SHADOW
+       --shadow-sm / --shadow-md : neutral ink-tinted (hub).
+       --shadow-card             : per-vertical tinted, set in
+                                   [data-vertical] (w2l = red,
+                                   mc = navy, dli/corp = neutral).
+     ======================================================== */
   --shadow-sm: 0 12px 34px -16px rgba(28, 20, 23, 0.24);
   --shadow-md: 0 30px 70px -30px rgba(28, 20, 23, 0.32);
+  --shadow-card: var(--shadow-md);
 
-  /* ---- easing / timing ---- */
-  --ease-out-soft: cubic-bezier(0.22, 0.7, 0.2, 1);
+  /* ========================================================
+     EASING / TIMING
+     ======================================================== */
+  --ease-out-soft: cubic-bezier(0.22, 0.7, 0.2, 1); /* deleadint/corporate --ease */
+  --ease-drawer: cubic-bezier(0.22, 0.61, 0.36, 1); /* nav drawers / photo flips */
   --default-transition-duration: 220ms;
   --default-transition-timing-function: cubic-bezier(0.22, 0.7, 0.2, 1);
 
-  /* ---- fonts (families resolved by each app's @fontsource imports) ---- */
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Instrument Sans", system-ui, sans-serif; /* hub + corporate */
-  --font-serif: "Lora", Georgia, serif; /* walk2lead */
-  --font-grotesk: "Bricolage Grotesque", system-ui, sans-serif; /* makerchamps */
-  --font-rounded: "Poppins", system-ui, sans-serif; /* dli education */
-  --font-script: "Caveat", cursive; /* hub accents */
+  /* ========================================================
+     FONT STACKS
+     Families are self-hosted by packages/fonts (next/font/local);
+     each app imports only the faces it needs and hands the
+     CSS var to Tailwind. Stacks below are the fallback chains.
+       deleadint    Inter, Instrument Sans, Lora, Caveat
+                    + VStack per-card: Covered By Your Grace,
+                      Bricolage Grotesque, Space Grotesk, Manrope
+       walk2lead    Lora (display), Inter (body)
+       makerchamps  Bricolage Grotesque (display), Anton (mega), Inter (body)
+       corporate    Instrument Sans (display), Inter (body)
+       dli-education Poppins (display + body)
+     ======================================================== */
+  --font-inter: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-instrument: "Instrument Sans", system-ui, sans-serif;
+  --font-lora: "Lora", Georgia, serif;
+  --font-caveat: "Caveat", cursive;
+  --font-grace: "Covered By Your Grace", cursive;
+  --font-bricolage: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-space-grotesk: "Space Grotesk", system-ui, sans-serif;
+  --font-manrope: "Manrope", system-ui, sans-serif;
+  --font-anton: "Anton", "Segoe UI", system-ui, sans-serif;
+  --font-poppins: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
-  /* ---- layout ---- */
+  /* semantic aliases — default to the hub; re-pointed per [data-vertical] */
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-instrument);
+  --font-serif: var(--font-lora);
+  --font-script: var(--font-caveat);
+  --font-mega: var(--font-anton); /* makerchamps only, but namespaced here */
+
+  /* ========================================================
+     LAYOUT
+     --container-site is re-set per [data-vertical]:
+       deleadint 1240 · corporate 1200 · walk2lead 1180
+       makerchamps 1180 · dli-education 1200
+     ======================================================== */
   --container-site: 1240px;
 }
 
-/* Per-vertical theming: a page sets <html data-vertical="walk2lead"> and gets
-   --accent / --accent-ink / --font-display wired to that brand. Components use
-   var(--accent) instead of hard-coding a colour. */
+/* ============================================================
+   PER-VERTICAL THEMING
+   <html data-vertical="…"> re-points the indirection tokens.
+   @delead/ui components consume var(--accent) / var(--font-display)
+   / var(--container-site) / var(--radius-card) / var(--shadow-card)
+   instead of hard-coding a brand.
+   ============================================================ */
 :root {
   --accent: var(--color-magenta);
   --accent-ink: #ffffff;
+  --radius-card: var(--radius-lg);
+  --radius-card-lg: var(--radius-xl);
 }
-[data-vertical="deleadint"],
+
+[data-vertical="deleadint"] {
+  --accent: var(--color-magenta);
+  --accent-ink: #ffffff;
+  --font-display: var(--font-instrument);
+  --font-sans: var(--font-inter);
+  --container-site: 1240px;
+  --radius-card: 22px;
+  --radius-card-lg: 22px;
+  --shadow-card: var(--shadow-md);
+}
+
 [data-vertical="corporate"] {
   --accent: var(--color-magenta);
   --accent-ink: #ffffff;
+  --font-display: var(--font-instrument);
+  --font-sans: var(--font-inter);
+  --container-site: 1200px;
+  --radius-card: 26px;
+  --radius-card-lg: 36px;
+  --shadow-card: 0 18px 50px -24px rgba(28, 20, 23, 0.4);
 }
+
 [data-vertical="walk2lead"] {
   --accent: var(--color-w2l);
   --accent-ink: #ffffff;
-  --font-display: var(--font-serif);
+  --font-display: var(--font-lora);
+  --font-sans: var(--font-inter);
+  --color-ink: var(--color-w2l-ink);
+  --color-ink-soft: var(--color-w2l-ink-soft);
+  --color-cream-2: var(--color-w2l-cream-2);
+  --container-site: 1180px;
+  --radius-card: 20px;
+  --radius-card-lg: 20px;
+  --shadow-card: 0 20px 60px -20px rgba(200, 28, 28, 0.22);
 }
+
 [data-vertical="makerchamps"] {
   --accent: var(--color-mc-orange);
-  --accent-ink: #04122e;
-  --font-display: var(--font-grotesk);
+  --accent-ink: #ffffff;
+  --font-display: var(--font-bricolage);
+  --font-sans: var(--font-inter);
+  --font-mega: var(--font-anton);
+  --color-ink: var(--color-mc-ink);
+  --color-cream: var(--color-mc-cream);
+  --container-site: 1180px;
+  --radius-card: 18px;
+  --radius-card-lg: 28px;
+  --shadow-card: 0 18px 40px -18px rgba(2, 30, 93, 0.35);
 }
+
 [data-vertical="dli-education"] {
-  --accent: var(--color-dli-teal);
-  --accent-ink: #06232b;
-  --font-display: var(--font-rounded);
+  --accent: var(--color-dli-coral);
+  --accent-ink: #ffffff;
+  --font-display: var(--font-poppins);
+  --font-sans: var(--font-poppins);
+  --color-ink: var(--color-dli-ink);
+  --color-ink-soft: var(--color-dli-ink-soft);
+  --color-cream: var(--color-dli-bg);
+  --color-line: var(--color-dli-line);
+  --container-site: 1200px;
+  --radius-card: 30px;
+  --radius-card-lg: 30px;
+  --shadow-card: 0 18px 50px -18px rgba(29, 29, 36, 0.18);
+}
+
+/* TinkerChamps keeps its own globals.css theme; listed here only so
+   the hub's ecosystem card can borrow the accent if it ever wants to. */
+[data-vertical="tinkerchamps"] {
+  --accent: var(--color-tc-purple);
+  --accent-ink: #ffffff;
 }
 
 @media (prefers-reduced-motion: reduce) {
