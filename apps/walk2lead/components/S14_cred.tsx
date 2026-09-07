@@ -1,7 +1,7 @@
 const chipList =
   "!grid grid-cols-2 gap-x-[22px] gap-y-4 max-[700px]:grid-cols-1";
 const chipItem =
-  "flex items-start gap-[9px] text-[0.94rem] before:mt-0.5 before:flex-[0_0_auto] before:text-[0.85em] before:font-semibold before:text-accent before:content-['→']";
+  "flex items-start gap-[9px] text-[0.94rem] before:mt-0.5 before:flex-[0_0_auto] before:text-[0.85em] before:font-semibold before:text-w2l before:content-['→']";
 const note = { marginTop: "14px", fontSize: ".84rem", color: "var(--ink-soft)" } as const;
 
 const LEADERS: [string, string][] = [

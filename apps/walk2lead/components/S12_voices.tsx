@@ -17,7 +17,7 @@ const PHOTO_STYLE: Record<string, CSSProperties> = {
 };
 
 const sliderBtn =
-  "grid h-[42px] w-[42px] cursor-pointer place-items-center rounded-full bg-white text-ink transition-colors [border:1.5px_solid_var(--color-line)] hover:text-accent hover:[border-color:var(--color-w2l)]";
+  "grid h-[42px] w-[42px] cursor-pointer place-items-center rounded-full bg-white text-ink transition-colors [border:1.5px_solid_var(--color-line)] hover:text-w2l hover:[border-color:var(--color-w2l)]";
 const mark = "font-serif text-[3.4rem] leading-[0] text-w2l-bright opacity-90";
 
 export async function S12_voices() {

@@ -34,10 +34,10 @@ export function S01_nav() {
         ref={navRef}
         id="nav"
         className={[
-          "left-0 right-0 top-0 z-[100] bg-w2l transition-[transform,background-color,border-color] duration-[350ms] [border-bottom:1px_solid_transparent]",
+          "left-0 right-0 top-0 z-[100] transition-[transform,background-color,border-color] duration-[350ms] [border-bottom:1px_solid_transparent]",
           fixed
-            ? "fixed bg-[rgba(250,247,244,0.9)] [backdrop-filter:blur(14px)]"
-            : "absolute",
+            ? "fixed bg-[rgba(250,247,244,0.9)] [backdrop-filter:blur(14px)] [-webkit-backdrop-filter:blur(14px)]"
+            : "absolute bg-w2l",
           fixed && scrolled ? "[border-bottom-color:var(--color-line)]" : "",
           fixed && hidden ? "-translate-y-full" : "",
         ].join(" ")}
@@ -63,7 +63,7 @@ export function S01_nav() {
                 <a
                   href={href}
                   className={`text-[0.92rem] font-medium transition-colors ${
-                    fixed ? "text-ink-soft hover:text-accent" : "text-white/85 hover:text-white"
+                    fixed ? "text-ink-soft hover:text-w2l" : "text-white/85 hover:text-white"
                   }`}
                 >
                   {label}

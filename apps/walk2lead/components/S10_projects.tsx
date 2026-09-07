@@ -14,7 +14,7 @@ const chevR = (
 // `.pcard` class + #proj-track / #proj-prev / #proj-next ids kept — main.js
 // initInfiniteSlider('proj-track', …, '.pcard', 4200) still drives this.
 const sliderBtn =
-  "grid h-[42px] w-[42px] cursor-pointer place-items-center rounded-full bg-white text-ink transition-colors [border:1.5px_solid_var(--color-line)] hover:text-accent hover:[border-color:var(--color-w2l)]";
+  "grid h-[42px] w-[42px] cursor-pointer place-items-center rounded-full bg-white text-ink transition-colors [border:1.5px_solid_var(--color-line)] hover:text-w2l hover:[border-color:var(--color-w2l)]";
 
 export async function S10_projects() {
   const rows = await getProjects();
@@ -45,7 +45,7 @@ export async function S10_projects() {
                   className="aspect-[16/10] object-cover"
                 />
                 <div className="p-[26px]">
-                  <span className="mb-3 inline-block rounded-full bg-cream-2 px-3 py-[5px] text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-accent">
+                  <span className="mb-3 inline-block rounded-full bg-cream-2 px-3 py-[5px] text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-w2l">
                     {p.category}
                   </span>
                   <h3 className="mb-2 text-[1.18rem]">{p.title}</h3>

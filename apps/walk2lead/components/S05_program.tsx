@@ -49,7 +49,7 @@ const POINTS = [
 ];
 
 const iconWrap =
-  "grid h-[42px] flex-[0_0_42px] place-items-center rounded-[12px] bg-cream-2 text-accent";
+  "grid h-[42px] flex-[0_0_42px] place-items-center rounded-[12px] bg-cream-2 text-w2l";
 
 export function S05_program() {
   return (

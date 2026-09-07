@@ -21,7 +21,7 @@ export function S11_video() {
                 &quot;The Walk2Lead programme has been a watershed moment for our government
                 schools.&quot;
               </blockquote>
-              <cite className="block text-[0.9rem] font-semibold not-italic text-accent">
+              <cite className="block text-[0.9rem] font-semibold not-italic text-w2l">
                 Dr. Babu Varghese, Principal, DIET Malappuram
               </cite>
               <div className="mt-[22px] flex flex-col items-start gap-2.5">

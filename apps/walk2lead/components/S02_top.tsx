@@ -86,7 +86,7 @@ export function S02_top() {
               </p>
             </div>
             <a
-              className="btn btn-ghost !mt-1 !w-full !justify-center !bg-transparent !text-ink ![border-color:var(--color-line)] hover:!text-accent hover:![border-color:var(--color-w2l)] min-[561px]:max-[900px]:!mt-0 min-[561px]:max-[900px]:!w-auto min-[561px]:max-[900px]:whitespace-nowrap min-[561px]:max-[900px]:[grid-area:btn]"
+              className="btn btn-ghost !mt-1 !w-full !justify-center !bg-transparent !text-ink ![border-color:var(--color-line)] hover:!text-w2l hover:![border-color:var(--color-w2l)] min-[561px]:max-[900px]:!mt-0 min-[561px]:max-[900px]:!w-auto min-[561px]:max-[900px]:whitespace-nowrap min-[561px]:max-[900px]:[grid-area:btn]"
               href="#delead"
             >
               Why us →

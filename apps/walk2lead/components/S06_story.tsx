@@ -22,7 +22,7 @@ const SCATTER_ALT = [
 ];
 
 const tag =
-  "mb-2.5 inline-block rounded-full bg-cream-2 px-2.5 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-accent";
+  "mb-2.5 inline-block rounded-full bg-cream-2 px-2.5 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-w2l";
 
 const BEATS: { tag: string; global?: boolean; yr: React.ReactNode; h3: string; body: React.ReactNode; countries?: boolean }[] = [
   {
@@ -135,7 +135,7 @@ export function S06_story() {
                 className="relative pb-[42px] last:pb-0 before:absolute before:left-[-38px] before:top-1 before:h-3 before:w-3 before:rounded-full before:bg-w2l before:[border:3px_solid_var(--color-cream)] before:content-['']"
               >
                 <div className={b.global ? `${tag} !bg-[#fff8e6] !text-[#a06800]` : tag}>{b.tag}</div>
-                <div className="mb-1.5 font-serif text-[1.05rem] font-semibold text-accent">{b.yr}</div>
+                <div className="mb-1.5 font-serif text-[1.05rem] font-semibold text-w2l">{b.yr}</div>
                 <h3 className="mb-2 text-[1.25rem]">{b.h3}</h3>
                 <p className="max-w-[640px] text-[0.96rem] text-ink-soft">{b.body}</p>
                 {b.countries && (

@@ -8,7 +8,7 @@ export default function NotFound() {
     <main className="flex min-h-[100svh] flex-col items-center justify-center gap-[22px] bg-cream px-6 py-16 text-center text-ink">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/assets/walk2lead-logo.svg" alt="Walk2Lead" className="mb-2 h-[30px] w-auto" />
-      <p className="m-0 font-serif text-[clamp(88px,18vw,180px)] font-bold leading-none tracking-[-0.02em] text-accent">
+      <p className="m-0 font-serif text-[clamp(88px,18vw,180px)] font-bold leading-none tracking-[-0.02em] text-w2l">
         404
       </p>
       <h1 className="m-0 font-serif text-[clamp(22px,4vw,32px)] font-semibold">

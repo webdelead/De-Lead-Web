@@ -21,7 +21,7 @@ export async function S15_gallery() {
           <div className="eyebrow reveal">Gallery</div>
           <h2 className="h2 reveal">Moments from the ground</h2>
           <a
-            className="reveal my-[14px] mb-2 inline-flex items-center gap-2 rounded-full py-[9px] pl-3 pr-4 text-[0.85rem] font-semibold text-accent transition-all [border:1.5px_solid_rgba(200,28,28,0.25)] hover:-translate-y-px hover:bg-[rgba(200,28,28,0.06)] hover:[border-color:var(--color-w2l)] [&_svg]:h-4 [&_svg]:w-4 [&_svg]:flex-none"
+            className="reveal my-[14px] mb-2 inline-flex items-center gap-2 rounded-full py-[9px] pl-3 pr-4 text-[0.85rem] font-semibold text-w2l transition-all [border:1.5px_solid_rgba(200,28,28,0.25)] hover:-translate-y-px hover:bg-[rgba(200,28,28,0.06)] hover:[border-color:var(--color-w2l)] [&_svg]:h-4 [&_svg]:w-4 [&_svg]:flex-none"
             href="https://www.instagram.com/deleadint/?hl=en"
             target="_blank"
             rel="noopener"

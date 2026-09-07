@@ -1,6 +1,6 @@
 const card =
   "reveal rounded-[20px] px-[30px] py-[34px] [border:1px_solid_var(--color-line)]";
-const role = "mb-2 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-accent";
+const role = "mb-2 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-w2l";
 const logo = "mb-5 h-[52px] w-auto object-contain [mix-blend-mode:multiply]";
 
 export function S16_stake() {

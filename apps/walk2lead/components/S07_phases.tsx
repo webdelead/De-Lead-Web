@@ -74,7 +74,7 @@ export function S07_phases() {
               >
                 <div
                   className={`mb-3 flex items-center gap-2 text-[0.72rem] font-semibold uppercase tracking-[0.14em] ${
-                    p.current ? "text-accent" : "text-[#f9cccc]"
+                    p.current ? "text-w2l" : "text-[#f9cccc]"
                   }`}
                 >
                   {p.live && (

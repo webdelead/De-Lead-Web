@@ -130,7 +130,7 @@ export function S18_partner() {
               </div>
               <h3 className="m-0 text-[1.5rem] text-ink">Message sent!</h3>
               <p>Thank you for reaching out. Our team will get back to you within one business day.</p>
-              <p className="!text-[0.85rem] [&_a:hover]:underline [&_a]:text-accent [&_a]:no-underline">
+              <p className="!text-[0.85rem] [&_a:hover]:underline [&_a]:text-w2l [&_a]:no-underline">
                 In the meantime, feel free to reach us on{" "}
                 <a href="https://wa.me/918075566081" target="_blank" rel="noopener">WhatsApp</a> or at{" "}
                 <a href="mailto:info@deleadint.com">info@deleadint.com</a>.
