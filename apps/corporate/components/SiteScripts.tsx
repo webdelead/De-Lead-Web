@@ -19,12 +19,17 @@ export function SiteScripts() {
   useEffect(() => {
     const nav = document.querySelector<HTMLElement>(".nav");
     let lastY = window.scrollY;
+    // set true while an eased anchor scroll is running so onScroll doesn't
+    // hide/show the nav mid-flight (that read as a jitter)
+    let programmatic = false;
     const onScroll = () => {
       if (!nav) return;
       const y = window.scrollY;
       nav.classList.toggle("scrolled", y > 30);
-      if (y > lastY && y > 120) nav.classList.add("nav-hidden");
-      else if (y < lastY) nav.classList.remove("nav-hidden");
+      if (!programmatic) {
+        if (y > lastY && y > 120) nav.classList.add("nav-hidden");
+        else if (y < lastY) nav.classList.remove("nav-hidden");
+      }
       lastY = y;
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -55,11 +60,65 @@ export function SiteScripts() {
       });
     }
 
-    // ---------- reveal on scroll ----------
-    const revealEls = document.querySelectorAll<HTMLElement>(".reveal");
     const reduce =
       typeof window.matchMedia === "function" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // ---------- eased in-page scroll (softer than native scroll-behavior) ----------
+    // easeInOutSine, duration scaled to distance and clamped, offset for the
+    // fixed pill nav. Instant jump for reduced-motion.
+    const NAV_OFFSET = 96;
+    let scrollRAF = 0;
+    const easeInOutSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
+    const smoothTo = (targetY: number) => {
+      cancelAnimationFrame(scrollRAF);
+      const maxY =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const startY = window.scrollY;
+      const endY = Math.max(0, Math.min(targetY, maxY));
+      const dist = endY - startY;
+      if (Math.abs(dist) < 2) return;
+      const dur = Math.min(1100, Math.max(500, Math.abs(dist) * 0.5));
+      const t0 = performance.now();
+      programmatic = true;
+      const tick = (now: number) => {
+        const p = Math.min((now - t0) / dur, 1);
+        // sub-pixel target + behavior:"auto" so nothing re-smooths per frame
+        window.scrollTo({ top: startY + dist * easeInOutSine(p), behavior: "auto" });
+        if (p < 1) {
+          scrollRAF = requestAnimationFrame(tick);
+        } else {
+          lastY = window.scrollY;
+          programmatic = false;
+        }
+      };
+      scrollRAF = requestAnimationFrame(tick);
+    };
+    const onAnchorClick = (e: Event) => {
+      const a = (e.target as HTMLElement)?.closest?.('a[href^="#"]') as
+        | HTMLAnchorElement
+        | null;
+      if (!a) return;
+      const hash = a.getAttribute("href") || "";
+      if (hash === "#" || hash.length < 2) return;
+      const target =
+        hash === "#top"
+          ? document.body
+          : document.getElementById(decodeURIComponent(hash.slice(1)));
+      if (!target) return;
+      e.preventDefault();
+      const y =
+        hash === "#top"
+          ? 0
+          : target.getBoundingClientRect().top + window.scrollY - NAV_OFFSET;
+      if (reduce) window.scrollTo(0, y);
+      else smoothTo(y);
+      history.pushState(null, "", hash);
+    };
+    document.addEventListener("click", onAnchorClick);
+
+    // ---------- reveal on scroll ----------
+    const revealEls = document.querySelectorAll<HTMLElement>(".reveal");
     let io: IntersectionObserver | null = null;
     const onLoad = () => {
       revealEls.forEach((el) => {
@@ -217,6 +276,8 @@ export function SiteScripts() {
       form?.removeEventListener("submit", onSubmit);
       lb?.removeEventListener("click", onLbClick);
       btn?.removeEventListener("click", onLoadMore);
+      document.removeEventListener("click", onAnchorClick);
+      cancelAnimationFrame(scrollRAF);
     };
   }, []);
 
