@@ -21,7 +21,7 @@ export async function S15_gallery() {
           <div className="eyebrow reveal">Gallery</div>
           <h2 className="h2 reveal">Moments from the ground</h2>
           <a
-            className="gallery-ig-badge reveal"
+            className="reveal my-[14px] mb-2 inline-flex items-center gap-2 rounded-full py-[9px] pl-3 pr-4 text-[0.85rem] font-semibold text-accent transition-all [border:1.5px_solid_rgba(200,28,28,0.25)] hover:-translate-y-px hover:bg-[rgba(200,28,28,0.06)] hover:[border-color:var(--color-w2l)] [&_svg]:h-4 [&_svg]:w-4 [&_svg]:flex-none"
             href="https://www.instagram.com/deleadint/?hl=en"
             target="_blank"
             rel="noopener"
@@ -29,15 +29,28 @@ export async function S15_gallery() {
             {instagramIcon}
             More on Instagram
           </a>
-          <div className="gallery-grid reveal" id="gallery-grid">
+          {/* .gallery-grid class + #gallery-grid id kept — main.js wires each
+              img to the lightbox and appends "Load more" pages here */}
+          <div
+            id="gallery-grid"
+            className="gallery-grid reveal mt-12 grid grid-cols-4 gap-3.5 max-[700px]:grid-cols-2"
+          >
             {items.map((g, i) => (
-              <div className={WIDE_IDX.has(i % 8) ? "wide" : undefined} key={g.id}>
-                <img src={g._url} alt={g._alt || String(g.title)} loading="lazy" />
+              <div
+                className={WIDE_IDX.has(i % 8) ? "wide col-span-2 [&_img]:aspect-[2.08/1]" : undefined}
+                key={g.id}
+              >
+                <img
+                  src={g._url}
+                  alt={g._alt || String(g.title)}
+                  loading="lazy"
+                  className="aspect-square cursor-zoom-in rounded-[14px] object-cover transition-transform duration-[250ms] hover:scale-[1.02] hover:shadow-card"
+                />
               </div>
             ))}
           </div>
           {hasMore && (
-            <div className="gallery-more">
+            <div className="mt-10 flex w-full justify-center">
               <button
                 type="button"
                 className="btn btn-ghost"
