@@ -1,28 +1,4 @@
 document.getElementById('yr').textContent = new Date().getFullYear();
-// nav — scrolls away inside the hero; becomes a fixed hide/show bar past it
-const nav=document.getElementById('nav');
-const heroEl=document.querySelector('.hero');
-let lastY=scrollY;
-function updateNav(){
-  const y=scrollY;
-  const heroEnd=heroEl.offsetHeight;
-  if(y<heroEnd-80){
-    nav.classList.remove('nav-fixed');
-    nav.classList.remove('nav-hidden');
-    nav.classList.remove('scrolled');
-  }else{
-    nav.classList.add('nav-fixed');
-    nav.classList.toggle('scrolled',y>10);
-    if(y>lastY){
-      nav.classList.add('nav-hidden');
-    }else if(y<lastY){
-      nav.classList.remove('nav-hidden');
-    }
-  }
-  lastY=y;
-}
-addEventListener('scroll',updateNav,{passive:true});
-updateNav();
 // reveal on scroll
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
