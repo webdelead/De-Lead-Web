@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
+import { SiteScripts } from "@/components/SiteScripts";
 
 const DESC =
   "44 government schools. 1,300+ children. Walk2Lead is funded by Walkaroo Foundation and implemented end-to-end by De' Lead International, a prominent CSR implementation team. See the numbers, the setbacks, and how we solved them.";
@@ -45,7 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <body> before React hydrates — ignore that specific mismatch */}
       <body suppressHydrationWarning>
         {children}
-        <Script src="/assets/js/main.js?v=4" strategy="afterInteractive" />
+        <SiteScripts />
         <Script src="/js/lead-capture.js" strategy="afterInteractive" data-endpoint={LEAD_ENDPOINT} />
       </body>
     </html>
