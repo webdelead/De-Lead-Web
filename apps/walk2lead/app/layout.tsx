@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { inter } from "@delead/fonts/inter";
 import { lora } from "@delead/fonts/lora";
 import "./globals.css";
 import { SiteScripts } from "@/components/SiteScripts";
+import { LeadCapture } from "@/components/LeadCapture";
 
 const DESC =
   "44 government schools. 1,300+ children. Walk2Lead is funded by Walkaroo Foundation and implemented end-to-end by De' Lead International, a prominent CSR implementation team. See the numbers, the setbacks, and how we solved them.";
@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning>
         {children}
         <SiteScripts />
-        <Script src="/js/lead-capture.js" strategy="afterInteractive" data-endpoint={LEAD_ENDPOINT} />
+        <LeadCapture endpoint={LEAD_ENDPOINT} />
       </body>
     </html>
   );

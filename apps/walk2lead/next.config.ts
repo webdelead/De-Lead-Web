@@ -3,6 +3,27 @@ import { config } from "dotenv";
 import { resolve } from "node:path";
 import { securityHeaders } from "@delead/shared/headers";
 config({ path: resolve(process.cwd(), "../../.env") });
+
+const LEAD_ENDPOINT =
+  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://admin.deleadint.com/api/lead";
+const LEAD_ORIGIN = new URL(LEAD_ENDPOINT).origin;
+
+// walk2lead is fully migrated off verbatim CSS/JS, so a CSP is feasible. Start
+// Report-Only: it logs violations without blocking. Tighten `unsafe-inline`
+// (Next's bootstrap + style={{}}) to a nonce, then flip to enforcing.
+const csp = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://*.supabase.co",
+  "font-src 'self'",
+  `connect-src 'self' ${LEAD_ORIGIN} https://script.google.com`,
+  "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self' https://script.google.com",
+].join("; ");
+
 const nextConfig: NextConfig = {
   transpilePackages: [
     "@delead/db",
@@ -14,7 +35,15 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["postgres"],
   images: { remotePatterns: [{ protocol: "https", hostname: "*.supabase.co" }] },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders() }];
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          ...securityHeaders(),
+          { key: "Content-Security-Policy-Report-Only", value: csp },
+        ],
+      },
+    ];
   },
 };
 export default nextConfig;
