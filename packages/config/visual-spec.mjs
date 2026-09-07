@@ -99,6 +99,33 @@ async function settle(page) {
     ]);
   });
 
+  // CSS background-image photos (full-bleed card / hero / band backgrounds)
+  // are NOT <img>, so the wait above misses them — they can pop in a frame
+  // after the screenshot and read as a big same-size pixel diff over the
+  // whole card. Force each url() to decode, capped like the <img> wait.
+  await page.evaluate(() => {
+    const urls = new Set();
+    for (const el of document.querySelectorAll("*")) {
+      for (const pseudo of [null, "::before", "::after"]) {
+        const bg = getComputedStyle(el, pseudo).backgroundImage;
+        if (!bg || bg === "none") continue;
+        for (const m of bg.matchAll(/url\((['"]?)([^'")]+)\1\)/g)) {
+          if (!m[2].startsWith("data:")) urls.add(m[2]);
+        }
+      }
+    }
+    const load = (src) =>
+      new Promise((res) => {
+        const im = new Image();
+        im.onload = im.onerror = res;
+        im.src = src;
+      });
+    return Promise.race([
+      Promise.all([...urls].map(load)),
+      new Promise((r) => setTimeout(r, 10_000)),
+    ]);
+  });
+
   // let the 1400ms count-ups reach their fixed final value
   await page.waitForTimeout(1800);
   await page.evaluate(() => window.scrollTo(0, 0));

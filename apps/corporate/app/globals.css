@@ -29,7 +29,10 @@
     --ink-faint: var(--color-ink-faint);
     --cream: var(--color-cream);
     --cream2: var(--color-cream-2);
-    --line: var(--color-line);
+    /* frozen styles.css uses #e7ddd4; @delead/brand's --color-line is #e6dcd3.
+       Keep the frozen value for pixel parity — converted components use
+       var(--line), NOT var(--color-line) / border-line. */
+    --line: #e7ddd4;
     --paper: var(--color-paper);
     --r: var(--radius-card);
     --r-lg: var(--radius-card-lg);

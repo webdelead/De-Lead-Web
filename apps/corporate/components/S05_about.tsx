@@ -2,7 +2,7 @@ export function S05_about() {
   return (
     <>
       <section
-        className="section relative [background:var(--color-paper)] [border-top:1px_solid_var(--color-line)]"
+        className="section relative [background:var(--color-paper)] [border-top:1px_solid_var(--line)]"
         id="about"
       >
         <div className="wrap reveal grid grid-cols-2 items-start gap-16 max-[1000px]:grid-cols-1 max-[1000px]:gap-9">
@@ -22,7 +22,7 @@ export function S05_about() {
             </p>
           </div>
           <div className="flex flex-col gap-[18px]">
-            <article className="rounded-[var(--r)] [padding:30px_32px] [background:var(--color-cream)] [border-bottom:1px_solid_var(--color-line)] [border-left:1px_solid_var(--color-line)] [border-right:1px_solid_var(--color-line)] [border-top:3px_solid_var(--color-magenta)]">
+            <article className="rounded-[var(--r)] [padding:30px_32px] [background:var(--color-cream)] [border-bottom:1px_solid_var(--line)] [border-left:1px_solid_var(--line)] [border-right:1px_solid_var(--line)] [border-top:3px_solid_var(--color-magenta)]">
               <span className="eyebrow mb-3.5">
                 <i className="mk"></i>Mission
               </span>
@@ -32,7 +32,7 @@ export function S05_about() {
                 inclusivity.
               </p>
             </article>
-            <article className="rounded-[var(--r)] [padding:30px_32px] [background:var(--color-cream)] [border-bottom:1px_solid_var(--color-line)] [border-left:1px_solid_var(--color-line)] [border-right:1px_solid_var(--color-line)] [border-top:3px_solid_var(--color-magenta)]">
+            <article className="rounded-[var(--r)] [padding:30px_32px] [background:var(--color-cream)] [border-bottom:1px_solid_var(--line)] [border-left:1px_solid_var(--line)] [border-right:1px_solid_var(--line)] [border-top:3px_solid_var(--color-magenta)]">
               <span className="eyebrow mb-3.5">
                 <i className="mk"></i>Vision
               </span>
