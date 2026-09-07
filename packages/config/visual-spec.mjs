@@ -148,18 +148,23 @@ async function settle(page) {
     .catch(() => {});
   await page.waitForTimeout(200);
 
-  // Pin each captured section to an integer height. A section whose natural
-  // height lands on a .5-ish boundary (e.g. a tall photo grid where a heading
-  // wraps) rounds to N or N+1 between the baseline run and the compare run —
-  // a 1px vertical shift that reads as a huge diff over the whole image, with
-  // nothing actually wrong. Rounding removes the boundary without hiding a
-  // real >=1px content change.
+  // Nudge each captured section to a whole-pixel min-height (ceil). A section
+  // whose natural height lands on a .5-ish sub-pixel boundary rounds to N or
+  // N+1 between the baseline run and the compare run — a 1px vertical shift
+  // that reads as a huge diff over a tall image with nothing actually wrong.
+  // min-height (not height) only ever grows the box, so content never clips
+  // and a real >=1px content change still moves the ceil.
   await page.evaluate(() => {
-    for (const el of document.querySelectorAll("body > [id]")) {
-      const h = Math.round(el.getBoundingClientRect().height);
-      if (h > 0) el.style.height = h + "px";
-    }
+    const boxes = [...document.querySelectorAll("body > [id]")].map((el) => [
+      el,
+      Math.ceil(el.getBoundingClientRect().height),
+    ]);
+    for (const [el, h] of boxes) if (h > 0) el.style.minHeight = h + "px";
   });
+  await page.evaluate(
+    () =>
+      new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))),
+  );
   await page.waitForTimeout(50);
 }
 
