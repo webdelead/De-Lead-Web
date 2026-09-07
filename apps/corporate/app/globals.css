@@ -8,29 +8,18 @@
 
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css" layer(utilities);
-
 @import "@delead/brand/theme.css";
-
 @import "./legacy.css" layer(corp-legacy);
-
-@layer base {
-  /* Tailwind's `border-*` utilities set only width; without Preflight the
-     style defaults to `none` and the border is invisible. Restore the
-     Preflight behaviour (1px solid, currentColor) until it lands for real. */
-  *,
-  *::before,
-  *::after {
-    border-width: 0;
-    border-style: solid;
-    border-color: currentColor;
-  }
-}
 
 @layer corp-legacy {
   :root {
-    /* alias the frozen :root names onto the brand tokens, so the inline
-       style={{…var(--x)}} / svg stroke refs that survive componentisation
-       keep resolving after legacy.css is deleted */
+    /* Alias the frozen :root names onto the brand tokens so the inline
+       style={{…var(--x)}} / svg-stroke refs that survive componentisation
+       keep resolving once legacy.css is deleted. legacy.css still defines
+       all of these with identical values while it is present, so this block
+       is effectively inert until the sweep. `--pad` is deliberately NOT
+       aliased here — legacy.css gives it an @media (max-width:520px)
+       override that an unconditional value would clobber. */
     --magenta: var(--color-magenta);
     --magenta-deep: var(--color-magenta-deep);
     --magenta-soft: var(--color-magenta-soft);
@@ -47,6 +36,18 @@
     --r-sm: 14px;
     --ease: var(--ease-out-soft);
     --maxw: var(--container-site);
-    --pad: 32px;
+  }
+}
+
+@layer base {
+  /* Tailwind's `border-*` utilities set only width; without Preflight the
+     style defaults to `none` and the border is invisible. Restore the
+     Preflight behaviour (1px solid, currentColor) until it lands for real. */
+  *,
+  *::before,
+  *::after {
+    border-width: 0;
+    border-style: solid;
+    border-color: currentColor;
   }
 }
