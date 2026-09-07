@@ -4,7 +4,7 @@ const brk =
 const tileBase =
   "reveal relative flex flex-col justify-end overflow-hidden rounded-[20px] p-[26px]";
 const num = "font-serif text-[clamp(2.2rem,3.6vw,3rem)] leading-none";
-const lbl = "mt-2 text-[0.98rem] font-bold";
+const lbl = "mt-2 text-[0.98rem] font-semibold";
 const body = "mt-1.5 max-w-[34ch] text-[0.85rem]";
 
 type Tile = {

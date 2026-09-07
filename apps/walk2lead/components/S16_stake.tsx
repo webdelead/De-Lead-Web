@@ -1,6 +1,6 @@
 const card =
   "reveal rounded-[20px] px-[30px] py-[34px] [border:1px_solid_var(--color-line)]";
-const role = "mb-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-accent";
+const role = "mb-2 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-accent";
 const logo = "mb-5 h-[52px] w-auto object-contain [mix-blend-mode:multiply]";
 
 export function S16_stake() {
@@ -19,7 +19,7 @@ export function S16_stake() {
                 alt="De' Lead International"
                 className="mb-5 h-[52px] w-auto object-contain [filter:brightness(0)_invert(1)]"
               />
-              <div className="mb-2 text-[0.72rem] font-bold uppercase tracking-[0.14em] text-[#f3c9e2]">
+              <div className="mb-2 text-[0.72rem] font-semibold uppercase tracking-[0.14em] text-[#f3c9e2]">
                 CSR Implementation Team
               </div>
               <h3 className="mb-2.5 text-[1.15rem]">De&apos; Lead International</h3>

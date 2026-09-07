@@ -45,7 +45,7 @@ export async function S10_projects() {
                   className="aspect-[16/10] object-cover"
                 />
                 <div className="p-[26px]">
-                  <span className="mb-3 inline-block rounded-full bg-cream-2 px-3 py-[5px] text-[0.72rem] font-bold uppercase tracking-[0.1em] text-accent">
+                  <span className="mb-3 inline-block rounded-full bg-cream-2 px-3 py-[5px] text-[0.72rem] font-semibold uppercase tracking-[0.1em] text-accent">
                     {p.category}
                   </span>
                   <h3 className="mb-2 text-[1.18rem]">{p.title}</h3>

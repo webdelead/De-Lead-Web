@@ -79,7 +79,7 @@ export async function S12_voices() {
                     {q.quote}
                   </p>
                   <div className="mt-auto flex items-center gap-3.5">
-                    <div className="grid h-[46px] w-[46px] min-h-[46px] min-w-[46px] flex-[0_0_46px] place-items-center self-center overflow-hidden rounded-full bg-w2l font-serif font-bold text-white">
+                    <div className="grid h-[46px] w-[46px] min-h-[46px] min-w-[46px] flex-[0_0_46px] place-items-center self-center overflow-hidden rounded-full bg-w2l font-serif font-semibold text-white">
                       {q._url ? (
                         <img
                           loading="lazy"

@@ -24,7 +24,7 @@ export function S02_top() {
             <svg className="pointer-events-none absolute bottom-[22px] left-[-6px] z-0 w-[46px] rotate-[14deg] opacity-55 [&_path]:!stroke-white [&_path]:opacity-60" viewBox="0 0 60 24" fill="none" aria-hidden="true">
               <path d="M2 12 C10 3 16 3 22 12 C28 21 34 21 40 12 C46 3 52 3 58 12" strokeWidth="2.5" strokeLinecap="round" />
             </svg>
-            <div className="reveal mb-4 inline-flex items-center gap-2.5 text-[0.78rem] font-bold tracking-[0.03em] text-white max-[560px]:text-[0.74rem]">
+            <div className="reveal mb-4 inline-flex items-center gap-2.5 text-[0.78rem] font-semibold tracking-[0.03em] text-white max-[560px]:text-[0.74rem]">
               <span className="h-2 w-2 flex-none rounded-full bg-white [animation:pulse_1.8s_infinite]" />{" "}
               Phase 4 running now in Kozhikode, Malappuram &amp; Wayanad
             </div>
@@ -80,7 +80,7 @@ export function S02_top() {
               className="mb-2 h-10 min-[561px]:max-[900px]:mb-0 min-[561px]:max-[900px]:h-auto min-[561px]:max-[900px]:max-h-12 min-[561px]:max-[900px]:self-center min-[561px]:max-[900px]:justify-self-start min-[561px]:max-[900px]:[grid-area:logo]"
             />
             <div className="min-[561px]:max-[900px]:text-center min-[561px]:max-[900px]:[grid-area:text]">
-              <div className="text-[0.94rem] font-bold">Implemented by De&apos; Lead International</div>
+              <div className="text-[0.94rem] font-semibold">Implemented by De&apos; Lead International</div>
               <p className="mb-1.5 text-[0.83rem] text-ink-soft min-[561px]:max-[900px]:mb-0">
                 India &amp; UAE · &quot;Learn, Develop &amp; Lead&quot;
               </p>

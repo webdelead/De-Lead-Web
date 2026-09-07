@@ -15,7 +15,7 @@ export function S03_marquee() {
         {[...ITEMS, ...ITEMS].map((label, i) => (
           <span
             key={i}
-            className="inline-flex items-center gap-4 px-[22px] text-[0.82rem] font-bold uppercase tracking-[0.14em] after:text-[0.6rem] after:text-w2l-bright after:content-['◆']"
+            className="inline-flex items-center gap-4 px-[22px] text-[0.82rem] font-semibold uppercase tracking-[0.14em] after:text-[0.6rem] after:text-w2l-bright after:content-['◆']"
           >
             {label}
           </span>

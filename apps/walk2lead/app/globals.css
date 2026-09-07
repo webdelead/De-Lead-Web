@@ -23,6 +23,18 @@
   .serif {
     font-family: var(--font-lora);
   }
+  /* @delead/brand/reset.css clamps `svg { max-width: 100% }`; the old
+     styles.css only clamped <img>. Decorative SVGs here (the hero doodle
+     circle at 128% of its box, sparks, wave) need their real width. */
+  svg {
+    max-width: none;
+  }
+  /* one notch lighter than Preflight's `bolder` (~700) — matches the
+     font-bold -> font-semibold sweep across the sections */
+  b,
+  strong {
+    font-weight: 600;
+  }
 
   /* legacy custom-property aliases — a few inline style={{…var(--red)}} and
      SVG stroke="var(--red-bright)" still reference these */
@@ -94,7 +106,7 @@
     padding: 15px 30px;
     border: none;
     border-radius: 999px;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 0.98rem;
     text-decoration: none;
     cursor: pointer;
