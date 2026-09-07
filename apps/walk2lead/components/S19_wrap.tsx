@@ -48,7 +48,7 @@ export function S19_wrap() {
               className="h-6 opacity-90"
             />
             <p className="mt-4 max-w-[38ch] text-[0.88rem] leading-relaxed text-white/60">
-              Walk2Lead Robotics Tech Quest — funded by Walkaroo Foundation and implemented
+              Walk2Lead Robotics Tech Quest, funded by Walkaroo Foundation and implemented
               end-to-end by De&apos; Lead International, a prominent CSR implementation team, with the
               District Institutes of Education and Training (DIET) and the General Education
               Department, Government of Kerala.

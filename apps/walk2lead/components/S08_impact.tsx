@@ -54,13 +54,12 @@ const TILES: Tile[] = [
     pClass: "text-ink-soft",
   },
   {
-    count: 14,
-    lbl: <>→ Students at Zero2Entrepreneur Bootcamp</>,
+    count: 12,
+    lbl: <>→ Students at International Bootcamp</>,
     body: (
       <>
-        Selected for the Zero2Entrepreneur Bootcamp, part of the TechTop 2025 International Inclusive
-        Innovation Challenge, 28 Nov–4 Dec 2025, Maker Village, Kochi — run by TechTop with partner
-        sponsors, a national platform (Manorama Online, Dec 2025).
+        Selected for the TechTop 2025 International Inclusive Innovation Challenge &amp;
+        Zero2Entrepreneur Bootcamp, 28 Nov–4 Dec 2025, Maker Village, Kochi.
       </>
     ),
     place: "[grid-column:3/5] [grid-row:3/5]",
@@ -82,12 +81,12 @@ const TILES: Tile[] = [
     pClass: "text-ink-soft",
   },
   {
-    count: 20,
-    lbl: <>→ Students at Inspire Manak</>,
+    count: 14,
+    lbl: <>→ Students at National-Level Competition</>,
     body: (
       <>
-        Participated in the Inspire Manak competition — around 20 students from 8 schools across
-        Kozhikode.
+        Selected for the TechTop 2025 Innovation Bootcamp, a national platform (Manorama Online, Dec
+        2025).
       </>
     ),
     place: "[grid-column:4/7] [grid-row:5/7]",

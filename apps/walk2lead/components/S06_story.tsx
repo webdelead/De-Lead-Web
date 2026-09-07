@@ -79,14 +79,14 @@ const BEATS: { tag: string; global?: boolean; yr: React.ReactNode; h3: string; b
     tag: "28 Nov–4 Dec 2025 · International milestone",
     global: true,
     yr: "TechTop 2025 International Inclusive Innovation Challenge & Zero2Entrepreneur Bootcamp",
-    h3: "Walk2Lead students ranked top 2 — out of the world",
+    h3: "Walk2Lead students ranked top 2, out of the whole world",
     body: (
       <>
         A 7-day maker-to-entrepreneur bootcamp at <strong>Maker Village, Kochi</strong>, bringing
         together 37–45 hand-picked student innovators from Grades 6–12 across India, Japan and UAE.
         Students worked alongside mentors from <strong>MIT and Stanford</strong>, building prototypes
         addressing UN Sustainable Development Goals. Out of all participants across every country, the{" "}
-        <strong>top 2 ranked students came from Walk2Lead</strong> — government school kids from
+        <strong>top 2 ranked students came from Walk2Lead</strong>: government school kids from
         Kerala.
       </>
     ),

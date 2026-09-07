@@ -99,7 +99,7 @@ export function LeadCapture({ endpoint }: { endpoint: string }) {
         '<path d="M20 6L9 17l-5-5"/></svg></span>' +
         '<span style="font-size:1.4rem;font-weight:700;line-height:1.2;">Message sent</span>' +
         '<span style="font-size:.95rem;line-height:1.6;color:#4d4348;">' +
-        "Thanks for reaching out &mdash; we&rsquo;ll get back to you within a couple " +
+        "Thanks for reaching out. We&rsquo;ll get back to you within a couple " +
         "of working days. In the meantime you can email " +
         '<a href="mailto:' +
         CONTACT_EMAIL +
