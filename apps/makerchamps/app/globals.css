@@ -1,0 +1,53 @@
+/* makerchamps — Tailwind v4 + @delead/brand.
+   During the migration the frozen styles.css lives on as app/legacy.css,
+   imported into a layer BELOW `utilities` so a converted section's Tailwind
+   classes win while unconverted sections keep their full mobile-first styling
+   + element reset. When every S** section is on Tailwind: delete legacy.css,
+   drop this note, add Preflight + @delead/brand/reset.css, re-baseline. */
+@layer theme, base, mc-legacy, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "@delead/brand/theme.css";
+@import "./legacy.css" layer(mc-legacy);
+
+@layer mc-legacy {
+  :root {
+    /* alias the frozen :root names onto the brand tokens so the inline
+       style={{…var(--x)}} / svg refs that survive componentisation keep
+       resolving once legacy.css is deleted. legacy.css still defines all of
+       these with identical values while present, so this block is inert
+       until the sweep. */
+    --mc-navy: var(--color-mc-navy);
+    --mc-navy-deep: var(--color-mc-navy-deep);
+    --mc-orange: var(--color-mc-orange);
+    --mc-lime: var(--color-mc-lime);
+    --mc-purple: var(--color-mc-purple);
+    --mc-cream: var(--color-mc-cream);
+    --mc-cream-warm: var(--color-mc-cream-warm);
+    --mc-ink: var(--color-mc-ink);
+    --mc-white: #ffffff;
+    --font-display: var(--font-bricolage);
+    --font-mega: var(--font-anton);
+    --font-body: var(--font-inter);
+    --container: var(--container-site);
+    --radius-lg: var(--radius-card-lg);
+    --radius-md: 18px;
+    --radius-sm: 12px;
+    /* --shadow-card: legacy.css + @delead/brand agree on the value; leave it
+       to whichever is present. */
+  }
+}
+
+@layer base {
+  /* Tailwind's `border-*` utilities set only width; without Preflight the
+     style defaults to `none` and the border is invisible. Restore the
+     Preflight behaviour (1px solid, currentColor) until it lands for real. */
+  *,
+  *::before,
+  *::after {
+    border-width: 0;
+    border-style: solid;
+    border-color: currentColor;
+  }
+}
