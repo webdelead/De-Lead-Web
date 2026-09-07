@@ -1,24 +1,157 @@
+// grid placement + @900 collapse (all tiles -> full-width, auto row, min-h)
+const brk =
+  "max-[900px]:[grid-column:1/3] max-[900px]:[grid-row:auto] max-[900px]:min-h-[150px]";
+const tileBase =
+  "reveal relative flex flex-col justify-end overflow-hidden rounded-[20px] p-[26px]";
+const num = "font-serif text-[clamp(2.2rem,3.6vw,3rem)] leading-none";
+const lbl = "mt-2 text-[0.98rem] font-bold";
+const body = "mt-1.5 max-w-[34ch] text-[0.85rem]";
+
+type Tile = {
+  count: number;
+  suffix?: string;
+  lbl: React.ReactNode;
+  body: React.ReactNode;
+  place: string;
+  tile: string;
+  pClass: string;
+};
+
+const TILES: Tile[] = [
+  {
+    count: 44,
+    lbl: "Schools Implemented",
+    body: (
+      <>
+        Government UP &amp; high schools across four districts, each running the full 30-session
+        curriculum.
+      </>
+    ),
+    place: "[grid-column:1/4] [grid-row:1/3]",
+    tile: "bg-w2l text-white",
+    pClass: "text-white/85",
+  },
+  {
+    count: 1300,
+    suffix: "+",
+    lbl: "Students = Families Reached",
+    body: (
+      <>
+        Grades 6 &amp; 7, selected from cohorts of 300–400 applicants per school, in rural &amp;
+        coastal Kerala.
+      </>
+    ),
+    place: "[grid-column:4/7] [grid-row:1/3]",
+    tile: "bg-ink text-white",
+    pClass: "text-white/70",
+  },
+  {
+    count: 4,
+    lbl: "Districts Reached",
+    body: <>Kozhikode, Malappuram, Kannur &amp; Wayanad, across four phases.</>,
+    place: "[grid-column:1/3] [grid-row:3/5]",
+    tile: "bg-cream-2 text-ink",
+    pClass: "text-ink-soft",
+  },
+  {
+    count: 14,
+    lbl: <>→ Students at Zero2Entrepreneur Bootcamp</>,
+    body: (
+      <>
+        Selected for the Zero2Entrepreneur Bootcamp, part of the TechTop 2025 International Inclusive
+        Innovation Challenge, 28 Nov–4 Dec 2025, Maker Village, Kochi — run by TechTop with partner
+        sponsors, a national platform (Manorama Online, Dec 2025).
+      </>
+    ),
+    place: "[grid-column:3/5] [grid-row:3/5]",
+    tile: "bg-white text-ink [border:1.5px_solid_var(--color-line)]",
+    pClass: "text-ink-soft",
+  },
+  {
+    count: 20,
+    suffix: "+",
+    lbl: "Students with State-Level Recognition",
+    body: (
+      <>
+        Won recognition at the innovation competition hosted by Kerala Government&apos;s General
+        Education Department.
+      </>
+    ),
+    place: "[grid-column:1/4] [grid-row:5/7]",
+    tile: "bg-cream-2 text-ink",
+    pClass: "text-ink-soft",
+  },
+  {
+    count: 20,
+    lbl: <>→ Students at Inspire Manak</>,
+    body: (
+      <>
+        Participated in the Inspire Manak competition — around 20 students from 8 schools across
+        Kozhikode.
+      </>
+    ),
+    place: "[grid-column:4/7] [grid-row:5/7]",
+    tile: "bg-white text-ink [border:1.5px_solid_var(--color-line)]",
+    pClass: "text-ink-soft",
+  },
+];
+
 export function S08_impact() {
   return (
     <>
-      <section className="impact" id="impact">
+      <section id="impact" className="bg-white [border-top:1px_solid_var(--color-line)]">
         <div className="wrap">
           <div className="eyebrow reveal">The Numbers</div>
           <h2 className="h2 reveal">What four phases add up to</h2>
-          <p className="lead reveal">Not vanity metrics: every number here is verified against school-wise attendance records and session reports.</p>
-          <div className="mosaic reveal">
-            <div className="mtile m-red"><b data-count="44">0</b><div className="lbl">Schools Implemented</div><p>Government UP &amp; high schools across four districts, each running the full 30-session curriculum.</p></div>
-            <div className="mtile m-ink"><b data-count="1300" data-suffix="+">0</b><div className="lbl">Students = Families Reached</div><p>Grades 6 &amp; 7, selected from cohorts of 300–400 applicants per school, in rural &amp; coastal Kerala.</p></div>
-            <div className="mtile m-cream"><b data-count="4">0</b><div className="lbl">Districts Reached</div><p>Kozhikode, Malappuram, Kannur &amp; Wayanad, across four phases.</p></div>
-            <div className="mtile m-bordered"><b data-count="14">0</b><div className="lbl">→ Students at Zero2Entrepreneur Bootcamp</div><p>Selected for the Zero2Entrepreneur Bootcamp, part of the TechTop 2025 International Inclusive Innovation Challenge, 28 Nov–4 Dec 2025, Maker Village, Kochi — run by TechTop with partner sponsors, a national platform (Manorama Online, Dec 2025).</p></div>
-            <div className="m-photo reveal"><img loading="lazy" decoding="async" src="/assets/robot-track.jpg" alt="Student-built robot on test track" /></div>
-            <div className="mtile m-state"><b data-count="20" data-suffix="+">0</b><div className="lbl">Students with State-Level Recognition</div><p>Won recognition at the innovation competition hosted by Kerala Government's General Education Department.</p></div>
-            <div className="mtile m-national"><b data-count="20">0</b><div className="lbl">→ Students at Inspire Manak</div><p>Participated in the Inspire Manak competition — around 20 students from 8 schools across Kozhikode.</p></div>
+          <p className="lead reveal">
+            Not vanity metrics: every number here is verified against school-wise attendance records
+            and session reports.
+          </p>
+          <div className="reveal mt-12 grid grid-cols-6 gap-4 [grid-auto-rows:96px] max-[900px]:grid-cols-2 max-[900px]:[grid-auto-rows:auto]">
+            {TILES.slice(0, 4).map((t, i) => (
+              <div key={i} className={`${tileBase} ${brk} ${t.place} ${t.tile}`}>
+                <b className={num} data-count={t.count} data-suffix={t.suffix}>
+                  0
+                </b>
+                <div className={lbl}>{t.lbl}</div>
+                <p className={`${body} ${t.pClass}`}>{t.body}</p>
+              </div>
+            ))}
+            <div
+              className={`reveal relative overflow-hidden rounded-[20px] p-0 [grid-column:5/7] [grid-row:3/5] ${brk} max-[900px]:aspect-[16/10]`}
+            >
+              <img
+                loading="lazy"
+                decoding="async"
+                src="/assets/robot-track.jpg"
+                alt="Student-built robot on test track"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            {TILES.slice(4).map((t, i) => (
+              <div key={i} className={`${tileBase} ${brk} ${t.place} ${t.tile}`}>
+                <b className={num} data-count={t.count} data-suffix={t.suffix}>
+                  0
+                </b>
+                <div className={lbl}>{t.lbl}</div>
+                <p className={`${body} ${t.pClass}`}>{t.body}</p>
+              </div>
+            ))}
           </div>
-          <p style={{ textAlign: "center", color: "var(--ink-soft)", fontSize: ".9rem", marginTop: "22px" }}><b style={{ color: "var(--red)" }}>10+ sub-education districts</b> reached across the four.</p>
+          <p
+            style={{
+              textAlign: "center",
+              color: "var(--ink-soft)",
+              fontSize: ".9rem",
+              marginTop: "22px",
+            }}
+          >
+            <b style={{ color: "var(--red)" }}>10+ sub-education districts</b> reached across the
+            four.
+          </p>
         </div>
       </section>
-      
+
       {/* REALITY */}
     </>
   );
