@@ -54,7 +54,7 @@ const TILES: Tile[] = [
     pClass: "text-ink-soft",
   },
   {
-    count: 12,
+    count: 14,
     lbl: <>→ Students at International Bootcamp</>,
     body: (
       <>
@@ -81,12 +81,12 @@ const TILES: Tile[] = [
     pClass: "text-ink-soft",
   },
   {
-    count: 14,
-    lbl: <>→ Students at National-Level Competition</>,
+    count: 2,
+    lbl: <>→ Students with Inspire Awards</>,
     body: (
       <>
-        Selected for the TechTop 2025 Innovation Bootcamp, a national platform (Manorama Online, Dec
-        2025).
+        Harshit Raj of GMUPS Edakkanad, the only Inspire Award winner in Tirur Sub-District that
+        year, and Ashish Krishna of GUPS Thavanur.
       </>
     ),
     place: "[grid-column:4/7] [grid-row:5/7]",
