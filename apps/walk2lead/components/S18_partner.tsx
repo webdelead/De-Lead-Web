@@ -17,6 +17,9 @@ const phoneIcon = (
 
 const contact =
   "flex items-center gap-3.5 rounded-[14px] bg-white/[0.06] px-5 py-4 text-[0.95rem] no-underline transition-colors [border:1px_solid_rgba(255,255,255,0.14)] hover:bg-white/[0.12]";
+const labelC = "mb-1.5 block text-[0.78rem] font-semibold text-ink-soft";
+const fieldC =
+  "w-full rounded-[10px] bg-cream px-3.5 py-3 text-[0.92rem] leading-[1.6] [font-family:inherit] [border:1.5px_solid_var(--color-line)] focus:outline-none focus:[border-color:var(--color-w2l)]";
 const ic =
   "grid h-[38px] w-[38px] flex-[0_0_38px] place-items-center rounded-[10px] bg-w2l text-base";
 
@@ -64,34 +67,74 @@ export function S18_partner() {
               </a>
             </div>
           </div>
-          {/* form subtree kept verbatim — main.js drives #csr-form .is-loading/.is-success;
-              converts in the Phase B behaviour swap */}
-          <form id="csr-form" data-lead-source="walk2lead">
-            <div className="form-inner">
-              <h3>Start the conversation</h3>
-              <p className="sub">We typically respond within one business day.</p>
-              <div className="frow">
-                <div className="field"><label>Your name</label><input name="name" required placeholder="Full name" /></div>
-                <div className="field"><label>Company</label><input name="company" required placeholder="Company / Foundation" /></div>
+          {/* SiteScripts toggles .is-loading / .is-success on #csr-form; the
+              state-driven show/hide is the [.is-loading_&] / [.is-success_&]
+              arbitrary variants below. */}
+          <form
+            id="csr-form"
+            data-lead-source="walk2lead"
+            className="relative rounded-[20px] bg-white px-[34px] py-[38px] text-ink shadow-card"
+          >
+            <div className="form-inner [.is-loading_&]:hidden [.is-success_&]:hidden">
+              <h3 className="mb-1.5 text-[1.3rem]">Start the conversation</h3>
+              <p className="mb-6 text-[0.88rem] text-ink-soft">
+                We typically respond within one business day.
+              </p>
+              <div className="grid grid-cols-2 gap-3.5">
+                {[
+                  ["Your name", "name", "Full name", "text", true],
+                  ["Company", "company", "Company / Foundation", "text", true],
+                ].map(([label, name, ph, type, req]) => (
+                  <div className="mb-3.5" key={name as string}>
+                    <label className={labelC}>{label}</label>
+                    <input className={fieldC} name={name as string} type={type as string} required={!!req} placeholder={ph as string} />
+                  </div>
+                ))}
               </div>
-              <div className="frow">
-                <div className="field"><label>Email</label><input name="email" type="email" required placeholder="you@company.com" /></div>
-                <div className="field"><label>Phone</label><input name="phone" placeholder="+91" /></div>
+              <div className="grid grid-cols-2 gap-3.5">
+                <div className="mb-3.5">
+                  <label className={labelC}>Email</label>
+                  <input className={fieldC} name="email" type="email" required placeholder="you@company.com" />
+                </div>
+                <div className="mb-3.5">
+                  <label className={labelC}>Phone</label>
+                  <input className={fieldC} name="phone" placeholder="+91" />
+                </div>
               </div>
-              <div className="field"><label>What are you exploring?</label><textarea name="message" rows={4} placeholder="e.g. We want to run a STEM CSR programme in Tamil Nadu for ~500 students…"></textarea></div>
-              <button className="btn btn-primary" type="submit">Send enquiry →</button>
+              <div className="mb-3.5">
+                <label className={labelC}>What are you exploring?</label>
+                <textarea
+                  className={`${fieldC} min-h-[120px] resize-y`}
+                  name="message"
+                  rows={4}
+                  placeholder="e.g. We want to run a STEM CSR programme in Tamil Nadu for ~500 students…"
+                />
+              </div>
+              <button className="btn btn-primary !mt-1.5 !w-full !justify-center" type="submit">
+                Send enquiry →
+              </button>
             </div>
-            <div className="form-loading" aria-hidden="true">
-              <div className="form-spinner"></div>
+            <div
+              className="hidden min-h-[320px] flex-col items-center justify-center gap-[18px] px-6 py-12 text-center [.is-loading_&]:flex [&_p]:m-0 [&_p]:text-[0.95rem] [&_p]:text-ink-soft"
+              aria-hidden="true"
+            >
+              <div className="h-12 w-12 rounded-full [animation:spin_0.8s_linear_infinite] [border:3px_solid_rgba(0,0,0,0.1)] [border-top-color:var(--color-w2l)]" />
               <p>Sending your message…</p>
             </div>
-            <div className="form-success" aria-hidden="true">
-              <div className="form-success-icon">
+            <div
+              className="hidden min-h-[320px] flex-col items-center justify-center gap-[18px] px-6 py-12 text-center [.is-success_&]:flex [&_p]:m-0 [&_p]:text-[0.95rem] [&_p]:text-ink-soft"
+              aria-hidden="true"
+            >
+              <div className="[&_circle]:[animation:draw-circle_0.6s_ease_forwards] [&_circle]:[stroke-dasharray:157] [&_circle]:[stroke-dashoffset:157] [&_path]:[animation:draw-check_0.4s_0.5s_ease_forwards] [&_path]:[stroke-dasharray:40] [&_path]:[stroke-dashoffset:40] [&_svg]:h-16 [&_svg]:w-16">
                 <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="26" cy="26" r="25" stroke="var(--red)" strokeWidth="2" /><path d="M14 26.5l8 8 16-16" stroke="var(--red)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </div>
-              <h3>Message sent!</h3>
+              <h3 className="m-0 text-[1.5rem] text-ink">Message sent!</h3>
               <p>Thank you for reaching out. Our team will get back to you within one business day.</p>
-              <p className="form-success-contact">In the meantime, feel free to reach us on <a href="https://wa.me/918075566081" target="_blank" rel="noopener">WhatsApp</a> or at <a href="mailto:info@deleadint.com">info@deleadint.com</a>.</p>
+              <p className="!text-[0.85rem] [&_a:hover]:underline [&_a]:text-accent [&_a]:no-underline">
+                In the meantime, feel free to reach us on{" "}
+                <a href="https://wa.me/918075566081" target="_blank" rel="noopener">WhatsApp</a> or at{" "}
+                <a href="mailto:info@deleadint.com">info@deleadint.com</a>.
+              </p>
             </div>
           </form>
         </div>

@@ -108,14 +108,23 @@ export function S06_story() {
             Kinalur GUPS was a single pilot in 2023. Walk2Lead has since reached Kozhikode,
             Malappuram, Wayanad and Kannur, expanding with every phase.
           </p>
-          <div className="story-scatter" id="story-scatter">
+          <div
+            id="story-scatter"
+            className="pointer-events-none absolute right-0 top-0 hidden h-full w-[460px] min-[1350px]:block"
+          >
             {SCATTER.map(([top, left, r, d, file], i) => (
               <div
                 key={file}
-                className="scatter-photo"
+                className="scatter-photo pointer-events-auto absolute w-[190px] cursor-grab select-none overflow-hidden rounded-[16px] bg-white shadow-[0_16px_34px_-14px_rgba(0,0,0,0.35)] [animation:floaty_5s_ease-in-out_infinite] [animation-delay:var(--d,0s)] [border:5px_solid_#fff] [touch-action:none] [transform:rotate(var(--r,0deg))] active:cursor-grabbing active:[animation-play-state:paused] motion-reduce:[animation:none] [&.dragging]:[animation-play-state:paused]"
                 style={{ top, left, "--r": r, "--d": d, zIndex: String(i + 1) }}
               >
-                <img src={`/assets/${file}`} alt={SCATTER_ALT[i]} loading="lazy" decoding="async" />
+                <img
+                  src={`/assets/${file}`}
+                  alt={SCATTER_ALT[i]}
+                  loading="lazy"
+                  decoding="async"
+                  className="pointer-events-none block aspect-[4/3] w-full object-cover"
+                />
               </div>
             ))}
           </div>
