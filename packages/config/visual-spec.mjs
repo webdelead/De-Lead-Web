@@ -99,54 +99,10 @@ async function settle(page) {
     ]);
   });
 
-  // CSS background-image photos (full-bleed card / hero / band backgrounds)
-  // are NOT <img>, so the wait above misses them — they can pop in a frame
-  // after the screenshot and read as a big same-size pixel diff over the
-  // whole card. Force each url() to decode, capped like the <img> wait.
-  await page.evaluate(() => {
-    const urls = new Set();
-    for (const el of document.querySelectorAll("*")) {
-      for (const pseudo of [null, "::before", "::after"]) {
-        const bg = getComputedStyle(el, pseudo).backgroundImage;
-        if (!bg || bg === "none") continue;
-        for (const m of bg.matchAll(/url\((['"]?)([^'")]+)\1\)/g)) {
-          if (!m[2].startsWith("data:")) urls.add(m[2]);
-        }
-      }
-    }
-    const load = (src) =>
-      new Promise((res) => {
-        const im = new Image();
-        im.onload = im.onerror = res;
-        im.src = src;
-      });
-    return Promise.race([
-      Promise.all([...urls].map(load)),
-      new Promise((r) => setTimeout(r, 10_000)),
-    ]);
-  });
-
-  // forcing images eager + warming background-image URLs kicks off a fresh
-  // wave of requests; give it a BOUNDED moment to drain — networkidle alone
-  // can hang on a keep-alive socket and blow the 90s test timeout.
-  await Promise.race([
-    page.waitForLoadState("networkidle"),
-    page.waitForTimeout(4000),
-  ]).catch(() => {});
-
   // let the 1400ms count-ups reach their fixed final value
   await page.waitForTimeout(1800);
   await page.evaluate(() => window.scrollTo(0, 0));
-  // two frames so any late background-image paint has flushed
-  await page
-    .evaluate(
-      () =>
-        new Promise((r) =>
-          requestAnimationFrame(() => requestAnimationFrame(r)),
-        ),
-    )
-    .catch(() => {});
-  await page.waitForTimeout(200);
+  await page.waitForTimeout(150);
 }
 
 export function registerVisualTests({ path = "/", name = "home" } = {}) {
@@ -167,21 +123,6 @@ export function registerVisualTests({ path = "/", name = "home" } = {}) {
         const box = await el.boundingBox();
         if (!box || box.height < 4) continue;
         const id = (await el.getAttribute("id"))?.trim() || `i${i}`;
-        // Freeze THIS section's box to a whole-pixel height right before the
-        // shot (per-element, so no reflow cascade). A tall photo grid whose
-        // natural height sits on a sub-pixel boundary otherwise rounds to N or
-        // N+1 between runs — a 1px shift that smears every photo row.
-        await el.evaluate((node) => {
-          const h = Math.round(node.getBoundingClientRect().height);
-          node.style.height = h + "px";
-          node.style.overflow = "hidden";
-        });
-        await el.evaluate(
-          () =>
-            new Promise((r) =>
-              requestAnimationFrame(() => requestAnimationFrame(r)),
-            ),
-        );
         await expect.soft(el).toHaveScreenshot(`${name}--${id}.png`);
       }
     });

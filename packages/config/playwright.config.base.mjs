@@ -35,10 +35,6 @@ export function makeVisualConfig({ port, command } = {}) {
         // ~1% of pixels may differ (antialiasing, sub-pixel text). Tighten per
         // site if it proves too loose.
         maxDiffPixelRatio: 0.01,
-        // per-pixel YIQ tolerance. 0.3 (vs the 0.2 default) so a residual 1px
-        // vertical shift on a photo-heavy section reads as "same" for most
-        // pixels — a real recolour / moved block still swings well past it.
-        threshold: 0.3,
         animations: "disabled",
         scale: "css",
       },
