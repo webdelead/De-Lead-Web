@@ -147,6 +147,20 @@ async function settle(page) {
     )
     .catch(() => {});
   await page.waitForTimeout(200);
+
+  // Pin each captured section to an integer height. A section whose natural
+  // height lands on a .5-ish boundary (e.g. a tall photo grid where a heading
+  // wraps) rounds to N or N+1 between the baseline run and the compare run —
+  // a 1px vertical shift that reads as a huge diff over the whole image, with
+  // nothing actually wrong. Rounding removes the boundary without hiding a
+  // real >=1px content change.
+  await page.evaluate(() => {
+    for (const el of document.querySelectorAll("body > [id]")) {
+      const h = Math.round(el.getBoundingClientRect().height);
+      if (h > 0) el.style.height = h + "px";
+    }
+  });
+  await page.waitForTimeout(50);
 }
 
 export function registerVisualTests({ path = "/", name = "home" } = {}) {
