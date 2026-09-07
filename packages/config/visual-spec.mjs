@@ -123,6 +123,23 @@ export function registerVisualTests({ path = "/", name = "home" } = {}) {
         const box = await el.boundingBox();
         if (!box || box.height < 4) continue;
         const id = (await el.getAttribute("id"))?.trim() || `i${i}`;
+        // Freeze THIS section's box to a whole-pixel height just before the
+        // shot (per-element — no reflow cascade). A section whose natural
+        // height lands on a sub-pixel .5 boundary otherwise rasterises to N
+        // or N+1 between frames, so Playwright's "two consecutive stable
+        // screenshots" check never settles. overflow:hidden clips the <=0.5px
+        // remainder; a real >=1px content change still moves the rounded box.
+        await el.evaluate((node) => {
+          const h = Math.round(node.getBoundingClientRect().height);
+          node.style.height = h + "px";
+          node.style.overflow = "hidden";
+        });
+        await el.evaluate(
+          () =>
+            new Promise((r) =>
+              requestAnimationFrame(() => requestAnimationFrame(r)),
+            ),
+        );
         await expect.soft(el).toHaveScreenshot(`${name}--${id}.png`);
       }
     });

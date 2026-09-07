@@ -111,5 +111,7 @@ jobs:
         if: failure() && steps.scan.outputs.apps != ''
         with:
           name: playwright-report
-          path: apps/*/playwright-report/
+          path: |
+            apps/*/playwright-report/
+            apps/*/test-results/
           retention-days: 7
