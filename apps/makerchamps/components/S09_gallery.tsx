@@ -33,7 +33,7 @@ export async function S09_gallery() {
 
   return (
     <>
-      <section className="section gallery" id="gallery">
+      <section className="section bg-white" id="gallery">
         <div className="wrap">
           <div className="section-head reveal">
             <span className="eyebrow">Inside a batch</span>
