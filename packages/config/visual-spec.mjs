@@ -147,25 +147,6 @@ async function settle(page) {
     )
     .catch(() => {});
   await page.waitForTimeout(200);
-
-  // Nudge each captured section to a whole-pixel min-height (ceil). A section
-  // whose natural height lands on a .5-ish sub-pixel boundary rounds to N or
-  // N+1 between the baseline run and the compare run — a 1px vertical shift
-  // that reads as a huge diff over a tall image with nothing actually wrong.
-  // min-height (not height) only ever grows the box, so content never clips
-  // and a real >=1px content change still moves the ceil.
-  await page.evaluate(() => {
-    const boxes = [...document.querySelectorAll("body > [id]")].map((el) => [
-      el,
-      Math.ceil(el.getBoundingClientRect().height),
-    ]);
-    for (const [el, h] of boxes) if (h > 0) el.style.minHeight = h + "px";
-  });
-  await page.evaluate(
-    () =>
-      new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))),
-  );
-  await page.waitForTimeout(50);
 }
 
 export function registerVisualTests({ path = "/", name = "home" } = {}) {
@@ -186,6 +167,21 @@ export function registerVisualTests({ path = "/", name = "home" } = {}) {
         const box = await el.boundingBox();
         if (!box || box.height < 4) continue;
         const id = (await el.getAttribute("id"))?.trim() || `i${i}`;
+        // Freeze THIS section's box to a whole-pixel height right before the
+        // shot (per-element, so no reflow cascade). A tall photo grid whose
+        // natural height sits on a sub-pixel boundary otherwise rounds to N or
+        // N+1 between runs — a 1px shift that smears every photo row.
+        await el.evaluate((node) => {
+          const h = Math.round(node.getBoundingClientRect().height);
+          node.style.height = h + "px";
+          node.style.overflow = "hidden";
+        });
+        await el.evaluate(
+          () =>
+            new Promise((r) =>
+              requestAnimationFrame(() => requestAnimationFrame(r)),
+            ),
+        );
         await expect.soft(el).toHaveScreenshot(`${name}--${id}.png`);
       }
     });
