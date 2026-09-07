@@ -23,3 +23,14 @@
 @import "@delead/brand/theme.css";
 
 @import "./legacy.css" layer(w2l-legacy);
+
+/* keyframes referenced by migrated sections (were named animations in the old
+   styles.css). Named @keyframes only — no selectors, no cascade impact. */
+@keyframes w2l-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
