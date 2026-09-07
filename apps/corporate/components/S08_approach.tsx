@@ -38,7 +38,7 @@ export function S08_approach() {
                 key={s.n}
                 className="flex gap-[22px] [padding:38px_34px] [background:rgba(255,255,255,0.02)] max-[520px]:[padding:28px_24px]"
               >
-                <span className="flex-none [font-family:'Instrument_Sans',sans-serif] text-[1.6rem] font-semibold leading-none tracking-[-0.03em] [color:var(--color-magenta-soft)]">
+                <span className="flex-none [font-family:var(--font-instrument)] text-[1.6rem] font-semibold leading-none tracking-[-0.03em] [color:var(--color-magenta-soft)]">
                   {s.n}
                 </span>
                 <div>

@@ -13,7 +13,7 @@ export async function S09_trackrecord() {
       <span className="text-[0.68rem] font-bold uppercase tracking-[0.13em] text-magenta">
         {r.whenLabel}
       </span>
-      <h4 className="[font-family:'Instrument_Sans',sans-serif] text-[1.35rem] tracking-[-0.02em]">
+      <h4 className="[font-family:var(--font-instrument)] text-[1.35rem] tracking-[-0.02em]">
         {r.client}
       </h4>
       <p className="flex-1 text-[0.92rem] leading-[1.5] text-ink-soft">{r.blurb}</p>

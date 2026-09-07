@@ -16,7 +16,7 @@ const youtubeIcon = (
 const social =
   "flex h-[34px] w-[34px] flex-none items-center justify-center rounded-full transition-[color,border-color,background,transform] duration-200 [border:1px_solid_rgba(255,255,255,0.18)] [color:#d9c6d0] hover:text-white hover:-translate-y-0.5 hover:[border-color:rgba(255,255,255,0.5)] hover:[background:rgba(255,255,255,0.06)]";
 const colHead =
-  "mb-3.5 text-[0.74rem] uppercase tracking-[0.08em] [font-family:'Inter'] [color:#a9738f]";
+  "mb-3.5 text-[0.74rem] uppercase tracking-[0.08em] [font-family:var(--font-inter)] [color:#a9738f]";
 const colLink = "text-[0.9rem] [color:#d9c6d0] hover:text-white";
 
 export function S15_wrap() {

@@ -26,7 +26,7 @@ export function S03_facts() {
         </span>
         <p className="text-[0.95rem] leading-[1.45] [color:rgba(255,255,255,0.72)]">
           {f.big && (
-            <b className="mb-1.5 block [font-family:'Instrument_Sans',sans-serif] text-[2.4rem] font-semibold leading-none tracking-[-0.03em] text-white">
+            <b className="mb-1.5 block [font-family:var(--font-instrument)] text-[2.4rem] font-semibold leading-none tracking-[-0.03em] text-white">
               {f.big}
             </b>
           )}

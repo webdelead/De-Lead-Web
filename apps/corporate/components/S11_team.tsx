@@ -55,7 +55,7 @@ export function S11_team() {
                   />
                 </div>
                 <figcaption>
-                  <b className="block [font-family:'Instrument_Sans',sans-serif] text-[1.15rem] text-white">
+                  <b className="block [font-family:var(--font-instrument)] text-[1.15rem] text-white">
                     {m.name}
                   </b>
                   <span className="[margin:3px_0_6px] block text-[0.78rem] font-semibold [color:#f3c8dc]">

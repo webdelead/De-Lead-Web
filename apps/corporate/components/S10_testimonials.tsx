@@ -23,7 +23,7 @@ export async function S10_testimonials() {
                 key={t.id}
               >
                 <span
-                  className="h-[26px] [font-family:'Instrument_Sans',sans-serif] text-[3.4rem] font-bold leading-[0.6] [color:var(--color-magenta-soft)]"
+                  className="h-[26px] [font-family:var(--font-instrument)] text-[3.4rem] font-bold leading-[0.6] [color:var(--color-magenta-soft)]"
                   aria-hidden="true"
                 >
                   &ldquo;
@@ -32,7 +32,7 @@ export async function S10_testimonials() {
                   {t.quote}
                 </blockquote>
                 <figcaption className="pt-4 [border-top:1px_solid_var(--line)]">
-                  <b className="block [font-family:'Instrument_Sans',sans-serif] text-base text-ink">
+                  <b className="block [font-family:var(--font-instrument)] text-base text-ink">
                     {t.authorName}
                   </b>
                   <span className="mt-0.5 block text-[0.82rem] text-ink-soft">{t.authorRole}</span>

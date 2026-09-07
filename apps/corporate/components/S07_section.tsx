@@ -6,7 +6,7 @@ const NUMS: { n: string; count?: number; suffix?: string; label: string }[] = [
 ];
 
 const numB =
-  "block [font-family:'Instrument_Sans',sans-serif] font-semibold [font-size:clamp(2.4rem,5vw,3.9rem)] tracking-[-0.04em] leading-none text-ink mb-3.5";
+  "block [font-family:var(--font-instrument)] font-semibold [font-size:clamp(2.4rem,5vw,3.9rem)] tracking-[-0.04em] leading-none text-ink mb-3.5";
 
 export function S07_section() {
   return (
