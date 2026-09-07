@@ -3,10 +3,10 @@ export function S06_modules() {
     <>
       <section className="section" id="modules">
         <div className="pattern-bg on-light"></div>
-        <div className="container">
+        <div className="wrap">
           <div className="section-head reveal">
             <span className="eyebrow">Inside MakerChamps</span>
-            <h2>7 modules, <span className="italic">skills for life</span></h2>
+            <h2>7 modules, <span className="mc-accent">skills for life</span></h2>
             <p className="lede">Not lectures, not slides. Seven hands-on experiences where your child does, makes, and presents.</p>
           </div>
           <div className="modules-grid reveal-stagger">

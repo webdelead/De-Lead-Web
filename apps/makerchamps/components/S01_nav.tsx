@@ -2,7 +2,7 @@ export function S01_nav() {
   return (
     <>
       <nav className="nav">
-        <div className="container">
+        <div className="wrap">
           <a href="#top" className="nav-logo">
             <img src="/assets/brand/makerchamps-logo-on-dark.webp" alt="MakerChamps" />
           </a>

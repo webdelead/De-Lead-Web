@@ -8,7 +8,7 @@ export async function S02_top() {
   return (
     <>
       <header className="hero" id="top">
-        <div className="container hero-inner">
+        <div className="wrap hero-inner">
           <div className="hero-grid">
             <span className="hero-eyebrow">Think · Make · Transform</span>
             <h1 className="hero-mega">

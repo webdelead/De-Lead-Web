@@ -17,7 +17,7 @@ export function S12_footer() {
   return (
     <>
       <footer className="footer">
-        <div className="container">
+        <div className="wrap">
           <div className="footer-top">
             <div className="footer-brand">
               <img src="/assets/brand/dli-logo-white.png" alt="De' Lead International" />

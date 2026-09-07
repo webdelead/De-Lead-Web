@@ -6,7 +6,7 @@ const YOUTUBE_ID = "Q3OEp6WZn3U";
 export function S02b_video() {
   return (
     <section className="section video-feature">
-      <div className="container">
+      <div className="wrap">
         <div className="video-feature-frame reveal">
           <iframe
             src={`https://www.youtube.com/embed/${YOUTUBE_ID}`}

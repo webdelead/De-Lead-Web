@@ -82,7 +82,7 @@ p {
   margin: 0;
 }
 
-.container {
+.wrap {
   width: 100%;
   max-width: var(--container);
   margin: 0 auto;
@@ -139,8 +139,8 @@ p {
   filter: invert(1);
 }
 
-.section > .container,
-.section > .pattern-bg + .container {
+.section > .wrap,
+.section > .pattern-bg + .wrap {
   position: relative;
   z-index: 1;
 }
@@ -313,7 +313,7 @@ h2.section-head {
   object-fit: cover;
 }
 
-.italic {
+.mc-accent {
   color: var(--mc-orange);
 }
 
@@ -403,7 +403,7 @@ h2.section-head {
   transform: translateY(-100%);
 }
 
-.nav .container {
+.nav .wrap {
   display: flex;
   align-items: center;
   justify-content: space-between;

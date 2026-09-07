@@ -3,7 +3,7 @@ export function S05_section() {
     <>
       <section className="section shift">
         <div className="pattern-bg on-dark"></div>
-        <div className="container">
+        <div className="wrap">
           <div className="section-head reveal">
             <span className="eyebrow" style={{ color: "var(--mc-lime)" }}>In two days, something shifts</span>
             <h2>You won't see the change in a certificate</h2>

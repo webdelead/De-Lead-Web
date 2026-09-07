@@ -6,10 +6,10 @@ export async function S10_testimonials() {
     <>
       <section className="section testimonials" id="testimonials">
         <div className="pattern-bg on-dark"></div>
-        <div className="container">
+        <div className="wrap">
           <div className="section-head reveal">
             <span className="eyebrow" style={{ color: "var(--mc-lime)" }}>This is what we hear</span>
-            <h2>From parents. From students. <span className="italic">From the MakerChamps experience.</span></h2>
+            <h2>From parents. From students. <span className="mc-accent">From the MakerChamps experience.</span></h2>
           </div>
           <div className="testimonial-grid reveal-stagger">
             {rows.map((t) => (

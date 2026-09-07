@@ -3,10 +3,10 @@ export function S08_safety() {
     <>
       <section className="section safety" id="safety">
         <div className="pattern-bg on-light"></div>
-        <div className="container">
+        <div className="wrap">
           <div className="section-head reveal">
             <span className="eyebrow">Your peace of mind</span>
-            <h2>Your child is <span className="italic">safe with us</span></h2>
+            <h2>Your child is <span className="mc-accent">safe with us</span></h2>
             <p className="lede">We know what it means to send your child away overnight. So we've thought through every detail.</p>
           </div>
           <div className="safety-grid reveal-stagger">

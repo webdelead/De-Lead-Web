@@ -9,10 +9,10 @@ export async function S10b_whatsapp() {
   return (
     <section className="section wa-reviews" id="whatsapp-reviews">
       <div className="pattern-bg on-dark"></div>
-      <div className="container">
+      <div className="wrap">
         <div className="section-head reveal">
           <span className="eyebrow" style={{ color: "var(--mc-lime)" }}>Straight from the group chat</span>
-          <h2>What parents share on <span className="italic">WhatsApp</span></h2>
+          <h2>What parents share on <span className="mc-accent">WhatsApp</span></h2>
         </div>
       </div>
       <div className="wa-marquee-wrap reveal">

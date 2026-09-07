@@ -3,10 +3,10 @@ export function S07_backers() {
     <>
       <section className="section backers" id="backers">
         <div className="pattern-bg on-light"></div>
-        <div className="container">
+        <div className="wrap">
           <div className="section-head reveal">
             <span className="eyebrow">Who's behind it</span>
-            <h2>Built by innovators, <span className="italic">backed by NIT Calicut</span></h2>
+            <h2>Built by innovators, <span className="mc-accent">backed by NIT Calicut</span></h2>
             <p className="lede">An experience like this is only as good as the people and the campus behind it. This is what makes the exposure real, not staged.</p>
           </div>
           <div className="backers-grid">

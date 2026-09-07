@@ -52,18 +52,6 @@
   }
 }
 
-/* Frozen makerchamps class names that collide with Tailwind v4's built-in
-   utilities: `.container` (per-breakpoint max-width — would cap the layout at
-   768px) and `.italic` (font-style:italic — the frozen `.italic` is just an
-   orange accent, upright). Unlayered rules win over the `utilities` layer.
-   Phase C: rename these classes and drop this block. */
-.container {
-  width: 100%;
-  max-width: var(--container);
-  margin-inline: auto;
-  padding-inline: 20px;
-}
-.italic {
-  font-style: normal;
-  color: var(--color-mc-orange);
-}
+/* (The frozen `.container` / `.italic` class names collided with Tailwind v4's
+   built-in utilities, so they were renamed to `.wrap` / `.mc-accent` across
+   the markup + legacy.css — no override needed.) */

@@ -2,10 +2,10 @@ export function S11_enquire() {
   return (
     <>
       <section className="section cta" id="enquire">
-        <div className="container cta-inner">
+        <div className="wrap cta-inner">
           <div className="reveal">
             <span className="eyebrow" style={{ color: "var(--mc-lime)" }}>Only 60 seats per season</span>
-            <h2 className="section-head" style={{ marginBottom: "0" }}>Give them two days that <span className="italic">change how they see themselves</span></h2>
+            <h2 className="section-head" style={{ marginBottom: "0" }}>Give them two days that <span className="mc-accent">change how they see themselves</span></h2>
             <p className="lede" style={{ marginTop: "14px", maxWidth: "48ch" }}>Reach out directly, or leave your details and our team will call you back.</p>
             <div className="cta-quick" style={{ marginTop: "28px" }}>
               <a href="https://wa.me/918075566081?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20MakerChamps" className="btn btn-whatsapp" target="_blank" rel="noopener">
