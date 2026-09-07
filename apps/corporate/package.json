@@ -14,7 +14,9 @@
   "dependencies": {
     "@delead/brand": "workspace:*",
     "@delead/db": "workspace:*",
+    "@delead/fonts": "workspace:*",
     "@delead/shared": "workspace:*",
+    "@delead/ui": "workspace:*",
     "drizzle-orm": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
@@ -23,12 +25,14 @@
   "devDependencies": {
     "@delead/config": "workspace:*",
     "@playwright/test": "catalog:",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "dotenv": "catalog:",
     "eslint": "^9",
     "eslint-config-next": "catalog:",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:"
   }
 }

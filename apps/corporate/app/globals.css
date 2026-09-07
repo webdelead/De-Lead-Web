@@ -1,0 +1,52 @@
+/* corporate — Tailwind v4 + @delead/brand.
+   During the migration the frozen styles.css lives on as app/legacy.css,
+   imported into a layer BELOW `utilities` so a converted section's Tailwind
+   classes win while unconverted sections keep their full styling + element
+   reset. When every S** section is on Tailwind: delete legacy.css, drop this
+   note, add Preflight + @delead/brand/reset.css, re-baseline. */
+@layer theme, base, corp-legacy, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@import "@delead/brand/theme.css";
+
+@import "./legacy.css" layer(corp-legacy);
+
+@layer base {
+  /* Tailwind's `border-*` utilities set only width; without Preflight the
+     style defaults to `none` and the border is invisible. Restore the
+     Preflight behaviour (1px solid, currentColor) until it lands for real. */
+  *,
+  *::before,
+  *::after {
+    border-width: 0;
+    border-style: solid;
+    border-color: currentColor;
+  }
+}
+
+@layer corp-legacy {
+  :root {
+    /* alias the frozen :root names onto the brand tokens, so the inline
+       style={{…var(--x)}} / svg stroke refs that survive componentisation
+       keep resolving after legacy.css is deleted */
+    --magenta: var(--color-magenta);
+    --magenta-deep: var(--color-magenta-deep);
+    --magenta-soft: var(--color-magenta-soft);
+    --ink: var(--color-ink);
+    --ink-2: var(--color-ink-2);
+    --ink-soft: var(--color-ink-soft);
+    --ink-faint: var(--color-ink-faint);
+    --cream: var(--color-cream);
+    --cream2: var(--color-cream-2);
+    --line: var(--color-line);
+    --paper: var(--color-paper);
+    --r: var(--radius-card);
+    --r-lg: var(--radius-card-lg);
+    --r-sm: 14px;
+    --ease: var(--ease-out-soft);
+    --maxw: var(--container-site);
+    --pad: 32px;
+  }
+}

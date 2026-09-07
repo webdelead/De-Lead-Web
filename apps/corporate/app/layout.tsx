@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import "./globals.css";
 
 const TITLE = "Corporate Training: De' Lead International";
 const DESC =
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" data-vertical="corporate">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -40,7 +41,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter:wght@400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
-        <link rel="stylesheet" href="/css/styles.css" />
       </head>
       {/* browser extensions (ColorZilla, Grammarly, etc.) add attributes to
           <body> before React hydrates — ignore that specific mismatch */}
