@@ -428,13 +428,24 @@
     gap: 2px;
     padding: 96px 26px 32px;
     transform: translateX(100%);
-    transition: transform 0.4s var(--ease);
+    /* .nav-pill's backdrop-filter makes it the containing block for this
+       fixed drawer, so translateX(100%) only clears the pill's inset, not
+       the viewport edge — a sliver + its shadow bleed in. visibility:hidden
+       (held until the slide-out finishes) guarantees no paint when closed. */
+    visibility: hidden;
+    transition:
+      transform 0.4s var(--ease),
+      visibility 0s linear 0.4s;
     box-shadow: -20px 0 60px -20px rgba(0, 0, 0, 0.3);
     z-index: 99;
     border-radius: 0;
   }
   .nav-links.open {
     transform: translateX(0);
+    visibility: visible;
+    transition:
+      transform 0.4s var(--ease),
+      visibility 0s;
   }
   .nav-links a {
     font-size: 1rem;
