@@ -1,0 +1,62 @@
+name: Visual baseline refresh
+
+# Regenerate the Playwright screenshot baselines for one marketing app on the
+# same Ubuntu runner (and DB-less env) the `visual` CI job uses, then commit
+# them back to the branch this was dispatched on. macOS-generated baselines
+# never match the Linux CI renderer, so baselines must be produced here.
+#
+# Usage: Actions -> "Visual baseline refresh" -> Run workflow -> pick the branch
+# (a redesign/<site> branch) and the app path.
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: "App directory to re-baseline"
+        required: true
+        default: apps/walk2lead
+        type: choice
+        options:
+          - apps/walk2lead
+          - apps/corporate
+          - apps/makerchamps
+          - apps/dli-education
+          - apps/deleadint
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm --filter @delead/config exec playwright install --with-deps chromium
+
+      - name: Regenerate baselines
+        env:
+          BUILD_ALLOW_DB_FALLBACK: "1"
+        run: pnpm --filter "./${{ inputs.app }}" test:visual -u
+
+      - name: Commit updated screenshots
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${{ inputs.app }}/e2e/__screenshots__"
+          if git diff --cached --quiet; then
+            echo "No baseline changes."
+            exit 0
+          fi
+          git commit -m "ci: refresh visual baselines for ${{ inputs.app }} (Linux runner)"
+          git push origin HEAD:${{ github.ref_name }}
