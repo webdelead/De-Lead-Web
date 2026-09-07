@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
+import { SiteScripts } from "@/components/SiteScripts";
 
 const TITLE = "Corporate Training: De' Lead International";
 const DESC =
@@ -46,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <body> before React hydrates — ignore that specific mismatch */}
       <body suppressHydrationWarning>
         {children}
-        <Script src="/js/main.js" strategy="afterInteractive" />
+        <SiteScripts />
         <Script
           src="/js/lead-capture.js"
           strategy="afterInteractive"
