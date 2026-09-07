@@ -83,7 +83,7 @@ export function S06_modules() {
               presents.
             </p>
           </div>
-          <div className="reveal-stagger grid grid-cols-1 gap-4 md:grid-cols-2 min-[1080px]:grid-cols-3">
+          <div className="reveal-stagger grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {MODULES.map((m) => {
               const k = m.kind ?? "white";
               return (

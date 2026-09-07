@@ -11,6 +11,17 @@
 @import "@delead/brand/theme.css";
 @import "./legacy.css" layer(mc-legacy);
 
+/* the frozen makerchamps stylesheet has exactly two breakpoints: 768 (= `md`,
+   already Tailwind's default) and 1080. Re-point `lg` to 1080 so `lg:` maps
+   1:1 to the frozen `@media (min-width: 1080px)` block. (`min-[1080px]:`
+   arbitrary variants don't reliably sort after `md:` and lose at wide widths.) */
+@theme {
+  /* 1080px — in rem so Tailwind's media-query sort keeps it after `md`
+     (48rem); a px value here sorts before 48rem and `md:` wins at wide
+     widths. */
+  --breakpoint-lg: 67.5rem;
+}
+
 @layer mc-legacy {
   :root {
     /* alias the frozen :root names onto the brand tokens so the inline
