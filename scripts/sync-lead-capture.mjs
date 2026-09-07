@@ -13,7 +13,7 @@ import { dirname, resolve } from "node:path";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCE = resolve(root, "packages/shared/browser/lead-capture.js");
-const APPS = ["deleadint", "walk2lead", "makerchamps", "corporate", "dli-education"];
+const APPS = ["deleadint", "makerchamps", "corporate", "dli-education"]; // walk2lead migrated to a client component
 const target = (app) => resolve(root, "apps", app, "public/js/lead-capture.js");
 
 const check = process.argv.includes("--check");

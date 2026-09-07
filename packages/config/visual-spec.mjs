@@ -32,9 +32,16 @@ const KILL_MOTION = `
 
 async function settle(page) {
   await page.addStyleTag({ content: KILL_MOTION });
+  // the sticky bar toggles position:fixed on scroll (main.js), and a fixed
+  // element is composited into every viewport tile of a tall element
+  // screenshot — pin it to absolute-at-top so it only appears in home--nav.
+  await page.addStyleTag({
+    content: "nav, .nav { position: absolute !important; }",
+  });
 
   // force every image eager so heights are settled before any capture, then
-  // walk the page so the reveal IntersectionObservers fire
+  // walk the page so the reveal IntersectionObservers fire, then hard-force
+  // every scroll-reveal to its end state (IO callback timing was a flake source)
   await page.evaluate(async () => {
     for (const img of document.querySelectorAll("img")) img.loading = "eager";
     await (document.fonts && document.fonts.ready);
@@ -44,6 +51,12 @@ async function settle(page) {
       await new Promise((r) => setTimeout(r, 60));
     }
     window.scrollTo(0, 0);
+    for (const el of document.querySelectorAll(
+      ".reveal, .reveal-stagger, .stagger-item, [data-revealed]",
+    )) {
+      el.classList.add("in", "is-visible");
+      el.setAttribute("data-revealed", "");
+    }
   });
 
   // freeze timer-driven loops (slideshow, autoplay carousels) on their frame
@@ -52,6 +65,20 @@ async function settle(page) {
     for (let i = 0; i <= maxId; i++) {
       clearTimeout(i);
       clearInterval(i);
+    }
+  });
+
+  await page.evaluate(() => {
+    for (const el of document.querySelectorAll("body *")) {
+      // pin position:fixed -> absolute: a fixed element is composited into
+      // EVERY viewport tile of a tall element screenshot (stamps repeatedly)
+      if (getComputedStyle(el).position === "fixed") {
+        el.style.setProperty("position", "absolute", "important");
+      }
+      // reset scroll containers — a main.js carousel's setInterval may have
+      // nudged scrollLeft once before it was cleared above
+      if (el.scrollLeft) el.scrollLeft = 0;
+      if (el.scrollTop) el.scrollTop = 0;
     }
   });
 

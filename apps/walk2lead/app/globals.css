@@ -1,0 +1,183 @@
+/* walk2lead — Tailwind v4 + @delead/brand. The frozen styles.css / main.js are
+   gone; this + the S01–S20 component utilities are the whole stylesheet. */
+@layer theme, base, w2l-shared, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@import "@delead/brand/theme.css";
+@import "@delead/brand/reset.css";
+
+@layer w2l-shared {
+  html {
+    scroll-behavior: smooth;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  .serif {
+    font-weight: 600;
+  }
+  .serif {
+    font-family: var(--font-lora);
+  }
+  /* @delead/brand/reset.css clamps `svg { max-width: 100% }`; the old
+     styles.css only clamped <img>. Decorative SVGs here (the hero doodle
+     circle at 128% of its box, sparks, wave) need their real width. */
+  svg {
+    max-width: none;
+  }
+  /* one notch lighter than Preflight's `bolder` (~700) — matches the
+     font-bold -> font-semibold sweep across the sections */
+  b,
+  strong {
+    font-weight: 600;
+  }
+
+  /* legacy custom-property aliases — a few inline style={{…var(--red)}} and
+     SVG stroke="var(--red-bright)" still reference these */
+  :root {
+    --red: var(--color-w2l);
+    --red-deep: var(--color-w2l-deep);
+    --red-bright: var(--color-w2l-bright);
+    --red-wash: var(--color-w2l-wash);
+    --ink: var(--color-ink);
+    --ink-soft: var(--color-ink-soft);
+    --magenta: var(--color-magenta);
+    --magenta-deep: var(--color-w2l-magenta-deep);
+    --cream: var(--color-cream);
+    --cream2: var(--color-cream-2);
+    --line: var(--color-line);
+    --shadow: var(--shadow-card);
+  }
+}
+
+/* Shared primitives still used as classes across the sections. The final
+   shared-primitives pass could promote these to @delead/ui, but they're
+   two-line rules — cheaper to keep here. */
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: var(--container-site);
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+  section {
+    position: relative;
+    padding: 96px 0;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--color-w2l);
+  }
+  .eyebrow::before {
+    content: "";
+    width: 34px;
+    height: 2px;
+    background: var(--color-w2l-bright);
+  }
+  .h2 {
+    margin-bottom: 18px;
+    font-size: clamp(1.9rem, 3.4vw, 2.9rem);
+  }
+  .lead {
+    max-width: 640px;
+    font-size: 1.08rem;
+    color: var(--color-ink-soft);
+  }
+  mark {
+    background: none;
+    color: var(--color-w2l);
+    font-style: italic;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 0.98rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  .btn-primary {
+    background: var(--color-w2l);
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: var(--color-w2l-deep);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
+  }
+  .btn-ghost {
+    border: 1.5px solid var(--color-line);
+    background: transparent;
+    color: var(--color-ink);
+  }
+  .btn-ghost:hover {
+    border-color: var(--color-w2l);
+    color: var(--color-w2l);
+  }
+  .btn-wa {
+    background: #25d366;
+    color: #fff;
+  }
+  .btn-wa:hover {
+    filter: brightness(0.95);
+    transform: translateY(-2px);
+  }
+  .ico-svg {
+    width: 1em;
+    height: 1em;
+    flex: 0 0 auto;
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      opacity 0.7s ease,
+      transform 0.7s ease;
+  }
+  .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes w2l-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes press-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+@keyframes floaty {
+  0%, 100% { transform: rotate(var(--r, 0deg)) translateY(0); }
+  50% { transform: rotate(var(--r, 0deg)) translateY(-12px); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes draw-circle {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes draw-check {
+  to { stroke-dashoffset: 0; }
+}
