@@ -484,9 +484,15 @@ importers:
       '@delead/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@delead/fonts':
+        specifier: workspace:*
+        version: link:../../packages/fonts
       '@delead/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@delead/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.2(gel@2.2.0)(postgres@3.4.9)
@@ -506,6 +512,9 @@ importers:
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.63.0
+      '@tailwindcss/postcss':
+        specifier: ^4
+        version: 4.3.3
       '@types/node':
         specifier: 'catalog:'
         version: 24.13.3
@@ -524,6 +533,9 @@ importers:
       eslint-config-next:
         specifier: 'catalog:'
         version: 16.3.4(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.3.3
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

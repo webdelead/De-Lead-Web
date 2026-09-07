@@ -1,0 +1,25 @@
+/* Transitional stylesheet for the CSS -> Tailwind migration.
+   Tailwind v4 + @delead/brand tokens run alongside the frozen walk2lead
+   stylesheet (legacy.css). Layer order matters:
+
+     theme  -> base(preflight)  -> w2l-legacy  -> components  -> utilities
+
+   legacy.css provides the full element reset for now, so Tailwind's Preflight
+   is deliberately NOT imported during the transition (it shifts a few px in
+   sections that aren't migrated yet). legacy.css sits BELOW utilities so a
+   migrated section's Tailwind classes win over any element rule still in it.
+
+   When the last S## section is on Tailwind: delete legacy.css + its @import,
+   drop the w2l-legacy layer, and add
+     @import "tailwindcss/preflight.css" layer(base);
+     @import "@delead/brand/reset.css";
+   then re-capture the baseline (that shift is the intentional, reviewed end
+   state). */
+@layer theme, w2l-legacy, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@import "@delead/brand/theme.css";
+
+@import "./legacy.css" layer(w2l-legacy);
