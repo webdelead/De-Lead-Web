@@ -10,7 +10,7 @@ export function S11_enquire() {
         className="section relative overflow-hidden [background:var(--color-mc-navy)] [color:var(--color-mc-cream)] before:absolute before:inset-0 before:bg-[url('/assets/brand/pattern.svg')] before:bg-[length:100%_auto] before:bg-no-repeat before:opacity-[0.06] before:content-['']"
         id="enquire"
       >
-        <div className="wrap relative z-[1] lg:grid lg:grid-cols-2 lg:items-start lg:gap-12">
+        <div className="wrap relative z-[1] md:grid md:grid-cols-2 md:items-start md:gap-12">
           <div className="reveal">
             <span className="eyebrow" style={{ color: "var(--mc-lime)" }}>
               Only 60 seats per season
@@ -25,10 +25,10 @@ export function S11_enquire() {
             >
               Reach out directly, or leave your details and our team will call you back.
             </p>
-            <div className="mb-8 mt-7 flex flex-col gap-3 lg:flex-row lg:flex-wrap">
+            <div className="mb-8 mt-7 flex flex-col gap-3 md:flex-row md:flex-wrap">
               <a
                 href="https://wa.me/918075566081?text=Hi%2C%20I%27d%20like%20to%20know%20more%20about%20MakerChamps"
-                className="btn btn-whatsapp w-full lg:w-auto lg:min-w-[200px] lg:flex-1"
+                className="btn btn-whatsapp w-full md:w-auto md:min-w-[200px] md:flex-1"
                 target="_blank"
                 rel="noopener"
               >
@@ -39,7 +39,7 @@ export function S11_enquire() {
               </a>
               <a
                 href="mailto:info@deleadint.com?subject=MakerChamps%20Enquiry"
-                className="btn btn-light w-full lg:w-auto lg:min-w-[200px] lg:flex-1"
+                className="btn btn-light w-full md:w-auto md:min-w-[200px] md:flex-1"
               >
                 Email Us
               </a>
