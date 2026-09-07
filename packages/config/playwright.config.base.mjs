@@ -80,7 +80,13 @@ export function makeVisualConfig({ port, command } = {}) {
       timeout: 180_000,
       env: {
         // visual gate runs without a DB — DB sections render their fallback
+        // (empty) state. Force the connection vars blank so a contributor with
+        // a populated .env still generates baselines that match CI, which has
+        // no database. buildSafe() swallows the resulting "not set" throw.
         BUILD_ALLOW_DB_FALLBACK: "1",
+        DATABASE_URL: "",
+        DATABASE_URL_RO: "",
+        DIRECT_URL: "",
         NODE_ENV: "production",
       },
     },
