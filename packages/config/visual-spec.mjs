@@ -126,10 +126,20 @@ async function settle(page) {
     ]);
   });
 
+  // forcing images eager + warming background-image URLs kicks off a fresh
+  // wave of requests; wait for the network to go quiet again so nothing is
+  // still painting when we capture.
+  await page.waitForLoadState("networkidle").catch(() => {});
+
   // let the 1400ms count-ups reach their fixed final value
   await page.waitForTimeout(1800);
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.waitForTimeout(150);
+  // two frames so any late background-image paint has flushed
+  await page.evaluate(
+    () =>
+      new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))),
+  );
+  await page.waitForTimeout(200);
 }
 
 export function registerVisualTests({ path = "/", name = "home" } = {}) {
