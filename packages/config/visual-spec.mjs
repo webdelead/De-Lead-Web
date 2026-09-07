@@ -127,18 +127,25 @@ async function settle(page) {
   });
 
   // forcing images eager + warming background-image URLs kicks off a fresh
-  // wave of requests; wait for the network to go quiet again so nothing is
-  // still painting when we capture.
-  await page.waitForLoadState("networkidle").catch(() => {});
+  // wave of requests; give it a BOUNDED moment to drain — networkidle alone
+  // can hang on a keep-alive socket and blow the 90s test timeout.
+  await Promise.race([
+    page.waitForLoadState("networkidle"),
+    page.waitForTimeout(4000),
+  ]).catch(() => {});
 
   // let the 1400ms count-ups reach their fixed final value
   await page.waitForTimeout(1800);
   await page.evaluate(() => window.scrollTo(0, 0));
   // two frames so any late background-image paint has flushed
-  await page.evaluate(
-    () =>
-      new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))),
-  );
+  await page
+    .evaluate(
+      () =>
+        new Promise((r) =>
+          requestAnimationFrame(() => requestAnimationFrame(r)),
+        ),
+    )
+    .catch(() => {});
   await page.waitForTimeout(200);
 }
 
