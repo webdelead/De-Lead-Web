@@ -9,7 +9,7 @@ export function S04_trust() {
   return (
     <>
       {/* .reveal stays until the main.js -> @delead/ui <Reveal> swap */}
-      <div className="reveal border-y border-solid border-line bg-white py-[30px] max-[600px]:py-6">
+      <div className="reveal [border-top:1px_solid_var(--color-line)] [border-bottom:1px_solid_var(--color-line)] bg-white py-[30px] max-[600px]:py-6">
         <div className="wrap flex flex-wrap items-center justify-center gap-11 max-[600px]:flex-col max-[600px]:gap-4">
           <div className="flex items-center gap-3.5 max-[600px]:justify-center">
             <span className="text-[0.78rem] font-semibold uppercase tracking-[0.14em] text-ink-soft">
