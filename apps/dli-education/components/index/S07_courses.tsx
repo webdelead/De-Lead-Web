@@ -22,7 +22,7 @@ export function S07_courses() {
               <h4>Python Programming</h4>
               <p className="cc-desc">Core fundamentals, problem solving, data structures, file and exception handling.</p>
               <p className="cc-meta">Ages 12+ &bull; Group or 1-to-1</p>
-              <div className="cc-foot"><span className="cc-price">32 hrs</span><a href="students/index.html#catalogue" className="btn btn-outline btn-sm">See details</a></div>
+              <div className="cc-foot"><span className="cc-price">32 hrs</span><a href="#contact" className="btn btn-outline btn-sm">Enquire</a></div>
             </article>
             <article className="ccard">
               <div className="cc-top peach"><svg className="ic"><use href="#i-chart" /></svg></div>
@@ -30,7 +30,7 @@ export function S07_courses() {
               <h4>Python for Data Analytics</h4>
               <p className="cc-desc">Statistics, data management, exploratory analysis, visualisation and capstone projects.</p>
               <p className="cc-meta">Ages 14+ &bull; 4 to 5 months</p>
-              <div className="cc-foot"><span className="cc-price">48 to 60 hrs</span><a href="students/index.html#catalogue" className="btn btn-outline btn-sm">See details</a></div>
+              <div className="cc-foot"><span className="cc-price">48 to 60 hrs</span><a href="#contact" className="btn btn-outline btn-sm">Enquire</a></div>
             </article>
             <article className="ccard">
               <div className="cc-top rose"><svg className="ic"><use href="#i-globe" /></svg></div>
@@ -38,7 +38,7 @@ export function S07_courses() {
               <h4>Web Development</h4>
               <p className="cc-desc">HTML, CSS and Bootstrap, JavaScript and jQuery, frameworks and deployment.</p>
               <p className="cc-meta">Ages 12+ &bull; Group or 1-to-1</p>
-              <div className="cc-foot"><span className="cc-price">32 to 48 hrs</span><a href="students/index.html#catalogue" className="btn btn-outline btn-sm">See details</a></div>
+              <div className="cc-foot"><span className="cc-price">32 to 48 hrs</span><a href="#contact" className="btn btn-outline btn-sm">Enquire</a></div>
             </article>
             <article className="ccard">
               <div className="cc-top teal"><svg className="ic"><use href="#i-bot" /></svg></div>
@@ -46,7 +46,7 @@ export function S07_courses() {
               <h4>Robotics</h4>
               <p className="cc-desc">Electronics and sensors, mechanical design and robot programming, geared to STEM pathways.</p>
               <p className="cc-meta">Ages 10+ &bull; 3 to 4 months</p>
-              <div className="cc-foot"><span className="cc-price">32 hrs</span><a href="students/index.html#catalogue" className="btn btn-outline btn-sm">See details</a></div>
+              <div className="cc-foot"><span className="cc-price">32 hrs</span><a href="#contact" className="btn btn-outline btn-sm">Enquire</a></div>
             </article>
             <article className="ccard">
               <div className="cc-top lav"><svg className="ic"><use href="#i-box" /></svg></div>
@@ -54,7 +54,7 @@ export function S07_courses() {
               <h4>3D Design &amp; Modeling</h4>
               <p className="cc-desc">Modelling fundamentals, sculpting, texturing and rendering for product and architecture.</p>
               <p className="cc-meta">Ages 12+ &bull; 3 to 4 months</p>
-              <div className="cc-foot"><span className="cc-price">32 hrs</span><a href="students/index.html#catalogue" className="btn btn-outline btn-sm">See details</a></div>
+              <div className="cc-foot"><span className="cc-price">32 hrs</span><a href="#contact" className="btn btn-outline btn-sm">Enquire</a></div>
             </article>
             <article className="ccard">
               <div className="cc-top lime"><svg className="ic"><use href="#i-sparkles" /></svg></div>
@@ -62,7 +62,7 @@ export function S07_courses() {
               <h4>Gen AI for Smart Learning</h4>
               <p className="cc-desc">AI study techniques, prompt engineering, memory and revision tools, ethical use.</p>
               <p className="cc-meta">Ages 13+ &bull; Group or 1-to-1</p>
-              <div className="cc-foot"><span className="cc-price">2 months</span><a href="students/index.html#catalogue" className="btn btn-outline btn-sm">See details</a></div>
+              <div className="cc-foot"><span className="cc-price">2 months</span><a href="#contact" className="btn btn-outline btn-sm">Enquire</a></div>
             </article>
           </div>
           <p style={{ marginTop: "26px" }} className="reveal"><a className="tlink" href="/students">See all 11 student courses
