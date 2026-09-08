@@ -1,12 +1,32 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { instrumentSans } from "@delead/fonts/instrument-sans";
+import { inter } from "@delead/fonts/inter";
+import { lora } from "@delead/fonts/lora";
+import { bricolageGrotesque } from "@delead/fonts/bricolage-grotesque";
+import { spaceGrotesk } from "@delead/fonts/space-grotesk";
+import { manrope } from "@delead/fonts/manrope";
+import { caveat } from "@delead/fonts/caveat";
+import { coveredByYourGrace } from "@delead/fonts/covered-by-your-grace";
 import "./globals.css";
+import { SiteScripts } from "@/components/SiteScripts";
 
 const DESC =
   "De' Lead International is an education innovation ecosystem running Corporate Training, TinkerChamps, MakerChamps, DLI Education, Goal Finder and DLI Foundation (Walk2Lead CSR) across India and the UAE.";
 const SITE = process.env.SITE_URL_DELEADINT || "https://deleadint.com";
 const LEAD_ENDPOINT =
   process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://admin.deleadint.com/api/lead";
+
+const fontVars = [
+  instrumentSans.variable,
+  inter.variable,
+  lora.variable,
+  bricolageGrotesque.variable,
+  spaceGrotesk.variable,
+  manrope.variable,
+  caveat.variable,
+  coveredByYourGrace.variable,
+].join(" ");
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),
@@ -32,20 +52,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-vertical="deleadint">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Inter:wght@400;500;600;700;800&family=Lora:ital,wght@0,600;0,700;1,600&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@600;700;800&family=Caveat:wght@400;600;700&family=Covered+By+Your+Grace&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="en" data-vertical="deleadint" className={fontVars}>
       {/* browser extensions (ColorZilla, Grammarly, etc.) add attributes to
           <body> before React hydrates — ignore that specific mismatch */}
       <body suppressHydrationWarning>
         {children}
-        <Script src="/js/main.js" strategy="afterInteractive" />
+        <SiteScripts />
         <Script src="/js/lead-capture.js" strategy="afterInteractive" data-endpoint={LEAD_ENDPOINT} />
       </body>
     </html>

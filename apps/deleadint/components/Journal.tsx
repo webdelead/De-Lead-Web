@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getPosts } from "@/lib/content";
 
 const FALLBACK: Record<string, string> = {
@@ -24,9 +25,9 @@ export async function Journal() {
             </p>
           </div>
           {posts.length > 0 && (
-            <a href="/journal" className="blog-head-link">
+            <Link href="/journal" className="blog-head-link">
               All field notes &rarr;
-            </a>
+            </Link>
           )}
         </div>
 
@@ -41,7 +42,7 @@ export async function Journal() {
           </div>
           <div className="blog-row">
             {posts.map((p) => (
-              <a key={p.id} href={`/journal/${p.slug}`} className="blog-card2">
+              <Link key={p.id} href={`/journal/${p.slug}`} className="blog-card2">
                 <div className="bc-media">
                   <img src={p._url || FALLBACK[p.tag] || "/assets/stock/tc-4.webp"} alt={p.title} loading="lazy" />
                 </div>
@@ -57,7 +58,7 @@ export async function Journal() {
                     : ""}
                 </span>
                 <p>{p.excerpt}</p>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
