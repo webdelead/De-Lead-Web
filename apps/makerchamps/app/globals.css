@@ -1288,8 +1288,6 @@
     border-radius: var(--radius-md);
     overflow: hidden;
     background: var(--mc-navy-deep);
-    /* section is now warm cream, not navy — dark hairline so the cards read */
-    border: 1px solid rgba(2, 30, 93, 0.12);
     box-shadow: var(--shadow-card);
   }
 
@@ -1300,6 +1298,7 @@
     height: 100%;
     object-fit: cover;
     object-position: top center;
+    cursor: zoom-in;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1556,13 +1555,13 @@
     transition: opacity 0.6s ease, transform 0.6s ease;
   }
 
-  /* soft lift + un-tilt + slight zoom on hover for the module / safety cards.
-     The frozen sheet did this via `.module-card:hover` / `.safety-card:hover`;
-     those classes were converted to utilities, so target a shared marker class
-     instead. Specificity (0,3,1) beats `.reveal-stagger.is-visible
-     .stagger-item` (0,3,0) so the hover transform wins over the resting tilt. */
+  /* very soft lift + un-tilt on hover for the module / safety cards. The frozen
+     sheet did this via `.module-card:hover` / `.safety-card:hover`; those
+     classes became utilities, so target a shared marker class instead.
+     Specificity (0,4,0) beats `.reveal-stagger.is-visible .stagger-item`
+     (0,3,0) so the hover transform wins over the resting tilt. */
   .reveal-stagger.is-visible .tilt-hover:hover {
-    transform: translateY(-4px) rotate(0deg) scale(1.02);
+    transform: translateY(-2px) rotate(0deg) scale(1.004);
   }
 
   .stagger-item:nth-child(1) { transition-delay: 0.02s; }

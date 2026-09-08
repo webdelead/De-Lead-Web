@@ -230,7 +230,9 @@ export function SiteScripts() {
         im.addEventListener("click", h);
         cleanups.push(() => im.removeEventListener("click", h));
       };
-      document.querySelectorAll<HTMLImageElement>(".marquee-track img").forEach(wire);
+      document
+        .querySelectorAll<HTMLImageElement>(".marquee-track img, .wa-card img")
+        .forEach(wire);
       const onLbClick = () => lb.classList.remove("open");
       lb.addEventListener("click", onLbClick);
       cleanups.push(() => lb.removeEventListener("click", onLbClick));
