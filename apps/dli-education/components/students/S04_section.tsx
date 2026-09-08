@@ -22,7 +22,7 @@ export function S04_section() {
             <article className="tcard rose reveal">
               <span className="tc-ico"><svg className="ic"><use href="#i-graduation" /></svg></span>
               <h3>Certificate on completion</h3>
-              <p>Every learner who finishes a track receives a completion certificate from De' Lead International.</p>
+              <p>Every learner who finishes a track receives a completion certificate from De&apos; Lead International.</p>
             </article>
           </div>
         </div>

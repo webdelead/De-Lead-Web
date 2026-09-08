@@ -4,7 +4,7 @@ export function S04_audiences() {
       <section className="section" id="audiences">
         <div className="wrap">
           <div className="shead simple reveal">
-            <span className="kicker">Who it's for</span>
+            <span className="kicker">Who it&apos;s for</span>
             <h2 className="h2" style={{ marginTop: "10px" }}>Two paths, one hands-on method</h2>
             <p className="sh-note">Pick the track that fits. Same build-first approach, scaled to the learner.</p>
           </div>

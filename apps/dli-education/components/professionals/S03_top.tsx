@@ -21,9 +21,6 @@ export function S03_top() {
             </div>
       
             <figure className="hero-figure">
-              <svg className="squiggle" viewBox="0 0 220 240" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M14 224c-4-48 26-84 70-84 40 0 58 44 22 66-30 18-70-8-46-44 20-30 74-40 128-96" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
-              </svg>
               <img src="/assets/photos/session-1.webp" alt="A DLI Education professional training session" />
               <span className="photo-tag pt-1">Hands-on</span>
               <span className="photo-tag pt-2">Cohort or 1-to-1</span>
@@ -31,7 +28,7 @@ export function S03_top() {
       
             <div className="hero-aside">
               <div className="hero-blobs"><i></i><i></i><i></i></div>
-              <p>Delivered the same hands-on way as the rest of De' Lead International, scoped to your team, department or whole institution.</p>
+              <p>Delivered the same hands-on way as the rest of De&apos; Lead International, scoped to your team, department or whole institution.</p>
               <a href="#areas" className="btn">See the skill areas
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M7 17L17 7M17 7H8M17 7V16" /></svg></a>
             </div>

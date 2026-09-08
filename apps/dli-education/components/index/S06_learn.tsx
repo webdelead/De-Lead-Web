@@ -4,7 +4,7 @@ export function S06_learn() {
       <section className="section" id="learn">
         <div className="wrap">
           <div className="shead simple reveal">
-            <h2 className="h2">What they'll learn</h2>
+            <h2 className="h2">What they&apos;ll learn</h2>
             <p className="sh-note">Two audiences, one hands-on method. Every track is designed to be built, not just watched.</p>
           </div>
           <div className="bento reveal">

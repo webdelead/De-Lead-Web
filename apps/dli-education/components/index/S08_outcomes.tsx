@@ -16,16 +16,16 @@ export function S08_outcomes() {
             </figure>
             <figure className="ocard">
               <div className="o-top"><span className="o-badge">AN</span><div><div className="o-name">Aamil Nazar</div><div className="o-where">GHSS Medical College Campus, Kozhikode</div></div></div>
-              <p className="o-win">Built his school's website and was honoured by Kerala's education minister. Two-time winner of the state-level web design competition.</p>
+              <p className="o-win">Built his school&apos;s website and was honoured by Kerala&apos;s education minister. Two-time winner of the state-level web design competition.</p>
               <span className="o-tag">Web development</span>
             </figure>
             <figure className="ocard">
               <div className="o-top"><span className="o-badge">MA</span><div><div className="o-name">Adhil T S &amp; Ameya M</div><div className="o-where">Kerala, India</div></div></div>
-              <p className="o-win">Champions at the TechTop International Bootcamp, held at Kerala Startup Mission's Maker Village, Kochi.</p>
+              <p className="o-win">Champions at the TechTop International Bootcamp, held at Kerala Startup Mission&apos;s Maker Village, Kochi.</p>
               <span className="o-tag">Robotics</span>
             </figure>
           </div>
-          <p style={{ marginTop: "22px" }} className="reveal"><a className="tlink" href="students/index.html#heroes">More student stories
+          <p style={{ marginTop: "22px" }} className="reveal"><a className="tlink" href="/students#heroes">More student stories
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M7 17L17 7M17 7H8M17 7V16" /></svg></a></p>
         </div>
       </section>

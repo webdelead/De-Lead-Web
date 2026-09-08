@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 // no dedicated DLI Education social account yet — follow the parent brand
 const instagramIcon = (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -20,7 +22,7 @@ export function S12_footergrid() {
         <div className="footer-grid">
           <div className="footer-brand">
             <b>DLI Professionals</b>
-            <p>Future-skills and soft-skills training from DLI Education, part of De' Lead International.</p>
+            <p>Future-skills and soft-skills training from DLI Education, part of De&apos; Lead International.</p>
             <span className="footer-tag">Learn, Develop &amp; Lead</span>
             <div className="footer-social">
               <a href="https://www.instagram.com/deleadint/?hl=en" target="_blank" rel="noopener" aria-label="De' Lead International on Instagram">
@@ -34,16 +36,16 @@ export function S12_footergrid() {
           <div className="footer-col">
             <h4>DLI Education</h4>
             <ul>
-              <li><a href="/">Overview</a></li>
+              <li><Link href="/">Overview</Link></li>
               <li><a href="#areas">Skill areas</a></li>
               <li><a href="#gen-ai">Gen AI tracks</a></li>
               <li><a href="/students">Students</a></li>
             </ul>
           </div>
           <div className="footer-col">
-            <h4>De' Lead</h4>
+            <h4>De&apos; Lead</h4>
             <ul>
-              <li><a href="https://deleadint.com" target="_blank" rel="noopener">De' Lead International</a></li>
+              <li><a href="https://deleadint.com" target="_blank" rel="noopener">De&apos; Lead International</a></li>
               <li><a href="https://tinkerchamps.deleadint.com" target="_blank" rel="noopener">TinkerChamps</a></li>
               <li><a href="https://goalfinder.org/" target="_blank" rel="noopener">Goal Finder</a></li>
               <li><a href="https://w2l.deleadint.com" target="_blank" rel="noopener">Walk2Lead</a></li>
@@ -61,7 +63,7 @@ export function S12_footergrid() {
           </div>
         </div>
         <div className="footer-bottom">
-          <span>&copy; <span id="year"></span> De' Lead International.</span>
+          <span>&copy; {new Date().getFullYear()} De&apos; Lead International.</span>
           <span>www.deleadint.com</span>
         </div>
       </footer>    </>

@@ -21,9 +21,6 @@ export function S03_top() {
             </div>
       
             <figure className="hero-figure">
-              <svg className="squiggle" viewBox="0 0 220 240" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <path d="M14 224c-4-48 26-84 70-84 40 0 58 44 22 66-30 18-70-8-46-44 20-30 74-40 128-96" stroke="currentColor" strokeWidth="7" strokeLinecap="round" />
-              </svg>
               <img src="/assets/photos/session-6.webp" alt="Students in a DLI Education session" />
               <span className="photo-tag pt-1">Mentor-led</span>
               <span className="photo-tag pt-2">Real projects</span>

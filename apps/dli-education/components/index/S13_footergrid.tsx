@@ -20,7 +20,7 @@ export function S13_footergrid() {
         <div className="footer-grid">
           <div className="footer-brand">
             <b>DLI Education</b>
-            <p>The technology and future-skills learning arm of De' Lead International. Hands-on programmes for students and professionals across India and the UAE.</p>
+            <p>The technology and future-skills learning arm of De&apos; Lead International. Hands-on programmes for students and professionals across India and the UAE.</p>
             <span className="footer-tag">Learn, Develop &amp; Lead</span>
             <div className="footer-social">
               <a href="https://www.instagram.com/deleadint/?hl=en" target="_blank" rel="noopener" aria-label="De' Lead International on Instagram">
@@ -41,9 +41,9 @@ export function S13_footergrid() {
             </ul>
           </div>
           <div className="footer-col">
-            <h4>De' Lead</h4>
+            <h4>De&apos; Lead</h4>
             <ul>
-              <li><a href="https://deleadint.com" target="_blank" rel="noopener">De' Lead International</a></li>
+              <li><a href="https://deleadint.com" target="_blank" rel="noopener">De&apos; Lead International</a></li>
               <li><a href="https://tinkerchamps.deleadint.com" target="_blank" rel="noopener">TinkerChamps</a></li>
               <li><a href="https://goalfinder.org/" target="_blank" rel="noopener">Goal Finder</a></li>
               <li><a href="https://w2l.deleadint.com" target="_blank" rel="noopener">Walk2Lead</a></li>
@@ -61,7 +61,7 @@ export function S13_footergrid() {
           </div>
         </div>
         <div className="footer-bottom">
-          <span>&copy; <span id="year"></span> De' Lead International.</span>
+          <span>&copy; {new Date().getFullYear()} De&apos; Lead International.</span>
           <span>www.deleadint.com</span>
         </div>
       </footer>    </>
