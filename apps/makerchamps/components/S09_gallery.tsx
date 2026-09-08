@@ -33,11 +33,11 @@ export async function S09_gallery() {
 
   return (
     <>
-      <section className="section gallery" id="gallery">
-        <div className="container">
+      <section className="section bg-white" id="gallery">
+        <div className="wrap">
           <div className="section-head reveal">
             <span className="eyebrow">Inside a batch</span>
-            <h2>What two days on campus <span className="italic">actually looks like</span></h2>
+            <h2>What two days on campus <span className="mc-accent">actually looks like</span></h2>
             <a
               className="gallery-ig-badge reveal"
               href="https://www.instagram.com/deleadint/?hl=en"

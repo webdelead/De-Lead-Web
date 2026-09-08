@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { bricolageGrotesque } from "@delead/fonts/bricolage-grotesque";
+import { anton } from "@delead/fonts/anton";
+import { inter } from "@delead/fonts/inter";
+import "./globals.css";
+import { SiteScripts } from "@/components/SiteScripts";
 
 const TITLE =
   "MakerChamps — Residential Innovation Bootcamp at NIT Calicut | De' Lead International";
@@ -33,21 +38,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Anton&family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-        <link rel="stylesheet" href="/css/styles.css" />
-      </head>
+    <html
+      lang="en"
+      data-vertical="makerchamps"
+      className={`${bricolageGrotesque.variable} ${anton.variable} ${inter.variable}`}
+    >
       {/* browser extensions (ColorZilla, Grammarly, etc.) add attributes to
           <body> before React hydrates — ignore that specific mismatch */}
       <body suppressHydrationWarning>
         {children}
-        <Script src="/js/main.js" strategy="afterInteractive" />
+        <SiteScripts />
         <Script
           src="/js/lead-capture.js"
           strategy="afterInteractive"

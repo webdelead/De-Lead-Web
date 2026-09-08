@@ -7,12 +7,17 @@ export async function S10b_whatsapp() {
   const loop = [...rows, ...rows];
 
   return (
-    <section className="section wa-reviews" id="whatsapp-reviews">
-      <div className="pattern-bg on-dark"></div>
-      <div className="container">
+    <section
+      className="section overflow-hidden [background:var(--color-mc-cream-warm)] [color:var(--color-mc-ink)]"
+      id="whatsapp-reviews"
+    >
+      <div className="pattern-bg on-light"></div>
+      <div className="wrap">
         <div className="section-head reveal">
-          <span className="eyebrow" style={{ color: "var(--mc-lime)" }}>Straight from the group chat</span>
-          <h2>What parents share on <span className="italic">WhatsApp</span></h2>
+          <span className="eyebrow">Straight from the group chat</span>
+          <h2>
+            What parents share on <span className="mc-accent">WhatsApp</span>
+          </h2>
         </div>
       </div>
       <div className="wa-marquee-wrap reveal">
