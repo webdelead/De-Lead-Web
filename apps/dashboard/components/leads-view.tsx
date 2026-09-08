@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { interestLabel as interestLabelFor } from "@/lib/lead-fields";
 import { deleteLead } from "@/lib/actions/leads";
-import { formatDate, formatDateTime } from "@delead/shared/dates";
+import { formatDateTime } from "@delead/shared/dates";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -199,7 +199,7 @@ export function LeadsView(props: {
               props.rows.map((r) => (
                 <TableRow key={r.id} className="cursor-pointer" onClick={() => setOpen(r)}>
                   <TableCell className="whitespace-nowrap text-muted-foreground">
-                    {formatDate(r.createdAt)}
+                    {formatDateTime(r.createdAt)}
                   </TableCell>
                   <TableCell className="font-medium">{r.name}</TableCell>
                   {!props.hideSite && (

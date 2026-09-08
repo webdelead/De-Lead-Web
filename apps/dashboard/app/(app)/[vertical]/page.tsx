@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { VERTICALS, type VerticalSlug } from "@delead/brand/verticals";
 import { requireAccess } from "@/lib/authz";
 import { verticalSections } from "@/lib/nav";
-import { formatDate } from "@delead/shared/dates";
+import { formatDateTime } from "@delead/shared/dates";
 import {
   getDb,
   leads,
@@ -185,7 +185,7 @@ export default async function VerticalOverview({
                     {r.sub && <span className="text-muted-foreground"> · {r.sub}</span>}
                   </div>
                   <span className="flex-shrink-0 text-xs text-muted-foreground">
-                    {formatDate(r.date)}
+                    {formatDateTime(r.date)}
                   </span>
                 </li>
               ))}

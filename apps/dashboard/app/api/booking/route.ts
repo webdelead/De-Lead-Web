@@ -2,6 +2,7 @@ import { NextResponse, after } from "next/server";
 import { getDb, tcBookings, outbox, flushOutbox, sql } from "@delead/db";
 import { verifyTurnstile } from "@delead/shared/turnstile";
 import { clientIp, ipHashOf } from "@delead/shared/request-ip";
+import { formatDateTime } from "@delead/shared/dates";
 
 // Public write endpoint for the TinkerChamps booking form. Same model as
 // /api/lead: the site POSTs here (cross-origin), the dashboard owns the DB write
@@ -82,7 +83,14 @@ export async function POST(req: Request) {
 
     const values = { ...clean, meta: ipHash ? { ip_hash: ipHash } : {} };
     const appsScriptUrl = process.env.APPS_SCRIPT_URL_TINKERCHAMPS;
-    const mirrorPayload = { ...clean, receivedAt: new Date().toISOString() };
+    const receivedAt = new Date();
+    // receivedAt: machine-readable UTC (ISO 8601, ...Z). receivedAtIst: the same
+    // instant as a human string in India Standard Time, for the Google Sheet.
+    const mirrorPayload = {
+      ...clean,
+      receivedAt: receivedAt.toISOString(),
+      receivedAtIst: formatDateTime(receivedAt),
+    };
 
     let bookingId: string | undefined;
     try {

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getDb, leads, outbox, sql, flushOutbox } from "@delead/db";
 import { verifyTurnstile } from "@delead/shared/turnstile";
 import { clientIp, ipHashOf } from "@delead/shared/request-ip";
+import { formatDateTime } from "@delead/shared/dates";
 import { DB_VERTICAL_KEYS } from "@delead/brand/verticals";
 
 const ORIGINS = [
@@ -106,7 +107,14 @@ export async function POST(req: Request) {
   };
   const hook = APPS_SCRIPT[sourceKey];
   const { turnstileToken: _t, ...mirrorFields } = d;
-  const mirrorPayload = { ...mirrorFields, receivedAt: new Date().toISOString() };
+  const receivedAt = new Date();
+  // receivedAt: machine-readable UTC (ISO 8601, ...Z). receivedAtIst: the same
+  // instant as a human string in India Standard Time, for the Google Sheet.
+  const mirrorPayload = {
+    ...mirrorFields,
+    receivedAt: receivedAt.toISOString(),
+    receivedAtIst: formatDateTime(receivedAt),
+  };
 
   // Store the lead + queue the Google Sheet mirror in one transaction, so the
   // mirror survives a dropped request. Fall back to a plain insert if the
