@@ -44,7 +44,7 @@ const CARDS = [
 ];
 
 const card =
-  "stagger-item relative rounded-[var(--radius-md)] bg-white p-5 shadow-[var(--shadow-card)] transition-transform duration-200 odd:[--tilt:1deg] even:[--tilt:-1deg]";
+  "stagger-item tilt-hover relative rounded-[var(--radius-md)] bg-white p-5 shadow-[var(--shadow-card)] transition-transform duration-200 odd:[--tilt:1deg] even:[--tilt:-1deg]";
 
 export function S08_safety() {
   return (

@@ -80,6 +80,9 @@
     --mc-cream-warm: var(--color-mc-cream-warm);
     --mc-ink: var(--color-mc-ink);
     --mc-white: #ffffff;
+    /* @delead/brand has no --color-mc-white token; several components use the
+       `--color-*` name in arbitrary values, so define it here too. */
+    --color-mc-white: #ffffff;
     --font-display: var(--font-bricolage);
     --font-mega: var(--font-anton);
     --font-body: var(--font-inter);
@@ -1285,7 +1288,8 @@
     border-radius: var(--radius-md);
     overflow: hidden;
     background: var(--mc-navy-deep);
-    border: 1px solid rgba(247, 247, 247, 0.12);
+    /* section is now warm cream, not navy — dark hairline so the cards read */
+    border: 1px solid rgba(2, 30, 93, 0.12);
     box-shadow: var(--shadow-card);
   }
 
@@ -1550,6 +1554,15 @@
     opacity: 0;
     transform: translateY(20px) rotate(var(--tilt, 0deg));
     transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  /* soft lift + un-tilt + slight zoom on hover for the module / safety cards.
+     The frozen sheet did this via `.module-card:hover` / `.safety-card:hover`;
+     those classes were converted to utilities, so target a shared marker class
+     instead. Specificity (0,3,1) beats `.reveal-stagger.is-visible
+     .stagger-item` (0,3,0) so the hover transform wins over the resting tilt. */
+  .reveal-stagger.is-visible .tilt-hover:hover {
+    transform: translateY(-4px) rotate(0deg) scale(1.02);
   }
 
   .stagger-item:nth-child(1) { transition-delay: 0.02s; }

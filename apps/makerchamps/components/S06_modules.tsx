@@ -41,7 +41,7 @@ const MODULES: { n: string; h: string; p: string; kind?: "set-a" | "featured" }[
 ];
 
 const cardBase =
-  "stagger-item relative rounded-[var(--radius-md)] p-[22px] shadow-[var(--shadow-card)] transition-transform duration-200 odd:[--tilt:-1deg] even:[--tilt:1deg]";
+  "stagger-item tilt-hover relative rounded-[var(--radius-md)] p-[22px] shadow-[var(--shadow-card)] transition-transform duration-200 odd:[--tilt:-1deg] even:[--tilt:1deg]";
 const kindClass = {
   "set-a": "[background:var(--color-mc-lime)]",
   featured: "[background:var(--color-mc-navy)]",

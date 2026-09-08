@@ -96,7 +96,7 @@ export function S07_backers() {
                 <div className="relative z-[1] [font-family:var(--font-anton)] [font-size:clamp(3.2rem,16vw,4.2rem)] leading-none [color:var(--color-mc-orange)]">
                   #1
                 </div>
-                <p className="relative z-[1] mt-2.5 text-[0.9rem] opacity-85">
+                <p className="relative z-[1] mt-2.5 text-[0.9rem] text-white">
                   NIT in Kerala, NIRF top-ranked — and where your child spends two days building, not
                   just visiting.
                 </p>

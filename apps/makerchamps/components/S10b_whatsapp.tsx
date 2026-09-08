@@ -8,15 +8,13 @@ export async function S10b_whatsapp() {
 
   return (
     <section
-      className="section overflow-hidden [background:var(--color-mc-navy)] [color:var(--color-mc-cream)]"
+      className="section overflow-hidden [background:var(--color-mc-cream-warm)] [color:var(--color-mc-ink)]"
       id="whatsapp-reviews"
     >
-      <div className="pattern-bg on-dark"></div>
+      <div className="pattern-bg on-light"></div>
       <div className="wrap">
         <div className="section-head reveal">
-          <span className="eyebrow" style={{ color: "var(--mc-lime)" }}>
-            Straight from the group chat
-          </span>
+          <span className="eyebrow">Straight from the group chat</span>
           <h2>
             What parents share on <span className="mc-accent">WhatsApp</span>
           </h2>
