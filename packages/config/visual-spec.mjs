@@ -38,14 +38,19 @@ async function settle(page) {
   await page.addStyleTag({
     content: "nav, .nav { position: absolute !important; }",
   });
-  // deleadint's ecosystem section is a stack of sticky .v-card panels whose
-  // opacity + translateY are rewritten every scroll frame by main.js's
-  // fadeCards() (a scroll-linked crossfade). That can never settle into two
-  // identical frames for toHaveScreenshot. Pin every card fully visible so the
-  // section captures as a deterministic stack. `!important` beats the inline
-  // style fadeCards writes; layout (position:sticky) is untouched.
+  // deleadint's ecosystem section is a stack of `position: sticky` .v-card
+  // panels (each min-height:100vh, ~7000px total) whose opacity + translateY a
+  // scroll-linked crossfade rewrites every frame. Two problems for
+  // toHaveScreenshot on that one giant element: (1) the crossfade never
+  // settles into two identical frames, (2) Playwright captures a
+  // taller-than-viewport element in scrolled segments and `position: sticky`
+  // children re-pin at every offset, so the stitched image is
+  // non-deterministic. Pin the cards fully visible AND un-stick them so the
+  // section flows as a plain 6-panel stack that captures identically every
+  // time. `!important` beats the inline styles the crossfade writes.
   await page.addStyleTag({
-    content: ".v-card { opacity: 1 !important; transform: none !important; }",
+    content:
+      ".v-card { opacity: 1 !important; transform: none !important; position: relative !important; }",
   });
 
   // force every image eager so heights are settled before any capture, then
