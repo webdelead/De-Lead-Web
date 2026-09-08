@@ -96,7 +96,7 @@ export function S12_footer() {
                     </a>
                   </li>
                   <li>
-                    <a href="https://tinkerchamps.deleadint.com" target="_blank" rel="noopener">
+                    <a href="https://tc.deleadint.com" target="_blank" rel="noopener">
                       TinkerChamps
                     </a>
                   </li>
