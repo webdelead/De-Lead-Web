@@ -68,11 +68,12 @@
     cursor: pointer; /* Tailwind v4 Preflight dropped button{cursor:pointer} */
   }
   /* Preflight sets `line-height: inherit` on form controls -> pulls in the
-     body 1.6; the frozen sheet left them at the UA `normal`. */
+     body 1.6; the frozen sheet left <input>/<select>/<textarea> at the UA
+     `normal`. NOT <button> — the frozen `button { font: inherit }` means
+     buttons DO inherit the body 1.6 (e.g. .nav-drop-trigger). */
   input,
   select,
-  textarea,
-  button {
+  textarea {
     line-height: normal;
   }
 }
