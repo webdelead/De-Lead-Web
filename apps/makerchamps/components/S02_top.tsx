@@ -49,7 +49,7 @@ export async function S02_top() {
 
             <div className="hero-actions">
               <a href="#enquire" className="btn btn-primary">Reserve a Seat</a>
-              <a href="#modules" className="btn btn-ghost-light">See What They'll Do</a>
+              <a href="#modules" className="btn btn-ghost-light">See What They&apos;ll Do</a>
             </div>
             <div className="hero-microstats">
               <div>
