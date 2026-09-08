@@ -38,6 +38,15 @@ async function settle(page) {
   await page.addStyleTag({
     content: "nav, .nav { position: absolute !important; }",
   });
+  // deleadint's ecosystem section is a stack of sticky .v-card panels whose
+  // opacity + translateY are rewritten every scroll frame by main.js's
+  // fadeCards() (a scroll-linked crossfade). That can never settle into two
+  // identical frames for toHaveScreenshot. Pin every card fully visible so the
+  // section captures as a deterministic stack. `!important` beats the inline
+  // style fadeCards writes; layout (position:sticky) is untouched.
+  await page.addStyleTag({
+    content: ".v-card { opacity: 1 !important; transform: none !important; }",
+  });
 
   // force every image eager so heights are settled before any capture, then
   // walk the page so the reveal IntersectionObservers fire, then hard-force
