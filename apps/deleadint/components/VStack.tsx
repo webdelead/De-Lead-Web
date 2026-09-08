@@ -52,7 +52,7 @@ const cards: VCard[] = [
     style: {
       "--v-bg": "#c81c1c",
       "--v-fg": "#fff",
-      "--v-font": "'Lora',serif",
+      "--v-font": "var(--font-lora), serif",
       "--v-fw": "700",
       "--v-fstyle": "italic",
     } as CSSProperties,
@@ -84,7 +84,7 @@ const cards: VCard[] = [
     style: {
       "--v-bg": "#5021b0",
       "--v-fg": "var(--tc-yellow)",
-      "--v-font": "'Covered By Your Grace',cursive",
+      "--v-font": "var(--font-grace), cursive",
       "--v-fw": "400",
     } as CSSProperties,
     logo: {
@@ -118,7 +118,7 @@ const cards: VCard[] = [
     style: {
       "--v-bg": "#021e5d",
       "--v-fg": "#fff",
-      "--v-font": "'Bricolage Grotesque',sans-serif",
+      "--v-font": "var(--font-bricolage), sans-serif",
       "--v-fw": "700",
     } as CSSProperties,
     logo: {
@@ -151,7 +151,7 @@ const cards: VCard[] = [
       "--v-bg": "#142653",
       "--v-fg": "#fff",
       "--v-accent": "#29bac1",
-      "--v-font": "'Space Grotesk',sans-serif",
+      "--v-font": "var(--font-space-grotesk), sans-serif",
       "--v-fw": "700",
     } as CSSProperties,
     brandSplit: true,
@@ -181,7 +181,7 @@ const cards: VCard[] = [
       "--v-bg": "#0145d5",
       "--v-fg": "#fff",
       "--v-accent": "#72c045",
-      "--v-font": "'Manrope',sans-serif",
+      "--v-font": "var(--font-manrope), sans-serif",
       "--v-fw": "800",
     } as CSSProperties,
     logo: {
@@ -211,7 +211,7 @@ const cards: VCard[] = [
 function VCardEl({ c }: { c: VCard }) {
   return (
     <section className="v-card" id={c.id} style={c.style}>
-      <div className="v-card-inner container">
+      <div className="v-card-inner wrap">
         <div className={c.brandSplit ? "vc-brand vc-brand-split" : "vc-brand"}>
           <img className="vc-logo" src={c.logo.src} alt={c.logo.alt} style={c.logo.style} />
           {c.brandSub && <span className="vc-brand-sub">{c.brandSub}</span>}
@@ -248,7 +248,7 @@ function VCardEl({ c }: { c: VCard }) {
 
 export function VStack() {
   return (
-    <div id="ecosystem" className="v-stack">
+    <div id="ecosystem" className="v-stack" data-visual-skip>
       {cards.map((c) => (
         <VCardEl key={c.id} c={c} />
       ))}

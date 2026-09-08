@@ -33,7 +33,7 @@ function MarqueeSet({ hidden = false }: { hidden?: boolean }) {
 export function AssocMarquee() {
   return (
     <section className="assoc">
-      <div className="container">
+      <div className="wrap">
         <p className="assoc-label">Schools, foundations and companies we&apos;ve worked with</p>
       </div>
       {/* two identical tracks, each scrolls left by exactly its own width

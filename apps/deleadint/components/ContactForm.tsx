@@ -1,7 +1,7 @@
 export function ContactForm() {
   return (
     <section className="contact-form" id="contact">
-      <div className="container cf-layout">
+      <div className="wrap cf-layout">
         <div className="section-head reveal">
           <span className="eyebrow">Get In Touch</span>
           <h2>Tell us what you&apos;re building</h2>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getReadDb, blogPosts, eq } from "@delead/db";
 import { getPost, getAllPosts } from "@/lib/content";
@@ -86,10 +87,10 @@ export default async function JournalPost({
         className="jr-post-hero"
         style={{ "--cover": `url("${cover}")` } as CSSProperties}
       >
-        <div className="container jr-post-hero-inner">
-          <a href="/journal" className="jr-back">
+        <div className="wrap jr-post-hero-inner">
+          <Link href="/journal" className="jr-back">
             &larr; The Journal
-          </a>
+            </Link>
           <span className="jr-post-tag">{post.tag}</span>
           <h1>{post.title}</h1>
           <p className="jr-post-meta">
@@ -99,7 +100,7 @@ export default async function JournalPost({
         </div>
       </header>
 
-      <div className="container jr-post-layout">
+      <div className="wrap jr-post-layout">
         <main className="jr-post-body" dangerouslySetInnerHTML={{ __html: html }} />
 
         <aside className="jr-post-aside">
@@ -111,7 +112,7 @@ export default async function JournalPost({
               <ul className="jr-aside-list">
                 {recent.map((p) => (
                   <li key={p.id}>
-                    <a href={`/journal/${p.slug}`} className="jr-aside-item">
+                    <Link href={`/journal/${p.slug}`} className="jr-aside-item">
                       <span className="jr-aside-thumb">
                         <img src={imgFor(p)} alt="" loading="lazy" />
                       </span>
@@ -120,14 +121,14 @@ export default async function JournalPost({
                         <span className="jr-aside-name">{p.title}</span>
                         <span className="jr-aside-date">{fmtDate(p.publishedAt)}</span>
                       </span>
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
             )}
-            <a href="/journal" className="jr-aside-all">
+            <Link href="/journal" className="jr-aside-all">
               All field notes &rarr;
-            </a>
+              </Link>
           </div>
         </aside>
       </div>

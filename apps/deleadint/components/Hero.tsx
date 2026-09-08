@@ -47,7 +47,7 @@ export function Hero() {
         </figure>
       </div>
 
-      <div className="hero-inner container">
+      <div className="hero-inner wrap">
         <div className="hero-top">
           <span className="hero-accent" aria-hidden="true">
             {squiggle}

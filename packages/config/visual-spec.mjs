@@ -120,6 +120,12 @@ export function registerVisualTests({ path = "/", name = "home" } = {}) {
       for (let i = 0; i < count; i++) {
         const el = sections.nth(i);
         if (!(await el.isVisible())) continue;
+        // opt-out: a section that can't be captured as one stable frame —
+        // deleadint's #ecosystem is 6 sticky 100vh panels (~7000px) with a
+        // scroll-linked crossfade + `will-change` compositing; the segmented
+        // screenshot of an element that tall never produces two identical
+        // frames. Its child cards are static content, cross-checked by hand.
+        if ((await el.getAttribute("data-visual-skip")) !== null) continue;
         const box = await el.boundingBox();
         if (!box || box.height < 4) continue;
         const id = (await el.getAttribute("id"))?.trim() || `i${i}`;

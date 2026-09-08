@@ -6,7 +6,7 @@ export async function Voices() {
 
   return (
     <section className="voices" id="voices">
-      <div className="container">
+      <div className="wrap">
         <div className="voices-head reveal">
           <span className="eyebrow">What People Notice</span>
           <h2>Not our words, theirs</h2>

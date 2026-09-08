@@ -19,7 +19,7 @@ export function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer>
-      <div className="container">
+      <div className="wrap">
         <div className="footer-grid">
           <div className="footer-brand">
             <img src="/assets/logo/logo-delead-white.png" alt="De' Lead International" />
@@ -41,18 +41,24 @@ export function Footer() {
             <h4>Verticals</h4>
             <ul>
               <li>
-                <a href="#corporate">Corporate Training</a>
+                <a href="https://corporate.deleadint.com" target="_blank" rel="noopener">
+                  Corporate Training
+                </a>
               </li>
               <li>
-                <a href="https://tinkerchamps.deleadint.com" target="_blank" rel="noopener">
+                <a href="https://tc.deleadint.com" target="_blank" rel="noopener">
                   TinkerChamps
                 </a>
               </li>
               <li>
-                <a href="#makerchamps">MakerChamps</a> <span className="soon">Soon</span>
+                <a href="https://mc.deleadint.com" target="_blank" rel="noopener">
+                  MakerChamps
+                </a>
               </li>
               <li>
-                <a href="#dli-education">DLI Education</a> <span className="soon">Soon</span>
+                <a href="https://edu.deleadint.com" target="_blank" rel="noopener">
+                  DLI Education
+                </a>
               </li>
               <li>
                 <a href="https://goalfinder.org/" target="_blank" rel="noopener">

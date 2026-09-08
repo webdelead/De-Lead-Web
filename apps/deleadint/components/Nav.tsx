@@ -7,7 +7,7 @@ export function Nav({ home = true }: { home?: boolean } = {}) {
   const h = (hash: string) => (home ? hash : `/${hash}`);
   return (
     <header className="nav">
-      <div className="container">
+      <div className="wrap">
         <a href={home ? "#top" : "/"} className="brand">
           <img className="brand-white" src="/assets/logo/logo-delead-white.png" alt="De' Lead International" />
           <img className="brand-dark" src="/assets/logo/logo-delead-dark.png" alt="De' Lead International" />

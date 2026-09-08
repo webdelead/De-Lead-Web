@@ -1,35 +1,37 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
-export const metadata: Metadata = { title: "Page not found — De' Lead International" };
+export const metadata: Metadata = { title: "Page not found | De' Lead International" };
 
 export default function NotFound() {
   return (
-    <main className="nf-wrap">
-      <style>{`
-        .nf-wrap{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
-          text-align:center;gap:22px;padding:64px 24px;background:var(--cream);color:var(--ink)}
-        .nf-wrap img{height:34px;width:auto;margin-bottom:8px}
-        .nf-code{font-family:'Lora',Georgia,serif;font-weight:700;letter-spacing:-.02em;line-height:1;
-          font-size:clamp(88px,18vw,180px);color:var(--magenta);margin:0}
-        .nf-title{font-family:'Lora',Georgia,serif;font-weight:600;font-size:clamp(22px,4vw,32px);margin:0}
-        .nf-copy{max-width:44ch;color:var(--ink-soft);font-size:1.02rem;line-height:1.65;margin:0}
-        .nf-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:6px}
-      `}</style>
-      <img src="/assets/logo/logo-delead-dark.png" alt="De' Lead International" />
-      <p className="nf-code">404</p>
-      <h1 className="nf-title">This page wandered off</h1>
-      <p className="nf-copy">
-        The page you&rsquo;re after doesn&rsquo;t exist or has moved. Let&rsquo;s get you back to
-        the De&rsquo; Lead ecosystem.
+    <main className="flex min-h-[100svh] flex-col items-center justify-center gap-[22px] [padding:64px_24px] text-center [background:var(--color-cream)] [color:var(--color-ink)]">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/assets/logo/logo-delead-dark.png"
+        alt="De' Lead International"
+        className="mb-2 h-[34px] w-auto"
+      />
+      <p className="m-0 [font-family:var(--font-lora),Georgia,serif] font-bold tracking-[-0.02em] leading-none [font-size:clamp(88px,18vw,180px)] [color:var(--color-magenta)]">
+        404
       </p>
-      <div className="nf-actions">
-        <a className="btn btn-primary" href="/">
+      <h1 className="m-0 [font-family:var(--font-lora),Georgia,serif] font-semibold [font-size:clamp(22px,4vw,32px)]">
+        This page wandered off
+      </h1>
+      <p className="m-0 max-w-[44ch] text-[1.02rem] leading-[1.65] [color:var(--color-ink-soft)]">
+        The page you&rsquo;re after doesn&rsquo;t exist or has moved. Let&rsquo;s get you back to the
+        De&rsquo; Lead ecosystem.
+      </p>
+      <div className="mt-1.5 flex flex-wrap justify-center gap-3">
+        <Link className="btn btn-primary" href="/">
           Back to home
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M5 12h14M13 5l7 7-7 7" />
           </svg>
-        </a>
-        <a className="btn btn-ghost" href="/#eco">Explore the ecosystem</a>
+        </Link>
+        <Link className="btn btn-ghost" href="/#ecosystem">
+          Explore the ecosystem
+        </Link>
       </div>
     </main>
   );

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getAllPosts } from "@/lib/content";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
@@ -40,7 +41,7 @@ export default async function JournalIndex() {
       <Nav home={false} />
 
       <header className="jr-hero">
-        <div className="container">
+        <div className="wrap">
           <span className="eyebrow on-dark">The Journal</span>
           <h1>Field notes</h1>
           <p>
@@ -50,13 +51,13 @@ export default async function JournalIndex() {
         </div>
       </header>
 
-      <main className="jr-index container">
+      <main className="jr-index wrap">
         {posts.length === 0 ? (
           <p className="jr-empty">No posts published yet. Check back soon.</p>
         ) : (
           <div className="jr-grid">
             {posts.map((p) => (
-              <a key={p.id} href={`/journal/${p.slug}`} className="jr-card">
+              <Link key={p.id} href={`/journal/${p.slug}`} className="jr-card">
                 <span className="jr-card-media">
                   <img
                     src={p._url || FALLBACK[p.tag] || "/assets/stock/tc-4.webp"}
@@ -71,7 +72,7 @@ export default async function JournalIndex() {
                   {p.publishedAt ? ` · ${fmtDate(p.publishedAt)}` : ""}
                 </span>
                 <span className="jr-card-excerpt">{p.excerpt}</span>
-              </a>
+              </Link>
             ))}
           </div>
         )}
