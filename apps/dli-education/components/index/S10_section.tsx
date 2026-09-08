@@ -10,7 +10,7 @@ export function S10_section() {
           <div className="qgrid reveal">
             <figure className="qcard">
               <span className="q-m" aria-hidden="true">&ldquo;</span>
-              <blockquote>Being from a non-IT background I thought it would be difficult to learn to code, but De' Lead helped me get the concepts easily, in a fun-filled way.</blockquote>
+              <blockquote>Being from a non-IT background I thought it would be difficult to learn to code, but De&apos; Lead helped me get the concepts easily, in a fun-filled way.</blockquote>
               <figcaption><b>Soumya C.</b><span>Civil Engineer, on DLI Education</span></figcaption>
             </figure>
             <figure className="qcard">

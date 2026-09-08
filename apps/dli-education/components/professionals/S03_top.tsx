@@ -31,7 +31,7 @@ export function S03_top() {
       
             <div className="hero-aside">
               <div className="hero-blobs"><i></i><i></i><i></i></div>
-              <p>Delivered the same hands-on way as the rest of De' Lead International, scoped to your team, department or whole institution.</p>
+              <p>Delivered the same hands-on way as the rest of De&apos; Lead International, scoped to your team, department or whole institution.</p>
               <a href="#areas" className="btn">See the skill areas
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M7 17L17 7M17 7H8M17 7V16" /></svg></a>
             </div>
