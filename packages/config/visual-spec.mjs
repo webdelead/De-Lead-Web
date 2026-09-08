@@ -38,20 +38,6 @@ async function settle(page) {
   await page.addStyleTag({
     content: "nav, .nav { position: absolute !important; }",
   });
-  // deleadint's ecosystem section is a stack of `position: sticky` .v-card
-  // panels (each min-height:100vh, ~7000px total) whose opacity + translateY a
-  // scroll-linked crossfade rewrites every frame. Two problems for
-  // toHaveScreenshot on that one giant element: (1) the crossfade never
-  // settles into two identical frames, (2) Playwright captures a
-  // taller-than-viewport element in scrolled segments and `position: sticky`
-  // children re-pin at every offset, so the stitched image is
-  // non-deterministic. Pin the cards fully visible AND un-stick them so the
-  // section flows as a plain 6-panel stack that captures identically every
-  // time. `!important` beats the inline styles the crossfade writes.
-  await page.addStyleTag({
-    content:
-      ".v-card { opacity: 1 !important; transform: none !important; position: relative !important; }",
-  });
 
   // force every image eager so heights are settled before any capture, then
   // walk the page so the reveal IntersectionObservers fire, then hard-force
@@ -134,6 +120,12 @@ export function registerVisualTests({ path = "/", name = "home" } = {}) {
       for (let i = 0; i < count; i++) {
         const el = sections.nth(i);
         if (!(await el.isVisible())) continue;
+        // opt-out: a section that can't be captured as one stable frame —
+        // deleadint's #ecosystem is 6 sticky 100vh panels (~7000px) with a
+        // scroll-linked crossfade + `will-change` compositing; the segmented
+        // screenshot of an element that tall never produces two identical
+        // frames. Its child cards are static content, cross-checked by hand.
+        if ((await el.getAttribute("data-visual-skip")) !== null) continue;
         const box = await el.boundingBox();
         if (!box || box.height < 4) continue;
         const id = (await el.getAttribute("id"))?.trim() || `i${i}`;

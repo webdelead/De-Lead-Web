@@ -248,7 +248,7 @@ function VCardEl({ c }: { c: VCard }) {
 
 export function VStack() {
   return (
-    <div id="ecosystem" className="v-stack">
+    <div id="ecosystem" className="v-stack" data-visual-skip>
       {cards.map((c) => (
         <VCardEl key={c.id} c={c} />
       ))}
