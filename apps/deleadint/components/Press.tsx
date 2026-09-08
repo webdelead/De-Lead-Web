@@ -14,7 +14,7 @@ export async function Press() {
 
   return (
     <section className="press" id="press">
-      <div className="container">
+      <div className="wrap">
         <div className="press-top">
           <div className="section-head reveal">
             <span className="eyebrow">Achievements &amp; Press</span>

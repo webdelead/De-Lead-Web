@@ -1,7 +1,7 @@
 export function StatBand() {
   return (
     <section className="hero-stat-band">
-      <div className="container hero-stat-band-inner">
+      <div className="wrap hero-stat-band-inner">
         <div className="stat-item reveal">
           <b>5000+</b>
           <i></i>

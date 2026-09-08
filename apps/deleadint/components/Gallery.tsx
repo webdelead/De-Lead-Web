@@ -17,7 +17,7 @@ export async function Gallery() {
   const { items, hasMore } = await getGalleryPage(0, GALLERY_BATCH);
   return (
     <section className="gallery" id="gallery">
-      <div className="container">
+      <div className="wrap">
         <div className="section-head reveal">
           <span className="eyebrow">Gallery</span>
           <h2>Moments from across the ecosystem</h2>

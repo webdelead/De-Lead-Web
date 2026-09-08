@@ -12,7 +12,7 @@ export function EcoIntro() {
           />
         </svg>
       </span>
-      <div className="container eco-intro-inner reveal">
+      <div className="wrap eco-intro-inner reveal">
         <span className="eco-script">Six verticals, one idea</span>
         <h2 className="eco-h2">
           Climb the ecosystem

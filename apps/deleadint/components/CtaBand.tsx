@@ -1,7 +1,7 @@
 export function CtaBand() {
   return (
     <section className="cta-band" id="contact-band">
-      <div className="container reveal">
+      <div className="wrap reveal">
         <h2>
           Whatever room you&rsquo;re trying to change, we&rsquo;ve probably already built something
           for it.

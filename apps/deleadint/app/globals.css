@@ -1,0 +1,66 @@
+/* deleadint (parent hub) — Tailwind v4 + @delead/brand.
+   During the migration the frozen styles.css lives on as app/legacy.css,
+   imported into a layer BELOW `utilities` so a converted section's Tailwind
+   classes win while unconverted sections keep their full styling + element
+   reset. When every section is on Tailwind: delete legacy.css, drop this note,
+   add Preflight + @delead/brand/reset.css, re-baseline.
+   (The frozen `.container` wrapper collided with Tailwind v4's built-in
+   `.container` utility, so it was renamed to `.wrap` across the markup +
+   legacy.css.) */
+@layer theme, base, dl-legacy, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+@import "@delead/brand/theme.css";
+@import "./legacy.css" layer(dl-legacy);
+
+@layer dl-legacy {
+  :root {
+    /* alias the frozen :root names onto @delead/brand's tokens (identical
+       values) so the inline style / SVG-stroke refs that survive
+       componentisation keep resolving once legacy.css is deleted. The
+       sub-brand accents + --paper / --radius-sm / --shadow-sm have no brand
+       token — kept as the frozen literals. legacy.css still defines all of
+       these with identical values while present, so this block is inert until
+       the sweep. */
+    --magenta: var(--color-magenta);
+    --magenta-deep: var(--color-magenta-deep);
+    --magenta-soft: var(--color-magenta-soft);
+    --ink: var(--color-ink);
+    --ink-soft: var(--color-ink-soft);
+    --cream: var(--color-cream);
+    --cream2: var(--color-cream-2);
+    --line: var(--color-line);
+    --paper: #ffffff;
+
+    --tc-purple: #5021b0;
+    --tc-yellow: #fdc638;
+    --mc-navy: #0d1b3e;
+    --mc-orange: #ff5a1f;
+    --mc-lime: #c3e86a;
+    --w2l-red: #c81c1c;
+    --dli-blue: #2451c4;
+    --dli-teal: #0f9488;
+    --gf-indigo: #4338ca;
+
+    --radius: var(--radius-card);
+    --radius-sm: 12px;
+    --shadow: var(--shadow-card);
+    --shadow-sm: 0 12px 34px -16px rgba(28, 20, 23, 0.24);
+    --ease: var(--ease-out-soft);
+    --maxw: var(--container-site);
+  }
+}
+
+@layer base {
+  /* Tailwind's `border-*` utilities set only width; without Preflight the
+     style defaults to `none` and the border is invisible. Restore the
+     Preflight behaviour (1px solid, currentColor) until it lands for real. */
+  *,
+  *::before,
+  *::after {
+    border-width: 0;
+    border-style: solid;
+    border-color: currentColor;
+  }
+}

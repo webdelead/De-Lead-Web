@@ -211,7 +211,7 @@ const cards: VCard[] = [
 function VCardEl({ c }: { c: VCard }) {
   return (
     <section className="v-card" id={c.id} style={c.style}>
-      <div className="v-card-inner container">
+      <div className="v-card-inner wrap">
         <div className={c.brandSplit ? "vc-brand vc-brand-split" : "vc-brand"}>
           <img className="vc-logo" src={c.logo.src} alt={c.logo.alt} style={c.logo.style} />
           {c.brandSub && <span className="vc-brand-sub">{c.brandSub}</span>}

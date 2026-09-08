@@ -13,7 +13,7 @@ export async function Journal() {
 
   return (
     <section className="blog" id="blog">
-      <div className="container">
+      <div className="wrap">
         <div className="blog-head reveal">
           <div>
             <span className="eyebrow">The Journal</span>

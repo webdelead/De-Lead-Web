@@ -19,7 +19,7 @@ export function Footer() {
   const year = new Date().getFullYear();
   return (
     <footer>
-      <div className="container">
+      <div className="wrap">
         <div className="footer-grid">
           <div className="footer-brand">
             <img src="/assets/logo/logo-delead-white.png" alt="De' Lead International" />

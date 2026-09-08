@@ -86,7 +86,7 @@ export default async function JournalPost({
         className="jr-post-hero"
         style={{ "--cover": `url("${cover}")` } as CSSProperties}
       >
-        <div className="container jr-post-hero-inner">
+        <div className="wrap jr-post-hero-inner">
           <a href="/journal" className="jr-back">
             &larr; The Journal
           </a>
@@ -99,7 +99,7 @@ export default async function JournalPost({
         </div>
       </header>
 
-      <div className="container jr-post-layout">
+      <div className="wrap jr-post-layout">
         <main className="jr-post-body" dangerouslySetInnerHTML={{ __html: html }} />
 
         <aside className="jr-post-aside">

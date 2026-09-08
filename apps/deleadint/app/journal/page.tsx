@@ -40,7 +40,7 @@ export default async function JournalIndex() {
       <Nav home={false} />
 
       <header className="jr-hero">
-        <div className="container">
+        <div className="wrap">
           <span className="eyebrow on-dark">The Journal</span>
           <h1>Field notes</h1>
           <p>
@@ -50,7 +50,7 @@ export default async function JournalIndex() {
         </div>
       </header>
 
-      <main className="jr-index container">
+      <main className="jr-index wrap">
         {posts.length === 0 ? (
           <p className="jr-empty">No posts published yet. Check back soon.</p>
         ) : (

@@ -6,7 +6,13 @@ import { securityHeaders } from "@delead/shared/headers";
 config({ path: resolve(process.cwd(), "../../.env") });
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@delead/db", "@delead/brand", "@delead/shared", "@delead/ui"],
+  transpilePackages: [
+    "@delead/db",
+    "@delead/brand",
+    "@delead/shared",
+    "@delead/ui",
+    "@delead/fonts",
+  ],
   serverExternalPackages: ["postgres"],
   images: {
     remotePatterns: [{ protocol: "https", hostname: "*.supabase.co" }],

@@ -1,7 +1,7 @@
 export function About() {
   return (
     <section className="about" id="about">
-      <div className="container">
+      <div className="wrap">
         <div className="about-panel reveal">
           <div className="about-copy about-copy-top">
             <span className="eyebrow">About Us</span>
