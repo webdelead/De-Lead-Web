@@ -17,7 +17,7 @@
       "name": "tinkerchamps",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@delead/site-tinkerchamps", "dev"],
-      "port": 3200
+      "port": 4326
     },
     {
       "name": "corporate",

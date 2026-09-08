@@ -75,7 +75,7 @@ needs it re-added and retested first.
   succeeds on the current Next (it was removed for the Vercel path — see above).
 - `pnpm install && pnpm -r --filter "./apps/*" build` → each app emits `.next/standalone`.
 - Run each with `pm2`/systemd: `node apps/<name>/.next/standalone/apps/<name>/server.js`
-  on its own port (4321–4325, 3100, 3200).
+  on its own port (4321–4326, 3100).
 - `caddy` reverse-proxies by host:
   ```
   deleadint.com, www.deleadint.com { reverse_proxy localhost:4321 }
@@ -84,7 +84,7 @@ needs it re-added and retested first.
   corporate.deleadint.com         { reverse_proxy localhost:4324 }
   edu.deleadint.com               { reverse_proxy localhost:4325 }
   admin.deleadint.com             { reverse_proxy localhost:3100 }
-  tc.deleadint.com                { reverse_proxy localhost:3200 }
+  tc.deleadint.com                { reverse_proxy localhost:4326 }
   ```
   Caddy gets certs automatically. Same env vars as Option A, in each service's environment.
 
@@ -276,5 +276,5 @@ pnpm --filter @delead/site-walk2lead dev     # http://localhost:4322
 pnpm --filter @delead/site-makerchamps dev   # http://localhost:4323
 pnpm --filter @delead/site-corporate dev     # http://localhost:4324
 pnpm --filter @delead/site-dli-education dev  # http://localhost:4325
-pnpm --filter @delead/site-tinkerchamps dev  # http://localhost:3200
+pnpm --filter @delead/site-tinkerchamps dev  # http://localhost:4326
 ```

@@ -103,8 +103,8 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
   `/api/cron/ping` (daily) is the second pinger.
 - **DNS is Hostinger, mail is Zoho** (a Cloudflare-DNS migration is planned — see `docs/DEPLOY.md`).
   Never touch `MX` or mail `TXT`/`CNAME` (SPF/DKIM/DMARC) records.
-- Dev ports: dashboard 3100, tinkerchamps 3200, deleadint 4321, walk2lead 4322, makerchamps 4323,
-  corporate 4324, dli-education 4325. `pnpm dev` runs all; or `pnpm --filter <name> dev`.
+- Dev ports: dashboard 3100, deleadint 4321, walk2lead 4322, makerchamps 4323,
+  corporate 4324, dli-education 4325, tinkerchamps 4326. `pnpm dev` runs all; or `pnpm --filter <name> dev`.
   Local prod check: `pnpm --filter <name> build && pnpm --filter <name> start`.
 - **No app sets `output: "standalone"`** — it was dropped 2026-09 because Next 16 + `output:
   "standalone"` breaks Vercel's post-build tracing (`ENOENT next-server.js.nft.json`). If a
