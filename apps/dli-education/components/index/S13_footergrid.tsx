@@ -44,7 +44,7 @@ export function S13_footergrid() {
             <h4>De&apos; Lead</h4>
             <ul>
               <li><a href="https://deleadint.com" target="_blank" rel="noopener">De&apos; Lead International</a></li>
-              <li><a href="https://tinkerchamps.deleadint.com" target="_blank" rel="noopener">TinkerChamps</a></li>
+              <li><a href="https://tc.deleadint.com" target="_blank" rel="noopener">TinkerChamps</a></li>
               <li><a href="https://goalfinder.org/" target="_blank" rel="noopener">Goal Finder</a></li>
               <li><a href="https://w2l.deleadint.com" target="_blank" rel="noopener">Walk2Lead</a></li>
             </ul>
