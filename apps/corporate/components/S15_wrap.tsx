@@ -82,7 +82,7 @@ export function S15_wrap() {
               <ul>
                 {[
                   ["https://deleadint.com", "De' Lead International"],
-                  ["https://tinkerchamps.deleadint.com", "TinkerChamps"],
+                  ["https://tc.deleadint.com", "TinkerChamps"],
                   ["https://w2l.deleadint.com", "Walk2Lead"],
                 ].map(([href, label]) => (
                   <li className="mb-2.5" key={href}>
