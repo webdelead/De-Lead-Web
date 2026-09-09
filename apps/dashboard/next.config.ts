@@ -1,3 +1,4 @@
+// redeploy trigger: 2026-09-09 — PR #11–#16 merges to main were skipped while Vercel Hobby was rate-limited
 import type { NextConfig } from "next";
 import { config } from "dotenv";
 import { resolve } from "node:path";
