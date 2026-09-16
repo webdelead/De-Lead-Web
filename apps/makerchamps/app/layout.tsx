@@ -5,6 +5,7 @@ import { anton } from "@delead/fonts/anton";
 import { inter } from "@delead/fonts/inter";
 import "./globals.css";
 import { SiteScripts } from "@/components/SiteScripts";
+import { EnquireModal } from "@/components/EnquireModal";
 
 const TITLE =
   "MakerChamps — Residential Innovation Bootcamp at NIT Calicut | De' Lead International";
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning>
         {children}
         <SiteScripts />
+        <EnquireModal />
         <Script
           src="/js/lead-capture.js"
           strategy="afterInteractive"

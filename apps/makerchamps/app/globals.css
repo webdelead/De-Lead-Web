@@ -1192,6 +1192,75 @@
     border-radius: 12px;
   }
 
+  /* Enquiry popup — auto-opens a few seconds in. Same overlay pattern as
+     .lightbox above; kept mounted at all times (display:none when closed) so
+     public/js/lead-capture.js's page-load `init()` finds and wires its
+     <form data-lead-source> like every other lead form on the site. */
+  .enquire-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    display: none;
+    place-items: center;
+    padding: 20px;
+  }
+  .enquire-modal.open {
+    display: grid;
+  }
+  .enquire-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 30, 93, 0.72);
+    backdrop-filter: blur(2px);
+  }
+  .enquire-modal-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--mc-cream);
+    color: var(--color-mc-ink);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 30px 26px 26px;
+    animation: enquireModalIn 0.32s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+  @keyframes enquireModalIn {
+    from {
+      opacity: 0;
+      transform: translateY(16px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .enquire-modal-card {
+      animation: none;
+    }
+  }
+  .enquire-modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: rgba(2, 30, 93, 0.06);
+    color: var(--color-mc-navy);
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .enquire-modal-close:hover {
+    background: rgba(2, 30, 93, 0.12);
+    transform: rotate(90deg);
+  }
+
   /* ---------- Testimonials ---------- */
 
   .testimonials {
