@@ -5,12 +5,12 @@ import { useRef } from "react";
 
 import { useInView } from "react-intersection-observer";
 
-/* Vimeo Player (clean embed) */
-function VimeoPlayer() {
+/* YouTube Player (clean embed) */
+function VideoPlayer() {
   return (
     <div className="relative w-full h-full bg-black">
       <iframe
-        src="https://player.vimeo.com/video/1177626363?autoplay=1&muted=1&loop=1&title=0&byline=0&portrait=0&controls=1"
+        src="https://www.youtube.com/embed/w0loJynVsPE?autoplay=1&mute=1&loop=1&playlist=w0loJynVsPE&controls=1&rel=0&modestbranding=1"
         allow="autoplay; fullscreen; picture-in-picture"
         allowFullScreen
         title="Tinkerchamps Video"
@@ -52,7 +52,7 @@ export default function VideoSection() {
       <section className="px-4 py-16 lg:hidden">
         <div className="w-full">
           <div className="relative w-full aspect-video overflow-hidden rounded-2xl shadow-lg bg-amber-50">
-            {inView && <VimeoPlayer />}
+            {inView && <VideoPlayer />}
             <div className="absolute inset-0 bg-black/10 pointer-events-none" />
           </div>
         </div>
@@ -78,7 +78,7 @@ export default function VideoSection() {
               transform-gpu
             "
           >
-            {inView && <VimeoPlayer />}
+            {inView && <VideoPlayer />}
             <div className="absolute inset-0 bg-black/10 pointer-events-none" />
           </motion.div>
         </div>
