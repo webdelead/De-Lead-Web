@@ -1,7 +1,9 @@
 # Migration plan — verbatim CSS/JS → Tailwind + React components
 
-Status: **not started.** This is the agreed plan for moving the 5 marketing sites off
-their frozen legacy stylesheets/scripts. Do it on its own branch, one site at a time.
+Status: **complete (2026-09).** All 5 marketing sites (walk2lead first as the pilot,
+then deleadint, dli-education, makerchamps, corporate) have been migrated to Tailwind v4
+per this plan and merged to `main`. This document is kept as historical record of the
+approach — see `CLAUDE.md`'s Layout table for the current state. Do not re-run this plan.
 
 ---
 
