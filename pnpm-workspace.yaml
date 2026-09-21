@@ -6,15 +6,15 @@ packages:
 # each package.json. next / react / react-dom / eslint-config-next are pinned
 # exact so every app resolves byte-identical framework versions (Next 16 line).
 catalog:
-  "@types/node": ^24.7.0
-  "@types/react": ^19.0.4
-  "@types/react-dom": ^19.0.2
+  "@types/node": ^24.13.5
+  "@types/react": ^19.3.0
+  "@types/react-dom": ^19.3.0
   dotenv: ^16.4.7
   drizzle-orm: ^0.45.2
-  eslint-config-next: 16.3.4
-  next: 16.3.4
-  react: 19.2.8
-  react-dom: 19.2.8
+  eslint-config-next: 16.3.5
+  next: 16.3.5
+  react: 19.3.0
+  react-dom: 19.3.0
   tailwindcss: ^4.0.0
   typescript: ^5.7.2
   "@playwright/test": ^1.49.1
