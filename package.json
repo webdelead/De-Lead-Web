@@ -19,9 +19,9 @@
     "db:seed": "pnpm --filter @delead/db seed"
   },
   "devDependencies": {
-    "turbo": "^2.3.3",
+    "turbo": "^2.11.4",
     "typescript": "catalog:",
-    "prettier": "^3.4.2"
+    "prettier": "^3.9.9"
   },
   "pnpm": {
     "onlyBuiltDependencies": ["esbuild", "sharp", "@tailwindcss/oxide", "unrs-resolver"],
