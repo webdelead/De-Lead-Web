@@ -22,7 +22,7 @@
     "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "sanitize-html": "^2.14.0"
+    "sanitize-html": "^2.18.0"
   },
   "devDependencies": {
     "@delead/config": "workspace:*",
