@@ -6,7 +6,7 @@ import { SiteScripts } from "@/components/SiteScripts";
 
 const SITE = process.env.SITE_URL_DLI_EDUCATION || "https://edu.deleadint.com";
 const LEAD_ENDPOINT =
-  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://admin.deleadint.com/api/lead";
+  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://dash.deleadint.com/api/lead";
 
 const DESC =
   "DLI Education is the technology and future-skills learning arm of De' Lead International. Hands-on, mentor-led programmes for students and working professionals across India and the UAE.";

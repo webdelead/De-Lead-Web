@@ -22,10 +22,10 @@ let me confirm before doing the other six. Never touch MX / SPF / DKIM / DMARC D
 Project: **De Lead Web** (`dslvxzcqcuqhfqqaohfb`). Go to Authentication.
 
 1. **URL Configuration → Site URL**: change `http://localhost:3000` to
-   `https://admin.deleadint.com`. Save.
+   `https://dash.deleadint.com`. Save.
 2. **URL Configuration → Redirect URLs**: confirm these two exist (add any missing):
-   - `https://admin.deleadint.com/auth/callback`
-   - `https://admin.deleadint.com/reset-password`
+   - `https://dash.deleadint.com/auth/callback`
+   - `https://dash.deleadint.com/reset-password`
 3. **Sessions**: set the JWT / access-token expiry to `28800` seconds (8 hours). Save.
 4. **Attack Protection**: leave "Enable Captcha protection" OFF for now (we don't have a
    Turnstile secret yet). If it's currently ON with an empty secret, turn it OFF and Save.
@@ -49,7 +49,7 @@ For **each** row below: Vercel dashboard → **Add New… → Project** → impo
 
 | # | Vercel project name | Root Directory | Package name (`<PKG>`) | Domains to add |
 |---|---|---|---|---|
-| 1 | delead-dashboard | `apps/dashboard` | `@delead/dashboard` | `admin.deleadint.com` |
+| 1 | delead-dashboard | `apps/dashboard` | `@delead/dashboard` | `dash.deleadint.com` |
 | 2 | delead-deleadint | `apps/deleadint` | `@delead/site-deleadint` | `deleadint.com`, `www.deleadint.com` |
 | 3 | delead-walk2lead | `apps/walk2lead` | `@delead/site-walk2lead` | `w2l.deleadint.com` (+ `walk2lead.deleadint.com` → redirects to w2l) |
 | 4 | delead-makerchamps | `apps/makerchamps` | `@delead/site-makerchamps` | `mc.deleadint.com` (+ `makerchamps.deleadint.com` → redirects to mc) |
@@ -57,7 +57,7 @@ For **each** row below: Vercel dashboard → **Add New… → Project** → impo
 | 6 | delead-dli-education | `apps/dli-education` | `@delead/site-dli-education` | `edu.deleadint.com` |
 | 7 | delead-tinkerchamps | `apps/tinkerchamps` | `@delead/site-tinkerchamps` | `tc.deleadint.com` (+ `tinkerchamps.deleadint.com` → redirects to tc) |
 
-**Do project 1 (dashboard) first. After it deploys green and `admin.deleadint.com` loads a
+**Do project 1 (dashboard) first. After it deploys green and `dash.deleadint.com` loads a
 login page, stop and tell me.** Then continue 2–7.
 
 For the redirect aliases (walk2lead/makerchamps/tinkerchamps long forms): after adding the
@@ -81,14 +81,14 @@ AUTH_SECRET=<<from .env>>
 STORAGE_PROVIDER=supabase
 CRON_SECRET=c09f86d7e716173469dfa4b5fd6e67b1992273eb4206ee1e71f3ade150f03c5e
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://dash.deleadint.com/api/lead
 SITE_URL_DELEADINT=https://deleadint.com
 SITE_URL_WALK2LEAD=https://w2l.deleadint.com
 SITE_URL_MAKERCHAMPS=https://mc.deleadint.com
 SITE_URL_CORPORATE=https://corporate.deleadint.com
 SITE_URL_DLI_EDUCATION=https://edu.deleadint.com
 SITE_URL_TINKERCHAMPS=https://tc.deleadint.com
-SITE_URL_DASHBOARD=https://admin.deleadint.com
+SITE_URL_DASHBOARD=https://dash.deleadint.com
 APPS_SCRIPT_URL_DELEADINT=https://script.google.com/macros/s/AKfycbzaKSDLqwSjYrWLAXqR-6qzxy6OzsScbnUpnLvumgDK8HW0RmCrdeJIz4TEBbwzg65X/exec
 APPS_SCRIPT_URL_WALK2LEAD=https://script.google.com/macros/s/AKfycbyqVKowhmqrD1u1Xt5qKgzND3fpihgfiuI7ZnIi-inhm7JVF-wgwAmXXWq2EHzYylTBrg/exec
 APPS_SCRIPT_URL_MAKERCHAMPS=https://script.google.com/macros/s/AKfycbySyamNFm289wO1WmiMJ2ISM4lD0PoYJ3dKPZUbP8XGRNN50zD03ILqRgrM0lkHQ_0p/exec
@@ -102,7 +102,7 @@ APPS_SCRIPT_URL_TINKERCHAMPS=https://script.google.com/macros/s/AKfycbxEbaNm8YFw
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://dash.deleadint.com/api/lead
 SITE_URL_DELEADINT=https://deleadint.com
 ```
 
@@ -111,7 +111,7 @@ SITE_URL_DELEADINT=https://deleadint.com
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://dash.deleadint.com/api/lead
 SITE_URL_WALK2LEAD=https://w2l.deleadint.com
 ```
 
@@ -120,7 +120,7 @@ SITE_URL_WALK2LEAD=https://w2l.deleadint.com
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://dash.deleadint.com/api/lead
 SITE_URL_MAKERCHAMPS=https://mc.deleadint.com
 ```
 
@@ -129,7 +129,7 @@ SITE_URL_MAKERCHAMPS=https://mc.deleadint.com
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://dash.deleadint.com/api/lead
 SITE_URL_CORPORATE=https://corporate.deleadint.com
 ```
 
@@ -138,7 +138,7 @@ SITE_URL_CORPORATE=https://corporate.deleadint.com
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-NEXT_PUBLIC_LEAD_ENDPOINT=https://admin.deleadint.com/api/lead
+NEXT_PUBLIC_LEAD_ENDPOINT=https://dash.deleadint.com/api/lead
 SITE_URL_DLI_EDUCATION=https://edu.deleadint.com
 ```
 
@@ -147,7 +147,7 @@ SITE_URL_DLI_EDUCATION=https://edu.deleadint.com
 DATABASE_URL=<<from .env>>
 SUPABASE_URL=https://dslvxzcqcuqhfqqaohfb.supabase.co
 REVALIDATE_SECRET=cfeccdf5abeca6814b8c85fa2cf711108b6df651742de393
-NEXT_PUBLIC_BOOKING_ENDPOINT=https://admin.deleadint.com/api/booking
+NEXT_PUBLIC_BOOKING_ENDPOINT=https://dash.deleadint.com/api/booking
 SITE_URL_TINKERCHAMPS=https://tc.deleadint.com
 ```
 (TinkerChamps no longer writes bookings itself — the form POSTs to the dashboard's
@@ -162,7 +162,7 @@ automatically as the Authorization header — nothing else to do.
 
 ## SECTION 6 — Post-deploy smoke test
 
-1. `https://admin.deleadint.com` → sign in `webdelead@gmail.com` / `DLI_site_3841` →
+1. `https://dash.deleadint.com` → sign in `webdelead@gmail.com` / `DLI_site_3841` →
    immediately change the password (top-right menu → Account).
 2. Open each marketing site's URL — it should render. Submit a test enquiry on one → check
    it shows under **Leads** in the dashboard.

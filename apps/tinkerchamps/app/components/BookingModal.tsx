@@ -9,7 +9,7 @@ import SuccessStep from "./booking/SuccessStep";
 
 // Bookings are written by the dashboard (same as leads), not by this app.
 const BOOKING_ENDPOINT =
-  process.env.NEXT_PUBLIC_BOOKING_ENDPOINT || "https://admin.deleadint.com/api/booking";
+  process.env.NEXT_PUBLIC_BOOKING_ENDPOINT || "https://dash.deleadint.com/api/booking";
 
 interface BookingModalProps {
   isOpen: boolean;

@@ -8,7 +8,7 @@
  * Education (each of which has its own Sheet + its own deployment of this file
  * with its own SITE_LABEL).
  *
- * The admin dashboard (admin.deleadint.com) is still the source of truth — this
+ * The admin dashboard (dash.deleadint.com) is still the source of truth — this
  * script is a per-site BACKUP + NOTIFIER for the same JSON payload.
  *
  * SETUP (once):
@@ -122,7 +122,7 @@ function notify_(payload, when) {
   lines.push(
     "",
     "Site: " + SITE_LABEL,
-    "— logged to the " + SITE_LABEL + " Google Sheet, and to the dashboard at admin.deleadint.com",
+    "— logged to the " + SITE_LABEL + " Google Sheet, and to the dashboard at dash.deleadint.com",
   );
 
   MailApp.sendEmail({

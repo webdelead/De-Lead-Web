@@ -13,7 +13,7 @@ const DESC =
   "A 2-day residential innovation bootcamp on the NIT Calicut campus for class 8–12 students. Only 60 seats per season. By De' Lead International × Nlightened ZenSolutions.";
 const SITE = process.env.SITE_URL_MAKERCHAMPS || "https://mc.deleadint.com";
 const LEAD_ENDPOINT =
-  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://admin.deleadint.com/api/lead";
+  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://dash.deleadint.com/api/lead";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),

@@ -9,7 +9,7 @@ const DESC =
   "44 government schools. 1,300+ children. Walk2Lead is funded by Walkaroo Foundation and implemented end-to-end by De' Lead International, a prominent CSR implementation team. See the numbers, the setbacks, and how we solved them.";
 const SITE = process.env.SITE_URL_WALK2LEAD || "https://w2l.deleadint.com";
 const LEAD_ENDPOINT =
-  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://admin.deleadint.com/api/lead";
+  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://dash.deleadint.com/api/lead";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),

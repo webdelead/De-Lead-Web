@@ -31,7 +31,7 @@ Currently every project serves on `*.vercel.app` and Vercel env holds the values
    Vercel env from the `.env.vercel` values back to the `.env` values.
    Helper: `../push-vercel-env.sh` (edit the map/source file) or the dashboard UI.
 3. Redeploy — **dashboard first** (it holds the lead/booking CORS allow-list), then the sites.
-4. Supabase → Auth → URL Configuration → set Site URL + redirect URLs to `admin.deleadint.com`.
+4. Supabase → Auth → URL Configuration → set Site URL + redirect URLs to `dash.deleadint.com`.
 
 ### Testing the Google Sheet / email path without spamming real inboxes
 In each vertical's Apps Script (`Extensions → Apps Script` from its Sheet): change the
@@ -68,7 +68,7 @@ Currently **does nothing** — the server code is inert until you add keys.
 ### Supabase Auth toggles (Supabase dashboard → Authentication)
 - **Attack Protection** → turn on **leaked-password protection** and the **CAPTCHA** option.
 - **URL Configuration → Redirect URLs** → keep only the exact
-  `https://admin.deleadint.com/auth/callback` and `.../reset-password`.
+  `https://dash.deleadint.com/auth/callback` and `.../reset-password`.
 - **Sessions** → shorten the JWT / session expiry (e.g. 8h) for an admin tool.
 - MFA: skipped by your decision.
 
@@ -114,7 +114,7 @@ Install a load tool (`brew install oha` — or `k6`, `bombardier`). Then:
 oha -z 30s -c 50 -m POST \
   -H 'content-type: application/json' \
   -d '{"source":"deleadint","name":"loadtest"}' \
-  https://admin.deleadint.com/api/lead
+  https://dash.deleadint.com/api/lead
 
 # same for booking
 oha -z 30s -c 50 -m POST -H 'content-type: application/json' \

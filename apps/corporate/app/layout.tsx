@@ -10,7 +10,7 @@ const DESC =
   "Leadership development, team building and outbound training for organisations across India and the UAE. Delivered for DP World, Kayzan Group, RAG Business Hub and Al Ahalia Group.";
 const SITE = process.env.SITE_URL_CORPORATE || "https://corporate.deleadint.com";
 const LEAD_ENDPOINT =
-  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://admin.deleadint.com/api/lead";
+  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://dash.deleadint.com/api/lead";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE),

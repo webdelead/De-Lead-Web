@@ -18,7 +18,7 @@ De Lead Web/
 │  ├─ corporate/       Next    → corporate.deleadint.com
 │  ├─ dli-education/    Next    → edu.deleadint.com            (/, /students, /professionals)
 │  ├─ tinkerchamps/    Next    → tc.deleadint.com             (alias: tinkerchamps.deleadint.com → 301; migrated off Sanity)
-│  └─ dashboard/       Next    → admin.deleadint.com          (the single dashboard)
+│  └─ dashboard/       Next    → dash.deleadint.com          (the single dashboard)
 ├─ packages/
 │  ├─ db/       Drizzle schema + typed client + migrations + seed  (@delead/db)
 │  ├─ ui/       legacy shared Astro components — no longer imported (kept for reference)  (@delead/ui)
@@ -291,7 +291,7 @@ using `DATABASE_URL` from repo secret. Also a manual `workflow_dispatch`.
 | ~~B1~~ | ✅ Project `dslvxzcqcuqhfqqaohfb` ("De Lead Web", Mumbai), pw `Dli_Web_2026`. Strings in `.env`. | done | — |
 | ~~B2~~ | ✅ `webdelead@gmail.com` / `DLI_site_3841`. In `.env`, seeded as `super_admin`. | done | — |
 | ~~B3~~ | ✅ **Per-site** Apps Scripts (each site its own Sheet). `.env` has `APPS_SCRIPT_URL_<VERTICAL>` — URLs still to be pasted; hop is skipped (lead still saved) until then. | pending URLs | — |
-| ~~B4~~ | ✅ `w2l` / `mc` / `tc` / `corporate` / `edu` / `admin` on `deleadint.com` (short forms canonical; `walk2lead`/`makerchamps`/`tinkerchamps` 301 → short). | done | — |
+| ~~B4~~ | ✅ `w2l` / `mc` / `tc` / `corporate` / `edu` / `dash` on `deleadint.com` (short forms canonical; `walk2lead`/`makerchamps`/`tinkerchamps` 301 → short). | done | — |
 | ~~B5~~ | ✅ `Tinkerchamps/.env.local` has project `4y4755by`, dataset `production`, + a **write token** (`sk…`) that also grants read — enough for a one-time GROQ export. Will use read-only. | done | — |
 | ~~B6~~ | ✅ `webdelead/De-Lead-Web` created empty. `git init` + remote set here. | done | — |
 | ~~B7~~ | ✅ **Launch with posts.** Blog section visible; I draft 3 real starter posts (one per key vertical) from existing brochure facts, flagged for client edit. | done | — |

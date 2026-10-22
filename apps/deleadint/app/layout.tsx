@@ -15,7 +15,7 @@ const DESC =
   "De' Lead International is an education innovation ecosystem running Corporate Training, TinkerChamps, MakerChamps, DLI Education, Goal Finder and DLI Foundation (Walk2Lead CSR) across India and the UAE.";
 const SITE = process.env.SITE_URL_DELEADINT || "https://deleadint.com";
 const LEAD_ENDPOINT =
-  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://admin.deleadint.com/api/lead";
+  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://dash.deleadint.com/api/lead";
 
 const fontVars = [
   instrumentSans.variable,

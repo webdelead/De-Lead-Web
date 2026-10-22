@@ -1,7 +1,7 @@
 /**
  * De' Lead — lead / booking capture for one site's Google Sheet.
  *
- * The admin dashboard (admin.deleadint.com) is the source of truth; this script
+ * The admin dashboard (dash.deleadint.com) is the source of truth; this script
  * is a per-site BACKUP + NOTIFIER. It receives the same JSON payload, appends a
  * row to this spreadsheet, and emails the team.
  *
@@ -92,7 +92,7 @@ function notify_(payload, when) {
     var val = payload[keys[i]];
     if (val != null && String(val) !== "") lines.push(label + ": " + val);
   }
-  lines.push("", "— logged to this site's Google Sheet, and to the dashboard at admin.deleadint.com");
+  lines.push("", "— logged to this site's Google Sheet, and to the dashboard at dash.deleadint.com");
 
   MailApp.sendEmail({
     to: NOTIFY_TO,

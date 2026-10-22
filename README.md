@@ -12,7 +12,7 @@ workspaces + Turbo, Node 24.
 | `apps/corporate` | Next 15 (App Router, ISR) | corporate.deleadint.com |
 | `apps/dli-education` | Next 15 (App Router, ISR) | edu.deleadint.com |
 | `apps/tinkerchamps` | Next 16 (App Router, ISR) | tc.deleadint.com |
-| `apps/dashboard` | Next 15 (admin) | admin.deleadint.com |
+| `apps/dashboard` | Next 15 (admin) | dash.deleadint.com |
 
 The five marketing sites were converted Astro → Next in 2026-09 as 1:1 pixel
 ports (verbatim `styles.css`/`main.js`, componentised markup). ISR:

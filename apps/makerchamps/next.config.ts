@@ -6,7 +6,7 @@ import { securityHeaders } from "@delead/shared/headers";
 config({ path: resolve(process.cwd(), "../../.env") });
 
 const LEAD_ENDPOINT =
-  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://admin.deleadint.com/api/lead";
+  process.env.NEXT_PUBLIC_LEAD_ENDPOINT || "https://dash.deleadint.com/api/lead";
 const LEAD_ORIGIN = new URL(LEAD_ENDPOINT).origin;
 
 // makerchamps is fully migrated off verbatim CSS/JS, so a CSP is feasible.

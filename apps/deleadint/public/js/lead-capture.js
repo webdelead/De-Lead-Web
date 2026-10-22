@@ -18,7 +18,7 @@
   var ENDPOINT =
     (document.currentScript && document.currentScript.dataset.endpoint) ||
     window.__LEAD_ENDPOINT__ ||
-    "https://admin.deleadint.com/api/lead";
+    "https://dash.deleadint.com/api/lead";
   var CONTACT_EMAIL = "info@deleadint.com";
 
   function pick(fd, res) {

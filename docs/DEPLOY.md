@@ -21,7 +21,7 @@ Repo: `github.com/webdelead/De-Lead-Web` · Supabase project `dslvxzcqcuqhfqqaoh
 
 ### Supabase Auth config (one-time, in the Supabase dashboard → Authentication)
 
-- **URL Configuration → Redirect URLs**: add `https://admin.deleadint.com/**` and, for local dev, `http://localhost:3100/**`. Needed for the invite / password-reset email links.
+- **URL Configuration → Redirect URLs**: add `https://dash.deleadint.com/**` and, for local dev, `http://localhost:3100/**`. Needed for the invite / password-reset email links.
 - **Email templates**: the default "Invite" and "Reset password" templates work as-is.
 - **SMTP**: the built-in sender is rate-limited (~a few emails/hour). For reliable invites/resets, set a custom SMTP (Authentication → SMTP Settings) — the company Zoho account works.
 
@@ -56,7 +56,7 @@ needs it re-added and retested first.
 3. **Environment variables** (Production + Preview):
    - `DATABASE_URL` = transaction pooler URI
    - `SUPABASE_URL` = `https://dslvxzcqcuqhfqqaohfb.supabase.co`
-   - `NEXT_PUBLIC_LEAD_ENDPOINT` = `https://admin.deleadint.com/api/lead`
+   - `NEXT_PUBLIC_LEAD_ENDPOINT` = `https://dash.deleadint.com/api/lead`
    - `REVALIDATE_SECRET` = the shared secret (identical on every site + the dashboard)
    - `SITE_URL_<VERTICAL>` = its own canonical origin
 4. **Custom domains** → add the subdomain:
@@ -83,7 +83,7 @@ needs it re-added and retested first.
   mc.deleadint.com                { reverse_proxy localhost:4323 }
   corporate.deleadint.com         { reverse_proxy localhost:4324 }
   edu.deleadint.com               { reverse_proxy localhost:4325 }
-  admin.deleadint.com             { reverse_proxy localhost:3100 }
+  dash.deleadint.com             { reverse_proxy localhost:3100 }
   tc.deleadint.com                { reverse_proxy localhost:4326 }
   ```
   Caddy gets certs automatically. Same env vars as Option A, in each service's environment.
@@ -99,7 +99,7 @@ Two projects, same repo:
 
 | Project | Root Directory | Domain |
 |---|---|---|
-| dashboard | `apps/dashboard` | `admin.deleadint.com` |
+| dashboard | `apps/dashboard` | `dash.deleadint.com` |
 | tinkerchamps | `apps/tinkerchamps` | `tc.deleadint.com` (+ alias `tinkerchamps.deleadint.com`) |
 
 1. Add New Project → import `webdelead/De-Lead-Web` → set **Root Directory**.
@@ -121,7 +121,7 @@ Two projects, same repo:
 
 ## 4. Post-deploy checklist
 
-- [ ] `admin.deleadint.com` → sign in as `webdelead@gmail.com` / `DLI_site_3841`.
+- [ ] `dash.deleadint.com` → sign in as `webdelead@gmail.com` / `DLI_site_3841`.
 - [ ] Immediately change that password (top-right menu → Profile).
 - [ ] Users → invite the real staff, grant per-vertical access.
 - [ ] Submit a test enquiry on each marketing site → appears under **Leads**.
@@ -212,7 +212,7 @@ Supabase dashboard → Authentication:
 - **Leaked-password protection**: on (HaveIBeenPwned check).
 - **Bot & abuse protection / CAPTCHA**: on for the auth endpoints (Turnstile/hCaptcha).
 - **URL Configuration → Redirect URLs**: allow-list only the exact
-  `https://admin.deleadint.com/auth/callback` and `/reset-password` URLs.
+  `https://dash.deleadint.com/auth/callback` and `/reset-password` URLs.
 - **Sessions / JWT expiry**: shorten to something sane for an admin tool (e.g. 1–8h).
 - MFA (TOTP): **deferred by decision** — revisit if the team grows.
 

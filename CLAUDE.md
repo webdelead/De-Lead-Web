@@ -15,7 +15,7 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
 |---|---|
 | `apps/deleadint` `walk2lead` `makerchamps` `corporate` `dli-education` | **Next 16 App Router** marketing sites (converted from Astro 2026-09). All five have now **completed** the migration off verbatim CSS/JS onto **Tailwind v4 + `@delead/brand` tokens** (walk2lead was the pilot, 14/N commits; deleadint/dli-education/makerchamps/corporate followed as their own `redesign/*` branches, all merged to `main`) — Preflight is on, fonts are self-hosted via `@delead/fonts/*`, `legacy.css`/`styles.css`/`main.js` are deleted repo-wide, and inline scripts moved to a `<SiteScripts/>` client component. [`docs/MIGRATION-CSS-TO-TAILWIND.md`](docs/MIGRATION-CSS-TO-TAILWIND.md) is a historical plan doc, not current status — **do not trust its "not started" header**. Dynamic sections are async server components reading Postgres via `lib/content.ts` (deleadint: press/voices/journal · walk2lead: projects/testimonials/gallery/press · makerchamps: gallery/testimonials · corporate: track record/testimonials/gallery · dli-education: student catalogue + outcomes on `/students`); everything else is static JSX. Content is seeded byte-identical to the markup via `packages/db/scripts/populate.ts`. `export const revalidate = 3600` + `app/api/revalidate` (POST, `x-revalidate-secret`) for on-demand ISR. Images from Supabase Storage. Custom `not-found.tsx` per app. Lead `<form data-lead-source>` picked up by `public/js/lead-capture.js` → dashboard `/api/lead`. The designs are still client-approved and pixel-frozen relative to their pre-migration screenshots — verify visual changes against CI's `__screenshots__` baselines, not against the old static sibling folders (those are now stale references, since markup/CSS both changed during the port). |
 | `apps/tinkerchamps` | Next 16 app, **same ISR model as the 5 marketing sites** (2026-09): `(site)/page.tsx` is an async server component that fetches events/gallery/reviews from Postgres (`app/lib/tc-db.ts`) and passes them as props; `revalidate = 3600` + `app/api/revalidate`. ScrollColorBackground + Lenis + WebGL gallery + framer-motion all kept (client components, unaffected). The old Sanity shim + `/api/tc/*` routes were deleted. Journey section is static cards; booking modal is a single 5-field labelled form → `/api/booking` → `tc_bookings` (still dynamic — it's a write). |
-| `apps/dashboard` | Next 16 admin (`admin.deleadint.com`). **Supabase Auth** email+password (login has show/hide + forgot/reset; `lib/supabase/*` + `lib/authz.ts`); `users` table is a profile row keyed by the Supabase auth uid. RBAC (`super_admin` + per-vertical `view`/`edit` grants), generic resource CRUD (`lib/resources.ts` registry), leads inbox, users (invite-by-email), audit. Sidebar vertical sections are collapsible. |
+| `apps/dashboard` | Next 16 admin (`dash.deleadint.com`). **Supabase Auth** email+password (login has show/hide + forgot/reset; `lib/supabase/*` + `lib/authz.ts`); `users` table is a profile row keyed by the Supabase auth uid. RBAC (`super_admin` + per-vertical `view`/`edit` grants), generic resource CRUD (`lib/resources.ts` registry), leads inbox, users (invite-by-email), audit. Sidebar vertical sections are collapsible. |
 | `packages/db` | Drizzle schema + client + migrations + seed. **The one source of DB truth.** |
 | `packages/ui` | `@delead/ui` — shared **client** React components. Recreated 2026-09 (the earlier Astro `packages/ui` was deleted Phase 3; this is unrelated). Currently exports `<ScrollStack>` (`./scroll-stack`): a scroll-driven card deck — every child pins at the same sticky `top`, fanned by a `translateY(--i·step)` transform (not a per-card `top`, so the whole deck un-sticks on one frame and exits together), scale-in as each card reaches the pin. Self-contained (inline styles + one rAF scroll handler, no external CSS), honours `prefers-reduced-motion`, collapses to a plain list below `collapseBelow` (default 1080). Props: `pinTop` `step` `stepCap` `gapVh` `tailVh` `tilt` `collapseBelow`. Extracted from the deleadint "Voices" section (which itself no longer uses it — see below). Consumers must add `@delead/ui` to `transpilePackages`. |
 | `packages/shared` | `@delead/shared` — cross-app server helpers: `assetPublicUrl` (`/storage`), `snakeToCamel` (`/strings`), `verifyTurnstile` (`/turnstile`), `clientIp`/`ipHashOf` (`/request-ip`), `securityHeaders` (`/headers` — baseline security response headers wired into every public site's `next.config` `headers()`; **no CSP** yet, that needs a report-only rollout; the dashboard keeps its own stricter block with CSP), `makeRevalidateRoute` (root, server-only). |
@@ -83,16 +83,21 @@ Full spec: [`docs/PLAN.md`](docs/PLAN.md). Deploy runbook: [`docs/DEPLOY.md`](do
     block were removed; card slide uses a CSS `transition` on an inline computed `transform`
     string. Do **not** diff this section against `../De Lead International/` — it diverged on
     purpose. The removed vertical scroll-stack lives on as `@delead/ui`'s `<ScrollStack>`.
-- **Subdomains**: `w2l` `mc` `tc` `corporate` `edu` `admin` on `deleadint.com`
+- **Subdomains**: `w2l` `mc` `tc` `corporate` `edu` `dash` on `deleadint.com`
   (`walk2lead`/`makerchamps`/`tinkerchamps` 301 → short forms).
-- **Vercel deploy state (2026-09)**: all 7 apps are live as separate Vercel projects
+- **Vercel deploy state (2026-10-22)**: all 7 apps are live as separate Vercel projects
   (`delead-dashboard`, `deleadint`, `walk2lead`, `makerchamps`, `delead-corporate`,
-  `dli-education`, `tinkerchamps`), all building from this repo. **Custom domains not cut
-  over yet** — serving on `*.vercel.app`. Two env sets live in the sibling `../env/<app>/`
-  folder (outside the repo): `.env` = real custom-domain values, `.env.vercel` = the
-  `*.vercel.app` testing values currently in Vercel. On cutover, swap `SITE_URL_*` +
-  `NEXT_PUBLIC_*_ENDPOINT` back to `.env` and redeploy (dashboard first — it holds the
-  `/api/lead` + `/api/booking` CORS allow-list, keyed on `SITE_URL_*`).
+  `dli-education`, `tinkerchamps`), all building from this repo. **Custom domains are now
+  connected in Vercel/DNS** (dashboard moved from the originally-planned `admin.deleadint.com`
+  to `dash.deleadint.com` — update this file's references if you see `admin.deleadint.com`
+  anywhere, it's retired). Two env sets live in the sibling `../env/<app>/` folder (outside
+  the repo): `.env` = real custom-domain values (already updated to `dash.deleadint.com`),
+  `.env.vercel` = the old `*.vercel.app` testing values. **Vercel's actual env vars have NOT
+  been swapped yet** — `push-vercel-env.sh` still pushes `.env.vercel`; until someone edits it
+  to push `.env` (or updates each Vercel project's `SITE_URL_*` / `NEXT_PUBLIC_*_ENDPOINT` by
+  hand) and redeploys, production is still pointed at the `*.vercel.app` testing values even
+  though the custom domains resolve. Do dashboard first — it holds the `/api/lead` +
+  `/api/booking` CORS allow-list, keyed on `SITE_URL_*`.
 - **Every Vercel project has Ignored Build Step = "Only build if there are changes"**
   (Settings → Build & Deployment) so a one-app change only rebuilds that project; shared
   `packages/*` changes still rebuild every dependent. Don't revert it to "Automatic".
